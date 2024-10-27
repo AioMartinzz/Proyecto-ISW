@@ -7,7 +7,7 @@ const _filename = fileURLToPath(import.meta.url);
 
 const _dirname = path.dirname(_filename);
 
-const envFilePath = path.resolve(_dirname, ".env");
+const envFilePath = path.resolve(_dirname, "conexion.env"); // path del archivo de conexion 
 
 dotenv.config({ path: envFilePath });
 
