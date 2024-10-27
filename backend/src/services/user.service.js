@@ -2,7 +2,9 @@
 import User from "../entity/user.entity.js";
 import { AppDataSource } from "../config/configDb.js";
 import { comparePassword, encryptPassword } from "../helpers/bcrypt.helper.js";
+import { ROLES } from "../entity/roles.js";
 
+// Obtener un usuario específico por ID, RUT o email
 export async function getUserService(query) {
   try {
     const { rut, id, email } = query;
@@ -24,6 +26,7 @@ export async function getUserService(query) {
   }
 }
 
+// Obtener todos los usuarios registrados en el sistema
 export async function getUsersService() {
   try {
     const userRepository = AppDataSource.getRepository(User);
@@ -41,6 +44,7 @@ export async function getUsersService() {
   }
 }
 
+// Modificar un usuario existente
 export async function updateUserService(query, body) {
   try {
     const { id, rut, email } = query;
@@ -101,6 +105,7 @@ export async function updateUserService(query, body) {
   }
 }
 
+// Eliminar un usuario existente
 export async function deleteUserService(query) {
   try {
     const { id, rut, email } = query;
@@ -113,7 +118,7 @@ export async function deleteUserService(query) {
 
     if (!userFound) return [null, "Usuario no encontrado"];
 
-    if (userFound.rol === "administrador") {
+    if (userFound.rol === ROLES.ADMINISTRADOR) {
       return [null, "No se puede eliminar un usuario con rol de administrador"];
     }
 
@@ -124,6 +129,57 @@ export async function deleteUserService(query) {
     return [dataUser, null];
   } catch (error) {
     console.error("Error al eliminar un usuario:", error);
+    return [null, "Error interno del servidor"];
+  }
+}
+
+// Crear un nuevo usuario con un rol específico (por el Administrador)
+export async function createUserService(user) {
+  try {
+    const userRepository = AppDataSource.getRepository(User);
+
+    const { nombreCompleto, rut, email, password, rol } = user;
+
+    const createErrorMessage = (dataInfo, message) => ({
+      dataInfo,
+      message
+    });
+
+    // Verificar si el correo ya está en uso
+    const existingEmailUser = await userRepository.findOne({
+      where: { email },
+    });
+
+    if (existingEmailUser) return [null, createErrorMessage("email", "Correo electrónico en uso")];
+
+    // Verificar si el RUT ya está asociado a una cuenta
+    const existingRutUser = await userRepository.findOne({
+      where: { rut },
+    });
+
+    if (existingRutUser) return [null, createErrorMessage("rut", "RUT ya asociado a una cuenta")];
+
+    // Validar que el rol proporcionado sea uno de los roles predefinidos
+    if (![ROLES.PROFESOR, ROLES.ALUMNO, ROLES.APODERADO].includes(rol)) {
+      return [null, createErrorMessage("rol", "Rol no válido")];
+    }
+
+    // Crear el nuevo usuario con el rol especificado
+    const newUser = userRepository.create({
+      nombreCompleto,
+      email,
+      rut,
+      password: await encryptPassword(password),
+      rol, // Asignar el rol proporcionado
+    });
+
+    await userRepository.save(newUser);
+
+    const { password: _, ...dataUser } = newUser;
+
+    return [dataUser, null];
+  } catch (error) {
+    console.error("Error al crear un usuario:", error);
     return [null, "Error interno del servidor"];
   }
 }
