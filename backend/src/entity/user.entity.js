@@ -18,23 +18,23 @@ const UserSchema = new EntitySchema({
     rut: {
       type: "varchar",
       length: 12,
-      nullable: false,
       unique: true,
+      nullable: false,
     },
     email: {
       type: "varchar",
       length: 255,
-      nullable: false,
       unique: true,
-    },
-    rol: {
-      type: "varchar",
-      length: 50,
       nullable: false,
     },
     password: {
       type: "varchar",
       nullable: false,
+    },
+    rol: {
+      type: "varchar",
+      length: 50,
+      nullable: false, // Profesor, Alumno, Apoderado, Administrador
     },
     createdAt: {
       type: "timestamp with time zone",
