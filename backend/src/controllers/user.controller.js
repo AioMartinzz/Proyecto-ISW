@@ -4,10 +4,12 @@ import {
   getUserService,
   getUsersService,
   updateUserService,
+  createUserService, // Servicio para crear usuarios específicos
 } from "../services/user.service.js";
 import {
   userBodyValidation,
   userQueryValidation,
+  createUserValidation, // Validación para crear usuarios con roles específicos
 } from "../validations/user.validation.js";
 import {
   handleErrorClient,
@@ -15,6 +17,7 @@ import {
   handleSuccess,
 } from "../handlers/responseHandlers.js";
 
+// Obtener un usuario específico por ID, RUT o email
 export async function getUser(req, res) {
   try {
     const { rut, id, email } = req.query;
@@ -33,6 +36,7 @@ export async function getUser(req, res) {
   }
 }
 
+// Obtener todos los usuarios registrados en el sistema
 export async function getUsers(req, res) {
   try {
     const [users, errorUsers] = await getUsersService();
@@ -51,6 +55,7 @@ export async function getUsers(req, res) {
   }
 }
 
+// Modificar un usuario existente
 export async function updateUser(req, res) {
   try {
     const { rut, id, email } = req.query;
@@ -91,6 +96,7 @@ export async function updateUser(req, res) {
   }
 }
 
+// Eliminar un usuario existente
 export async function deleteUser(req, res) {
   try {
     const { rut, id, email } = req.query;
@@ -116,9 +122,28 @@ export async function deleteUser(req, res) {
       email,
     });
 
-    if (errorUserDelete) return handleErrorClient(res, 404, "Error eliminado al usuario", errorUserDelete);
+    if (errorUserDelete) return handleErrorClient(res, 404, "Error eliminando al usuario", errorUserDelete);
 
     handleSuccess(res, 200, "Usuario eliminado correctamente", userDelete);
+  } catch (error) {
+    handleErrorServer(res, 500, error.message);
+  }
+}
+
+// Crear un nuevo usuario con un rol específico (por el Administrador)
+export async function createUser(req, res) {
+  try {
+    const { body } = req;
+
+    // Validar los datos para la creación de un nuevo usuario con rol
+    const { error } = createUserValidation.validate(body);
+    if (error) return handleErrorClient(res, 400, "Error de validación", error.message);
+
+    const [newUser, errorNewUser] = await createUserService(body);
+
+    if (errorNewUser) return handleErrorClient(res, 400, "Error creando el usuario", errorNewUser);
+
+    handleSuccess(res, 201, "Usuario creado exitosamente", newUser);
   } catch (error) {
     handleErrorServer(res, 500, error.message);
   }
