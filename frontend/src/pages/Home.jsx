@@ -1,5 +1,7 @@
 import React from 'react';
 import './Home.css'; // Asegúrate de tener un archivo CSS para estilos
+import RegisterGrade from '../components/RegisterGrade';
+import ViewGrades from '../components/ViewGrades';
 
 const Home = () => {
   return (
@@ -20,6 +22,11 @@ const Home = () => {
         <div className="feature">
           <h2>Funcionalidad 3</h2>
           <p>Descripción breve de la funcionalidad 3.</p>
+        </div>
+        <div>
+          <h1>Sistema de Calificaciones</h1>
+          <RegisterGrade />
+          <ViewGrades />
         </div>
       </section>
       <footer className="home-footer">
