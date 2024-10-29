@@ -3,7 +3,7 @@ import cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { convertirMinusculas } from '@helpers/formatData.js';
 
-export async function login(dataUser) {
+/*export async function login(dataUser) {
     try {
         const response = await axios.post('/auth/login', {
             email: dataUser.email, 
@@ -22,7 +22,7 @@ export async function login(dataUser) {
         return error.response.data;
     }
 }
-
+*/
 export async function register(data) {
     try {
         const dataRegister = convertirMinusculas(data);
