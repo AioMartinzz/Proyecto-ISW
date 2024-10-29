@@ -22,7 +22,7 @@ export async function createAsistencia(req, res) {
   try {
     const profesor_id = req.user;
 
-    const alumnoId = req.body;
+    const alumnoId = req.body.alumnoId;
 
     const { error } = createAsistenciaValidation.validate(req.body);
 
@@ -35,7 +35,7 @@ export async function createAsistencia(req, res) {
       );
     }
 
-    const asistencia = await createAsistenciaService(id_alumno, profesor_id);
+    const asistencia = await createAsistenciaService(alumnoId);
 
     if (!asistencia) {
       return handleErrorClient(
