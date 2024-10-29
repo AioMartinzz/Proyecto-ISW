@@ -4,8 +4,8 @@ import {
   getAnotacionesByProfesorService,
   updateAnotacionService,
   deleteAnotacionService,
-  getAnotacionesByApoderadoService,
-  getAnotacionesByAlumnoService,
+  getAnotacionesPorAlumnoService,
+  getResumenAnotacionesPorAsignaturaService,
 } from "../services/anotacion.service.js";
 import { handleErrorClient, handleErrorServer, handleSuccess } from "../handlers/responseHandlers.js";
 import { createAnotacionValidation, updateAnotacionValidation } from "../validations/anotacion.validation.js";
@@ -46,7 +46,7 @@ export async function getAnotacionesByProfesor(req, res) {
   }
 }
 
-// Modificar anotación (solo profesores)
+// Modificar una anotación existente (solo profesores)
 export async function updateAnotacion(req, res) {
   try {
     // Validar los datos de entrada
@@ -56,10 +56,9 @@ export async function updateAnotacion(req, res) {
     }
 
     const { id: anotacionId } = req.params;
-    const { id: profesorId } = req.user;
     const { body } = req;
 
-    const [anotacion, errorService] = await updateAnotacionService(anotacionId, body, profesorId);
+    const [anotacion, errorService] = await updateAnotacionService(anotacionId, body);
     if (errorService) return handleErrorClient(res, 400, "Error al modificar anotación", errorService);
     handleSuccess(res, 200, "Anotación modificada exitosamente", anotacion);
   } catch (error) {
@@ -67,13 +66,12 @@ export async function updateAnotacion(req, res) {
   }
 }
 
-// Eliminar anotación (solo profesores)
+// Eliminar una anotación existente (solo profesores)
 export async function deleteAnotacion(req, res) {
   try {
     const { id: anotacionId } = req.params;
-    const { id: profesorId } = req.user;
 
-    const [anotacion, error] = await deleteAnotacionService(anotacionId, profesorId);
+    const [anotacion, error] = await deleteAnotacionService(anotacionId);
     if (error) return handleErrorClient(res, 400, "Error al eliminar anotación", error);
     handleSuccess(res, 200, "Anotación eliminada con éxito", anotacion);
   } catch (error) {
@@ -86,7 +84,7 @@ export async function getAnotacionesByApoderado(req, res) {
   try {
     const { alumnoId } = req.params;
 
-    const [anotaciones, error] = await getAnotacionesByApoderadoService(alumnoId);
+    const [anotaciones, error] = await getAnotacionesPorAlumnoService(alumnoId);
     if (error) return handleErrorClient(res, 404, "No se encontraron anotaciones para el alumno", error);
     handleSuccess(res, 200, "Anotaciones obtenidas con éxito", anotaciones);
   } catch (error) {
@@ -94,14 +92,14 @@ export async function getAnotacionesByApoderado(req, res) {
   }
 }
 
-// Obtener resumen de anotaciones para alumnos
+// Obtener resumen de anotaciones para alumnos (cantidad por asignatura)
 export async function getAnotacionesByAlumno(req, res) {
   try {
     const { alumnoId } = req.params;
 
-    const [anotaciones, error] = await getAnotacionesByAlumnoService(alumnoId);
+    const [resumen, error] = await getResumenAnotacionesPorAsignaturaService(alumnoId);
     if (error) return handleErrorClient(res, 404, "No se encontraron anotaciones para el alumno", error);
-    handleSuccess(res, 200, "Resumen de anotaciones obtenido con éxito", anotaciones);
+    handleSuccess(res, 200, "Resumen de anotaciones obtenido con éxito", resumen);
   } catch (error) {
     handleErrorServer(res, 500, error.message);
   }

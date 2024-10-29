@@ -1,13 +1,13 @@
 "use strict";
+import { AppDataSource } from "../config/configDb.js";
 import Anotacion from "../entity/anotacion.entity.js";
 import Alumno from "../entity/alumno.entity.js";
 import Profesor from "../entity/profesor.entity.js";
 import Asignatura from "../entity/asignatura.entity.js";
-import { AppDataSource } from "../config/configDb.js";
 
 // Crear una nueva anotación (solo profesores)
 export async function createAnotacionService(data) {
-  const { tipo, motivo, fecha, alumnoId, profesorId, asignaturaId } = data;
+  const { tipo, descripcion, fecha, alumnoId, profesorId, asignaturaId } = data;
   try {
     const anotacionRepository = AppDataSource.getRepository(Anotacion);
     const alumnoRepository = AppDataSource.getRepository(Alumno);
@@ -16,7 +16,7 @@ export async function createAnotacionService(data) {
 
     // Verificar si el alumno, profesor y asignatura existen
     const alumno = await alumnoRepository.findOne({ where: { id: alumnoId } });
-    const profesor = await profesorRepository.findOne({ where: { id: profesorId } });
+    const profesor = await profesorRepository.findOne({ where: { usuarioId: profesorId } }); // Cambiado a usuarioId
     const asignatura = await asignaturaRepository.findOne({ where: { id: asignaturaId } });
 
     if (!alumno || !profesor || !asignatura) {
@@ -26,7 +26,7 @@ export async function createAnotacionService(data) {
     // Crear la nueva anotación
     const newAnotacion = anotacionRepository.create({
       tipo,
-      motivo,
+      descripcion,
       fecha,
       alumno,
       profesor,
@@ -41,42 +41,35 @@ export async function createAnotacionService(data) {
   }
 }
 
-// Obtener anotaciones creadas por un profesor (filtros: por curso, alumno, fecha)
+// Obtener anotaciones de un profesor
 export async function getAnotacionesByProfesorService(profesorId, filters) {
   try {
     const anotacionRepository = AppDataSource.getRepository(Anotacion);
-    const queryBuilder = anotacionRepository.createQueryBuilder("anotacion")
-      .leftJoinAndSelect("anotacion.alumno", "alumno")
-      .leftJoinAndSelect("anotacion.asignatura", "asignatura")
-      .where("anotacion.profesorId = :profesorId", { profesorId });
-
-    if (filters.alumnoId) {
-      queryBuilder.andWhere("anotacion.alumnoId = :alumnoId", { alumnoId: filters.alumnoId });
-    }
-
-    if (filters.fecha) {
-      queryBuilder.andWhere("anotacion.fecha = :fecha", { fecha: filters.fecha });
-    }
-
-    const anotaciones = await queryBuilder.getMany();
+    const anotaciones = await anotacionRepository.find({
+      where: { profesor: { usuarioId: profesorId } },
+      relations: ["asignatura", "alumno"],
+    });
     return [anotaciones, null];
   } catch (error) {
-    console.error("Error al obtener anotaciones por profesor:", error);
+    console.error("Error al obtener anotaciones del profesor:", error);
     return [null, "Error interno del servidor"];
   }
 }
 
 // Modificar una anotación existente (solo profesores)
-export async function updateAnotacionService(anotacionId, data, profesorId) {
+export async function updateAnotacionService(anotacionId, data) {
+  const { tipo, descripcion, fecha } = data;
   try {
     const anotacionRepository = AppDataSource.getRepository(Anotacion);
 
-    const anotacion = await anotacionRepository.findOne({ where: { id: anotacionId, profesorId } });
-    if (!anotacion) return [null, "Anotación no encontrada o no tiene permisos para modificarla"];
+    const anotacion = await anotacionRepository.findOne({ where: { id: anotacionId } });
+    if (!anotacion) return [null, "Anotación no encontrada"];
 
-    Object.assign(anotacion, data);
+    anotacion.tipo = tipo || anotacion.tipo;
+    anotacion.descripcion = descripcion || anotacion.descripcion;
+    anotacion.fecha = fecha || anotacion.fecha;
+
     await anotacionRepository.save(anotacion);
-
     return [anotacion, null];
   } catch (error) {
     console.error("Error al modificar anotación:", error);
@@ -85,15 +78,15 @@ export async function updateAnotacionService(anotacionId, data, profesorId) {
 }
 
 // Eliminar una anotación existente (solo profesores)
-export async function deleteAnotacionService(anotacionId, profesorId) {
+export async function deleteAnotacionService(anotacionId) {
   try {
     const anotacionRepository = AppDataSource.getRepository(Anotacion);
 
-    const anotacion = await anotacionRepository.findOne({ where: { id: anotacionId, profesorId } });
-    if (!anotacion) return [null, "Anotación no encontrada o no tiene permisos para eliminarla"];
+    const anotacion = await anotacionRepository.findOne({ where: { id: anotacionId } });
+    if (!anotacion) return [null, "Anotación no encontrada"];
 
     await anotacionRepository.remove(anotacion);
-    return [anotacion, null];
+    return ["Anotación eliminada exitosamente", null];
   } catch (error) {
     console.error("Error al eliminar anotación:", error);
     return [null, "Error interno del servidor"];
@@ -101,36 +94,39 @@ export async function deleteAnotacionService(anotacionId, profesorId) {
 }
 
 // Obtener anotaciones para apoderado (ver por alumno)
-export async function getAnotacionesByApoderadoService(alumnoId) {
+export async function getAnotacionesPorAlumnoService(alumnoId) {
   try {
     const anotacionRepository = AppDataSource.getRepository(Anotacion);
 
     const anotaciones = await anotacionRepository.find({
       where: { alumno: { id: alumnoId } },
-      relations: ["asignatura"],
+      relations: ["asignatura", "profesor"],
     });
 
+    if (!anotaciones || anotaciones.length === 0) return [null, "No se encontraron anotaciones para el alumno"];
     return [anotaciones, null];
   } catch (error) {
-    console.error("Error al obtener anotaciones para apoderado:", error);
+    console.error("Error al obtener anotaciones para el alumno:", error);
     return [null, "Error interno del servidor"];
   }
 }
 
 // Obtener resumen de anotaciones para alumnos (cantidad por asignatura)
-export async function getAnotacionesByAlumnoService(alumnoId) {
+export async function getResumenAnotacionesPorAsignaturaService(alumnoId) {
   try {
     const anotacionRepository = AppDataSource.getRepository(Anotacion);
 
-    const anotaciones = await anotacionRepository.createQueryBuilder("anotacion")
-      .select("anotacion.asignaturaId, anotacion.tipo, COUNT(*) as cantidad")
+    const resumen = await anotacionRepository
+      .createQueryBuilder("anotacion")
+      .select("anotacion.asignaturaId", "asignaturaId")
+      .addSelect("COUNT(anotacion.id)", "cantidad")
       .where("anotacion.alumnoId = :alumnoId", { alumnoId })
-      .groupBy("anotacion.asignaturaId, anotacion.tipo")
+      .groupBy("anotacion.asignaturaId")
       .getRawMany();
 
-    return [anotaciones, null];
+    return [resumen, null];
   } catch (error) {
-    console.error("Error al obtener resumen de anotaciones para alumno:", error);
+    console.error("Error al obtener resumen de anotaciones:", error);
     return [null, "Error interno del servidor"];
   }
 }
