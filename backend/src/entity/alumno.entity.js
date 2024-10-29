@@ -14,7 +14,7 @@ const AlumnoSchema = new EntitySchema({
     },
     nombreCompleto: {
       type: "varchar",
-      length: 255,
+      length: 100,
       nullable: false,
     },
     rut: {

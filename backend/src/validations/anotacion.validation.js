@@ -3,11 +3,12 @@ import Joi from "joi";
 
 // Validación para crear una nueva anotación
 export const createAnotacionValidation = Joi.object({
-  tipo: Joi.string().valid("Positiva", "Negativa").required(),
-  motivo: Joi.string().min(5).required(),
+  tipo: Joi.string().valid('Positiva', 'Negativa').required(),
+  motivo: Joi.string().max(255).required(),
   fecha: Joi.date().required(),
-  alumnoId: Joi.number().required(),
-  asignaturaId: Joi.number().required(),
+  alumnoId: Joi.number().integer().required(),
+  profesorId: Joi.number().integer().required(), // Asegúrate de incluir profesorId como permitido
+  asignaturaId: Joi.number().integer().required(),
 });
 
 // Validación para actualizar una anotación

@@ -4,12 +4,12 @@ import {
   getUserService,
   getUsersService,
   updateUserService,
-  createUserService, // Servicio para crear usuarios específicos
+  createUserService,
 } from "../services/user.service.js";
 import {
   userBodyValidation,
   userQueryValidation,
-  createUserValidation, // Validación para crear usuarios con roles específicos
+  createUserValidation,
 } from "../validations/user.validation.js";
 import {
   handleErrorClient,
@@ -21,13 +21,11 @@ import {
 export async function getUser(req, res) {
   try {
     const { rut, id, email } = req.query;
-
     const { error } = userQueryValidation.validate({ rut, id, email });
 
     if (error) return handleErrorClient(res, 400, error.message);
 
     const [user, errorUser] = await getUserService({ rut, id, email });
-
     if (errorUser) return handleErrorClient(res, 404, errorUser);
 
     handleSuccess(res, 200, "Usuario encontrado", user);
@@ -47,11 +45,7 @@ export async function getUsers(req, res) {
       ? handleSuccess(res, 204)
       : handleSuccess(res, 200, "Usuarios encontrados", users);
   } catch (error) {
-    handleErrorServer(
-      res,
-      500,
-      error.message,
-    );
+    handleErrorServer(res, 500, error.message);
   }
 }
 
@@ -61,33 +55,16 @@ export async function updateUser(req, res) {
     const { rut, id, email } = req.query;
     const { body } = req;
 
-    const { error: queryError } = userQueryValidation.validate({
-      rut,
-      id,
-      email,
-    });
-
+    const { error: queryError } = userQueryValidation.validate({ rut, id, email });
     if (queryError) {
-      return handleErrorClient(
-        res,
-        400,
-        "Error de validación en la consulta",
-        queryError.message,
-      );
+      return handleErrorClient(res, 400, "Error de validación en la consulta", queryError.message);
     }
 
     const { error: bodyError } = userBodyValidation.validate(body);
-
     if (bodyError)
-      return handleErrorClient(
-        res,
-        400,
-        "Error de validación en los datos enviados",
-        bodyError.message,
-      );
+      return handleErrorClient(res, 400, "Error de validación en los datos enviados", bodyError.message);
 
     const [user, userError] = await updateUserService({ rut, id, email }, body);
-
     if (userError) return handleErrorClient(res, 400, "Error modificando al usuario", userError);
 
     handleSuccess(res, 200, "Usuario modificado correctamente", user);
@@ -100,28 +77,13 @@ export async function updateUser(req, res) {
 export async function deleteUser(req, res) {
   try {
     const { rut, id, email } = req.query;
-
-    const { error: queryError } = userQueryValidation.validate({
-      rut,
-      id,
-      email,
-    });
+    const { error: queryError } = userQueryValidation.validate({ rut, id, email });
 
     if (queryError) {
-      return handleErrorClient(
-        res,
-        400,
-        "Error de validación en la consulta",
-        queryError.message,
-      );
+      return handleErrorClient(res, 400, "Error de validación en la consulta", queryError.message);
     }
 
-    const [userDelete, errorUserDelete] = await deleteUserService({
-      rut,
-      id,
-      email,
-    });
-
+    const [userDelete, errorUserDelete] = await deleteUserService({ rut, id, email });
     if (errorUserDelete) return handleErrorClient(res, 404, "Error eliminando al usuario", errorUserDelete);
 
     handleSuccess(res, 200, "Usuario eliminado correctamente", userDelete);
@@ -139,6 +101,7 @@ export async function createUser(req, res) {
     const { error } = createUserValidation.validate(body);
     if (error) return handleErrorClient(res, 400, "Error de validación", error.message);
 
+    // Llamar al servicio para crear el usuario y las entidades adicionales según el rol
     const [newUser, errorNewUser] = await createUserService(body);
 
     if (errorNewUser) return handleErrorClient(res, 400, "Error creando el usuario", errorNewUser);

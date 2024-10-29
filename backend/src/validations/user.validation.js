@@ -63,6 +63,14 @@ export const createUserValidation = Joi.object({
       "string.base": "El rol debe ser de tipo string.",
       "any.only": "El rol debe ser uno de los siguientes: administrador, profesor, apoderado, alumno.",
     }),
+  asignaturaId: Joi.when("rol", {
+    is: "profesor",
+    then: Joi.number().required().messages({
+      "number.base": "El ID de asignatura debe ser un número.",
+      "any.required": "El ID de asignatura es obligatorio para el rol de profesor.",
+    }),
+    otherwise: Joi.forbidden(),
+  })
 });
 
 // Validación para consultas de usuario (por rut, id o email)
@@ -135,3 +143,4 @@ export const userBodyValidation = Joi.object({
       "any.only": "El rol debe ser uno de los siguientes: administrador, profesor, apoderado, alumno.",
     }),
 });
+
