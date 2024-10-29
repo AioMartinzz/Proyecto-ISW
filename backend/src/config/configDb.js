@@ -10,6 +10,7 @@ import Anotacion from "../entity/anotacion.entity.js";
 import Apoderado from "../entity/apoderado.entity.js";
 import Curso from "../entity/curso.entity.js";
 import User from "../entity/user.entity.js";
+import Asisencia from "../entity/asistencia.entity.js";
 import { ROLES } from "../entity/roles.js"; // Corregido aquí
 
 export const AppDataSource = new DataSource({
@@ -24,6 +25,7 @@ export const AppDataSource = new DataSource({
     Asignatura,
     Alumno,
     Anotacion,
+    Asisencia,
     Apoderado,
     Curso,
     User,

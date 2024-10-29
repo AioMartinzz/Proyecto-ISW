@@ -10,6 +10,7 @@ import { cookieKey, HOST, PORT } from "./config/configEnv.js";
 import { connectDB } from "./config/configDb.js";
 import { createUsers } from "./config/initialSetup.js";
 import { passportJwtSetup } from "./auth/passport.auth.js";
+import gradeRoutes from "./routes/grade.routes.js";
 
 async function setupServer() {
   try {
@@ -60,6 +61,7 @@ async function setupServer() {
     passportJwtSetup();
 
     app.use("/api", indexRoutes);
+    app.use("/api", gradeRoutes);
 
     app.listen(PORT, () => {
       console.log(`=> Servidor corriendo en ${HOST}:${PORT}/api`);
