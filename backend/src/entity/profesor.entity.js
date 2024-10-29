@@ -1,29 +1,38 @@
 "use strict";
 import { EntitySchema } from "typeorm";
 import User from "./user.entity.js";
-import Asignatura from "./asignatura.entity.js"; // Importar la nueva entidad Asignatura
+import Asignatura from "./asignatura.entity.js";
 
 const ProfesorSchema = new EntitySchema({
   name: "Profesor",
   tableName: "profesores",
   columns: {
-    id: {
+    usuarioId: {
       type: "int",
       primary: true,
-      generated: true,
+    },
+    asignaturaId: {
+      type: "int",
+      nullable: false,
     },
   },
   relations: {
     usuario: {
       target: "User",
       type: "one-to-one",
-      joinColumn: true,
+      joinColumn: {
+        name: "usuarioId",  // Apunta al ID del usuario
+        referencedColumnName: "id",
+      },
       nullable: false,
     },
     asignatura: {
       target: "Asignatura",
-      type: "many-to-one", // Relación muchos a uno (un profesor tiene una asignatura)
-      joinColumn: true,
+      type: "many-to-one",
+      joinColumn: {
+        name: "asignaturaId",  // Asegura que asignaturaId apunte al ID de Asignatura
+        referencedColumnName: "id",
+      },
       nullable: false,
     },
   },

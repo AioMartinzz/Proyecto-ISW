@@ -2,6 +2,7 @@
 import { EntitySchema } from "typeorm";
 import Alumno from "./alumno.entity.js";
 import Profesor from "./profesor.entity.js";
+import Asignatura from "./asignatura.entity.js";
 
 const AnotacionSchema = new EntitySchema({
   name: "Anotacion",
@@ -12,12 +13,7 @@ const AnotacionSchema = new EntitySchema({
       primary: true,
       generated: true,
     },
-    tipo: {
-      type: "varchar",
-      length: 20,
-      nullable: false, // 'Positiva' o 'Negativa'
-    },
-    motivo: {
+    descripcion: {
       type: "text",
       nullable: false,
     },
@@ -25,18 +21,38 @@ const AnotacionSchema = new EntitySchema({
       type: "date",
       nullable: false,
     },
+    tipo: {
+      type: "varchar",
+      length: 50,
+      nullable: false,
+    },
   },
   relations: {
     alumno: {
       target: "Alumno",
       type: "many-to-one",
-      joinColumn: true,
+      joinColumn: {
+        name: "alumnoId",
+        referencedColumnName: "id",
+      },
       nullable: false,
     },
     profesor: {
       target: "Profesor",
       type: "many-to-one",
-      joinColumn: true,
+      joinColumn: {
+        name: "profesorId",
+        referencedColumnName: "usuarioId",  // Vincula con el usuarioId en Profesor
+      },
+      nullable: false,
+    },
+    asignatura: {
+      target: "Asignatura",
+      type: "many-to-one",
+      joinColumn: {
+        name: "asignaturaId",
+        referencedColumnName: "id",
+      },
       nullable: false,
     },
   },

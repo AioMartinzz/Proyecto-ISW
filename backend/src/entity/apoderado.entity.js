@@ -6,17 +6,19 @@ const ApoderadoSchema = new EntitySchema({
   name: "Apoderado",
   tableName: "apoderados",
   columns: {
-    id: {
+    usuarioId: {
       type: "int",
       primary: true,
-      generated: true,
     },
   },
   relations: {
     usuario: {
       target: "User",
       type: "one-to-one",
-      joinColumn: true,
+      joinColumn: {
+        name: "usuarioId",  // Se asegura que `usuarioId` apunte al ID de User
+        referencedColumnName: "id",
+      },
       nullable: false,
     },
   },
