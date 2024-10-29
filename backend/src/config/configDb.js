@@ -29,7 +29,6 @@ export const AppDataSource = new DataSource({
     Apoderado,
     Curso,
     User,
-
     ROLES, // Usar el nombre exportado correctamente
   ],
   synchronize: true,

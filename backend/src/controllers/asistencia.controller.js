@@ -7,6 +7,7 @@ import {
 } from "../handlers/responseHandlers.js";
 
 import {
+  createAsistenciaReportService,
   createAsistenciaService,
   getAsistenciasByAlumnoService,
   getAsistenciasService,
@@ -20,9 +21,7 @@ import {
 
 export async function createAsistencia(req, res) {
   try {
-    const profesor_id = req.user;
-
-    const alumnoId = req.body.alumnoId;
+    const { alumnoId, estado } = req.body;
 
     const { error } = createAsistenciaValidation.validate(req.body);
 
@@ -35,7 +34,7 @@ export async function createAsistencia(req, res) {
       );
     }
 
-    const asistencia = await createAsistenciaService(alumnoId);
+    const asistencia = await createAsistenciaService(alumnoId, estado);
 
     if (!asistencia) {
       return handleErrorClient(
@@ -89,6 +88,27 @@ export async function getAsistenciasByAlumno(req, res) {
     handleSuccess(res, 200, "Asistencias encontradas", asistencias);
   } catch (error) {
     handleErrorServer(res, 500, error.message);
+  }
+}
+
+export async function createAsistenciaReport(req, res) {
+  const { alumnoId } = req.params;
+  try {
+    const [nombreArchivo, pdfBuffer, error] =
+      await createAsistenciaReportService();
+
+    if (error) {
+      return handleErrorServer(res, 500, error.message);
+    }
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=Informe_Asistencia_${nombreArchivo}.pdf`,
+    );
+    res.send(pdfBuffer);
+  } catch (error) {
+    res.status(500).json({ message: "Error al generar el informe", error });
   }
 }
 
