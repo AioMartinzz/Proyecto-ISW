@@ -2,6 +2,7 @@
 import { Router } from "express";
 import {
   createAsistencia,
+  createAsistenciaReport,
   getAsistencias,
   getAsistenciasByAlumno,
   updateAsistencia,
@@ -16,8 +17,10 @@ router.use(authenticateJwt);
 
 router.get("/", getAsistencias);
 router.get("/:id_alumno", getAsistenciasByAlumno);
+router.get("/informe/:alumnoId", createAsistenciaReport);
 
 router.post("/", createAsistencia);
 
 router.put("/:id", updateAsistencia);
+
 export default router;
