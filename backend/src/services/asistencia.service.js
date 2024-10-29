@@ -3,12 +3,13 @@ import { AppDataSource } from "../config/configDb.js";
 import AlumnoSchema from "../entity/alumno.entity.js";
 import AsistenciaSchema from "../entity/asistencia.entity.js";
 
-export async function createAsistenciaService(id_alumno) {
+export async function createAsistenciaService(alumnoId) {
   try {
     const alumnoRepository = AppDataSource.getRepository(AlumnoSchema);
     const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
 
-    const alumno = await alumnoRepository.findOne({ where: { id: id_alumno } });
+    console.log(alumnoId);
+    const alumno = await alumnoRepository.findOne({ where: { id: alumnoId } });
 
     if (!alumno) {
       console.error("Alumno no encontrado");
@@ -41,6 +42,7 @@ export async function createAsistenciaService(id_alumno) {
     return null;
   }
 }
+
 export async function getAsistenciasService() {
   try {
     const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
