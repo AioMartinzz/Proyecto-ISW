@@ -8,7 +8,7 @@ const UserSchema = new EntitySchema({
     id: {
       type: "int",
       primary: true,
-      generated: true,
+      generated: true, // PrimaryGeneratedColumn para generar automáticamente el ID
     },
     nombreCompleto: {
       type: "varchar",
