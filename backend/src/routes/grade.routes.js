@@ -16,4 +16,7 @@ router.put("/:id", updateGrade);
 // Ruta para eliminar una Grade
 router.delete("/:id", deleteGrade);
 
+// Ruta para obtener las calificaciones
+router.get("/", getGrades);
+
 export default router;

@@ -41,3 +41,12 @@ export async function deleteGrade(req, res) {
     res.status(500).json({ message: "Error al eliminar la Calificacion" });
   }
 }
+// 
+export async function getGrades(req, res) {
+  try {
+    const grades = await getGradesService();
+    res.status(200).json({ data: grades });
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las calificaciones" });
+  }
+} 

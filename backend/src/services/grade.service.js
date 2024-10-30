@@ -45,3 +45,15 @@ export async function deleteGradeService(id) {
     return [null, "Error interno del servidor"];
   }
 }
+
+// Servicio para obtener todas las calificaciones
+export async function getGradesService() {
+  try {
+    const GradeRepository = AppDataSource.getRepository(Grade);
+    const grades = await GradeRepository.find();
+    return grades;
+  } catch (error) {
+    console.error("Error al obtener las calificaciones:", error);
+    return [];
+  }
+}
