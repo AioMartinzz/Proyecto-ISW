@@ -9,6 +9,7 @@ export async function login(dataUser) {
             email: dataUser.email, 
             password: dataUser.password
         });
+        console.log(response);
         const { status, data } = response;
         if (status === 200) {
             const { nombreCompleto, email, rut, rol } = jwtDecode(data.data.token);
@@ -19,7 +20,14 @@ export async function login(dataUser) {
             return response.data
         }
     } catch (error) {
-        return error.response.data;
+        console.error("Error en la solicitud:", error);
+        if (error.response) {
+            console.error("Error de respuesta:", error.response);
+            return error.response.data;
+        } else {
+            console.error("Error de conexión:", error);
+            return { status: 'Error', message: 'Error de conexión' };
+        }
     }
 }
 
