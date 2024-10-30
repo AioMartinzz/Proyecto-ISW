@@ -6,8 +6,9 @@ import anotacionRoutes from "./anotacion.routes.js";
 import asignaturaRoutes from "./asignatura.routes.js";
 import cursoRoutes from "./curso.routes.js";
 import alumnoRoutes from "./alumno.routes.js";
-import asistencuaRoutes from "./asistencia.routes.js"; // Importar las rutas de asistencia
+import asistencuaRoutes from "./asistencia.routes.js"; 
 import emailRoutes from "./email.routes.js";
+import calificacionRoutes from "./grade.routes.js"; 
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router
   .use("/cursos", cursoRoutes)
   .use("/alumnos", alumnoRoutes)
   .use("/email", emailRoutes)
-  .use("/asistencias", asistencuaRoutes);
+  .use("/asistencias", asistencuaRoutes)
+  .use("/calificaciones", calificacionRoutes); 
 
 export default router;

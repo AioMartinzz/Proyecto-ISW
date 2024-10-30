@@ -3,6 +3,7 @@ import {
   createGrade,
   deleteGrade,
   updateGrade,
+  getGrades,
 } from "../controllers/grade.controller.js";
 
 const router = express.Router();
