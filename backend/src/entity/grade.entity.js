@@ -6,29 +6,29 @@ const GradeSchema = new EntitySchema({
   name: "Grade",
   tableName: "grades",
   columns: {
-    id: {
+    grade_id: {
       type: "int",
       primary: true,
       generated: true,
     },
-    studentId: {
+    estudiante_id: {
       type: "int",
       nullable: false,
     },
-    subjectId: {
+    asignatura_id: {
       type: "int",
       nullable: false,
     },
-    score: {
+    nota: {
       type: "float",
       nullable: false,
     },
-    createdAt: {
+    fechacreacion: {
       type: "timestamp with time zone",
       default: () => "CURRENT_TIMESTAMP",
       nullable: false,
     },
-    updatedAt: {
+    fechaactualizacion: {
       type: "timestamp with time zone",
       default: () => "CURRENT_TIMESTAMP",
       onUpdate: "CURRENT_TIMESTAMP",

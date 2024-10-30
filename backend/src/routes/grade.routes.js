@@ -1,10 +1,19 @@
-"use strict";
-import { Router } from "express";
-import { getGrades, registerGrade } from "../controllers/grade.controller.js";
+import express from "express";
+import {
+  createGrade,
+  deleteGrade,
+  updateGrade,
+} from "../controllers/grade.controller.js";
 
-const router = Router();
+const router = express.Router();
 
-router.post("/grades", registerGrade);
-router.get("/grades", getGrades);
+// Ruta para crear una calificacion
+router.post("/", createGrade);
+
+// Ruta para actualizar una Grade
+router.put("/:id", updateGrade);
+
+// Ruta para eliminar una Grade
+router.delete("/:id", deleteGrade);
 
 export default router;
