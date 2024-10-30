@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-/*const useLogin = () => {
+const useLogin = () => {
     const [errorEmail, setErrorEmail] = useState('');
     const [errorPassword, setErrorPassword] = useState('');
     const [inputData, setInputData] = useState({ email: '', password: '' });
@@ -35,4 +35,3 @@ import { useState, useEffect } from 'react';
 };
 
 export default useLogin;
-*/
