@@ -1,5 +1,9 @@
 import express from "express";
-import { createAsignatura, updateAsignatura, deleteAsignatura } from "../controllers/asignatura.controller.js";
+import {
+  createAsignatura,
+  deleteAsignatura,
+  updateAsignatura,
+} from "../controllers/asignatura.controller.js";
 
 const router = express.Router();
 
