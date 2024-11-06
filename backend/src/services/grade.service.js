@@ -2,6 +2,7 @@
 import { AppDataSource } from "../config/configDb.js";
 import Grade from "../entity/grade.entity.js";
 
+
 // Servicio para crear una nueva Grade
 export async function createGradeService(data) {
   try {

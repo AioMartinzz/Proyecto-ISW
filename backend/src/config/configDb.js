@@ -12,7 +12,7 @@ import Curso from "../entity/curso.entity.js";
 import User from "../entity/user.entity.js";
 import Asisencia from "../entity/asistencia.entity.js";
 import { ROLES } from "../entity/roles.js"; // Corregido aquí
-
+import Grade from "../entity/grade.entity.js";
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: `${HOST}`,
@@ -29,6 +29,7 @@ export const AppDataSource = new DataSource({
     Apoderado,
     Curso,
     User,
+    Grade,
     ROLES, // Usar el nombre exportado correctamente
   ],
   synchronize: true,

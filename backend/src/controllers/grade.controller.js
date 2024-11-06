@@ -1,5 +1,6 @@
 "use strict";
-import { createGradeService, deleteGradeService, updateGradeService } from "../services/grade.service.js";
+import { createGradeService, deleteGradeService, updateGradeService, getGradesService } from "../services/grade.service.js";
+
 
 
 // Controlador para crear una calificacion
