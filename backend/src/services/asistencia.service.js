@@ -9,7 +9,7 @@ import ApoderadoSchema from "../entity/apoderado.entity.js";
 
 import { sendEmailDefault } from "../controllers/email.controller.js";
 
-export async function createAsistenciaService(alumnoId, estado) {
+export async function createAsistenciaService(alumnoId, estado, fecha) {
   try {
     const alumnoRepository = AppDataSource.getRepository(AlumnoSchema);
     const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
@@ -21,8 +21,13 @@ export async function createAsistenciaService(alumnoId, estado) {
       return null;
     }
 
-    const fechaActual = new Date();
-    const fecha = `${fechaActual.getFullYear()}-${fechaActual.getMonth() + 1}-${fechaActual.getDate()}`;
+    // Validación para impedir creación de asistencia en una fecha futura
+    const fechaHoy = new Date().toISOString().split("T")[0];
+
+    if (fecha !== fechaHoy) {
+      console.error("Solo se puede crear asistencia para hoy");
+      return null;
+    }
 
     const asistencia = await asistenciaRepository.findOne({
       where: { fecha: fecha, alumno: alumno },
