@@ -5,7 +5,9 @@ import Joi from "joi";
 export const createAsistenciaValidation = Joi.object({
   alumnoId: Joi.number().required(),
   estado: Joi.string().valid("Ausente", "Presente").optional(),
-  fecha: Joi.date().format(["YYYY/MM/DD"]).required(),
+  fecha: Joi.string()
+    .pattern(/^\d{4}-\d{2}-\d{2}$/)
+    .required(),
 });
 
 // Validación para actualizar una asistencia antigua
