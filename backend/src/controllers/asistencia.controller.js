@@ -15,13 +15,14 @@ import {
 } from "../services/asistencia.service.js";
 
 import {
+  createAsistenciaReportValidation,
   createAsistenciaValidation,
   updateAsistenciaValidation,
 } from "../validations/asistencia.validation.js";
 
 export async function createAsistencia(req, res) {
   try {
-    const { alumnoId, estado } = req.body;
+    const { alumnoId, estado, fecha } = req.body;
 
     const { error } = createAsistenciaValidation.validate(req.body);
 
@@ -34,7 +35,7 @@ export async function createAsistencia(req, res) {
       );
     }
 
-    const asistencia = await createAsistenciaService(alumnoId, estado);
+    const asistencia = await createAsistenciaService(alumnoId, estado, fecha);
 
     if (!asistencia) {
       return handleErrorClient(
@@ -96,30 +97,16 @@ export async function createAsistenciaReport(req, res) {
     const { alumnoId } = req.params;
     const { mes } = req.body;
 
-    if (!mes) {
-      return handleErrorClient(
-        res,
-        400,
-        "Datos inválidos",
-        "Debe ingresar un mes",
-      );
-    }
+    const { errorValidation } = createAsistenciaReportValidation.validate(
+      req.body,
+    );
 
-    if (!alumnoId) {
+    if (errorValidation) {
       return handleErrorClient(
         res,
         400,
         "Datos inválidos",
-        "Debe ingresar un alumno",
-      );
-    }
-
-    if (mes < 1 || mes > 12) {
-      return handleErrorClient(
-        res,
-        400,
-        "Datos inválidos",
-        "Mes inválido. Debe ser un número entre 1 y 12",
+        errorValidation.details[0].message,
       );
     }
 
