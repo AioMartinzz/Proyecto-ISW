@@ -26,7 +26,7 @@ router.get(
   authorizeRole([ROLES.PROFESOR]),
   getAsistenciasByAlumno,
 );
-router.get(
+router.post(
   "/informe/:alumnoId",
   authenticateJwt,
   authorizeRole([ROLES.PROFESOR]),
