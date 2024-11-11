@@ -93,9 +93,39 @@ export async function getAsistenciasByAlumno(req, res) {
 
 export async function createAsistenciaReport(req, res) {
   const { alumnoId } = req.params;
+  const { mes } = req.body;
+
+  if (!mes) {
+    return handleErrorClient(
+      res,
+      400,
+      "Datos inválidos",
+      "Debe ingresar un mes",
+    );
+  }
+
+  if (!alumnoId) {
+    return handleErrorClient(
+      res,
+      400,
+      "Datos inválidos",
+      "Debe ingresar un alumno",
+    );
+  }
+
+  if (mes < 1 || mes > 12) {
+    return handleErrorClient(
+      res,
+      400,
+      "Datos inválidos",
+      "Mes inválido. Debe ser un número entre 1 y 12",
+    );
+  }
+
   try {
+    const mesReal = mes - 1;
     const [nombreArchivo, pdfBuffer, error] =
-      await createAsistenciaReportService();
+      await createAsistenciaReportService(alumnoId, mesReal);
 
     if (error) {
       return handleErrorServer(res, 500, error.message);
