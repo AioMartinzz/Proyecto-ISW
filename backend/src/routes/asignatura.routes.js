@@ -3,6 +3,7 @@ import {
   createAsignatura,
   deleteAsignatura,
   updateAsignatura,
+  getAllAsignaturas,
 } from "../controllers/asignatura.controller.js";
 
 const router = express.Router();
@@ -15,5 +16,7 @@ router.put("/:id", updateAsignatura);
 
 // Ruta para eliminar una asignatura
 router.delete("/:id", deleteAsignatura);
+
+router.get("/", getAllAsignaturas);
 
 export default router;

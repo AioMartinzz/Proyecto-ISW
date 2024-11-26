@@ -45,3 +45,14 @@ export async function deleteAsignaturaService(id) {
     return [null, "Error interno del servidor"];
   }
 }
+
+export async function getAllAsignaturasService() {
+  try {
+    const asignaturaRepository = AppDataSource.getRepository(Asignatura);
+    const asignaturas = await asignaturaRepository.find(); // Obtiene todas las asignaturas
+    return asignaturas;
+  } catch (error) {
+    console.error("Error al obtener las asignaturas:", error);
+    throw new Error("Error interno del servidor");
+  }
+}

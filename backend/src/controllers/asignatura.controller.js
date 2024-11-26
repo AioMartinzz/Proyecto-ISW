@@ -40,3 +40,12 @@ export async function deleteAsignatura(req, res) {
     res.status(500).json({ message: "Error al eliminar la asignatura" });
   }
 }
+
+export async function getAllAsignaturas(req, res) {
+  try {
+    const asignaturas = await getAllAsignaturasService();
+    res.status(200).json(asignaturas);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las asignaturas" });
+  }
+}

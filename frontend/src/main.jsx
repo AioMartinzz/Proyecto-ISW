@@ -1,14 +1,14 @@
-import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Login from '@pages/Login'
-import Home from '@pages/Home'
-import Users from '@pages/Users'
-import Register from '@pages/Register'
-import Error404 from '@pages/Error404'
-import Root from '@pages/Root'
-import Asistencias from '@pages/Asistencias'
-import ProtectedRoute from '@components/ProtectedRoute'
-import '@styles/styles.css'
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Login from '@pages/Login';
+import Home from '@pages/Home';
+import Users from '@pages/Users';
+import Register from '@pages/Register';
+import Error404 from '@pages/Error404';
+import Root from '@pages/Root';
+import ProtectedRoute from '@components/ProtectedRoute';
+import Annotations from '@pages/Annotations'; // Importar el componente de Anotaciones
+import '@styles/styles.css';
 
 const router = createBrowserRouter([
     {
@@ -29,12 +29,10 @@ const router = createBrowserRouter([
                 ),
             },
             {
-                path: '/asistencias',
+                path: '/annotations', // Ruta para Anotaciones
                 element: (
-                    <ProtectedRoute
-                        allowedRoles={['administrador', 'profesor']}
-                    >
-                        <Asistencias />
+                    <ProtectedRoute allowedRoles={['profesor', 'apoderado']}>
+                        <Annotations />
                     </ProtectedRoute>
                 ),
             },
@@ -48,8 +46,13 @@ const router = createBrowserRouter([
         path: '/register',
         element: <Register />,
     },
-])
+    {
+        path: '*', // Manejar rutas no existentes
+        element: <Error404 />,
+    },
+]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <RouterProvider router={router} />
-)
+);
+

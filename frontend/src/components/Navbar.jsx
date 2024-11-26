@@ -1,48 +1,48 @@
-import { NavLink, useNavigate, useLocation } from 'react-router-dom'
-import { logout } from '@services/auth.service.js'
-import '@styles/navbar.css'
-import { useState } from 'react'
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { logout } from '@services/auth.service.js';
+import '@styles/navbar.css';
+import { useState } from 'react';
 
 const Navbar = () => {
-    const navigate = useNavigate()
-    const location = useLocation()
-    const user = JSON.parse(sessionStorage.getItem('usuario')) || ''
-    const userRole = user?.rol
-    const [menuOpen, setMenuOpen] = useState(false)
+    const navigate = useNavigate();
+    const location = useLocation();
+    const user = JSON.parse(sessionStorage.getItem('usuario')) || '';
+    const userRole = user?.rol;
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const logoutSubmit = () => {
         try {
-            logout()
-            navigate('/auth')
+            logout();
+            navigate('/auth');
         } catch (error) {
-            console.error('Error al cerrar sesión:', error)
+            console.error('Error al cerrar sesión:', error);
         }
-    }
+    };
 
     const toggleMenu = () => {
         if (!menuOpen) {
-            removeActiveClass()
+            removeActiveClass();
         } else {
-            addActiveClass()
+            addActiveClass();
         }
-        setMenuOpen(!menuOpen)
-    }
+        setMenuOpen(!menuOpen);
+    };
 
     const removeActiveClass = () => {
         const activeLinks = document.querySelectorAll(
             '.nav-menu ul li a.active'
-        )
-        activeLinks.forEach((link) => link.classList.remove('active'))
-    }
+        );
+        activeLinks.forEach((link) => link.classList.remove('active'));
+    };
 
     const addActiveClass = () => {
-        const links = document.querySelectorAll('.nav-menu ul li a')
+        const links = document.querySelectorAll('.nav-menu ul li a');
         links.forEach((link) => {
             if (link.getAttribute('href') === location.pathname) {
-                link.classList.add('active')
+                link.classList.add('active');
             }
-        })
-    }
+        });
+    };
 
     return (
         <nav className="navbar">
@@ -52,21 +52,22 @@ const Navbar = () => {
                         <NavLink
                             to="/home"
                             onClick={() => {
-                                setMenuOpen(false)
-                                addActiveClass()
+                                setMenuOpen(false);
+                                addActiveClass();
                             }}
                             activeClassName="active"
                         >
                             Inicio
                         </NavLink>
                     </li>
+
                     {userRole === 'profesor' && (
                         <li>
                             <NavLink
                                 to="/asistencias"
                                 onClick={() => {
-                                    setMenuOpen(false)
-                                    addActiveClass()
+                                    setMenuOpen(false);
+                                    addActiveClass();
                                 }}
                                 activeClassName="active"
                             >
@@ -80,8 +81,8 @@ const Navbar = () => {
                             <NavLink
                                 to="/users"
                                 onClick={() => {
-                                    setMenuOpen(false)
-                                    addActiveClass()
+                                    setMenuOpen(false);
+                                    addActiveClass();
                                 }}
                                 activeClassName="active"
                             >
@@ -89,12 +90,28 @@ const Navbar = () => {
                             </NavLink>
                         </li>
                     )}
+
+                    {(userRole === 'profesor' || userRole === 'apoderado') && (
+                        <li>
+                            <NavLink
+                                to="/annotations"
+                                onClick={() => {
+                                    setMenuOpen(false);
+                                    addActiveClass();
+                                }}
+                                activeClassName="active"
+                            >
+                                Anotaciones
+                            </NavLink>
+                        </li>
+                    )}
+
                     <li>
                         <NavLink
                             to="/auth"
                             onClick={() => {
-                                logoutSubmit()
-                                setMenuOpen(false)
+                                logoutSubmit();
+                                setMenuOpen(false);
                             }}
                             activeClassName="active"
                         >
@@ -109,7 +126,7 @@ const Navbar = () => {
                 <span className="bar"></span>
             </div>
         </nav>
-    )
-}
+    );
+};
 
-export default Navbar
+export default Navbar;
