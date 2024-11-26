@@ -1,22 +1,53 @@
-
 "use strict";
-import * as gradeService from "../services/grade.service.js";
+import { createGradeService, deleteGradeService, updateGradeService, getGradesService } from "../services/grade.service.js";
 
-export async function registerGrade(req, res) {
-  const { studentId, subjectId, score } = req.body;
-  const [data, error] = await gradeService.registerGradeService({ studentId, subjectId, score });
-  if (error) {
-    return res.status(400).json({ error });
+
+
+// Controlador para crear una calificacion
+export async function createGrade(req, res) {
+  try {
+    const { nombre } = req.body;
+    const [newGrade, error] = await createGradeService({ nombre });
+    if (error) return res.status(500).json({ message: error });
+
+    res.status(201).json({ message: "Grade creada exitosamente", data: newGrade });
+  } catch (error) {
+    res.status(500).json({ message: "Error al crear la Grade" });
   }
-  return res.status(201).json(data);
 }
 
+// Controlador para editar una calificacion
+export async function updateGrade(req, res) {
+  try {
+    const { id } = req.params;
+    const { nombre } = req.body;
+    const [updatedGrade, error] = await updateGradeService(id, { nombre });
+    if (error) return res.status(500).json({ message: error });
+
+    res.status(200).json({ message: "Calificacion actualizada exitosamente", data: updatedGrade });
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar la Calificacion" });
+  }
+}
+
+// Controlador para eliminar una calificacion
+export async function deleteGrade(req, res) {
+  try {
+    const { id } = req.params;
+    const [deletedGrade, error] = await deleteGradeService(id);
+    if (error) return res.status(500).json({ message: error });
+
+    res.status(200).json({ message: "Calificacion eliminada exitosamente", data: deletedGrade });
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar la Calificacion" });
+  }
+}
+// 
 export async function getGrades(req, res) {
-  const { studentId } = req.query;
-  const [data, error] = await gradeService.getGradesService(studentId);
-  if (error) {
-    return res.status(400).json({ error });
+  try {
+    const grades = await getGradesService();
+    res.status(200).json({ data: grades });
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las calificaciones" });
   }
-  return res.status(200).json(data);
-}
-
+} 

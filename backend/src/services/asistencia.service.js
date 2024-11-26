@@ -1,5 +1,6 @@
 "use strict";
 import PDFDocument from "pdfkit-table";
+import { Between } from "typeorm";
 
 import { AppDataSource } from "../config/configDb.js";
 import AlumnoSchema from "../entity/alumno.entity.js";
@@ -8,7 +9,7 @@ import ApoderadoSchema from "../entity/apoderado.entity.js";
 
 import { sendEmailDefault } from "../controllers/email.controller.js";
 
-export async function createAsistenciaService(alumnoId, estado) {
+export async function createAsistenciaService(alumnoId, estado, fecha) {
   try {
     const alumnoRepository = AppDataSource.getRepository(AlumnoSchema);
     const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
@@ -20,8 +21,13 @@ export async function createAsistenciaService(alumnoId, estado) {
       return null;
     }
 
-    const fechaActual = new Date();
-    const fecha = `${fechaActual.getFullYear()}-${fechaActual.getMonth() + 1}-${fechaActual.getDate()}`;
+    // Validación para impedir creación de asistencia en una fecha futura
+    const fechaHoy = new Date().toISOString().split("T")[0];
+
+    if (fecha !== fechaHoy) {
+      console.error("Solo se puede crear asistencia para hoy");
+      return null;
+    }
 
     const asistencia = await asistenciaRepository.findOne({
       where: { fecha: fecha, alumno: alumno },
@@ -109,9 +115,10 @@ export async function getAsistenciasByAlumnoService(id_alumno) {
     const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
     const alumnoRepository = AppDataSource.getRepository(AlumnoSchema);
 
-    const alumno = await alumnoRepository.findOne({ where: { id: id_alumno } });
-
-    console.log(alumno);
+    const alumno = await alumnoRepository.findOne({
+      where: { id: id_alumno },
+      relations: ["curso"],
+    });
 
     if (!alumno) {
       console.error("Alumno no encontrado");
@@ -129,7 +136,7 @@ export async function getAsistenciasByAlumnoService(id_alumno) {
   }
 }
 
-export async function createAsistenciaReportService(alumnoId, res) {
+export async function createAsistenciaReportService(alumnoId, mes, res) {
   const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
   const alumnoRepository = AppDataSource.getRepository(AlumnoSchema);
 
@@ -143,8 +150,25 @@ export async function createAsistenciaReportService(alumnoId, res) {
     return [null, error];
   }
 
+  // Obtener el primer y último día del mes seleccionado del año actual
+  const now = new Date();
+  const primerDiaMes = new Date(now.getFullYear(), mes, 1);
+  const ultimoDiaMes = new Date(now.getFullYear(), mes + 1, 0);
+
+  console.log(
+    "mes: ",
+    mes,
+    "primerdia: ",
+    primerDiaMes,
+    "ultimodia: ",
+    ultimoDiaMes,
+  );
+
   const asistencias = await asistenciaRepository.find({
-    where: { alumno: alumno },
+    where: {
+      alumno: alumno,
+      fecha: Between(primerDiaMes, ultimoDiaMes),
+    },
   });
 
   const doc = new PDFDocument({ margin: 30 });
@@ -182,7 +206,7 @@ export async function createAsistenciaReportService(alumnoId, res) {
     // Crear la tabla
     doc.table(table, { startU: 50, startV: 150, margin: 30 });
 
-    // Finalizar y cerrar el documento
+    // Finalizar
     doc.end();
   });
 

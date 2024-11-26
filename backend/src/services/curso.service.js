@@ -9,7 +9,9 @@ export async function createCursoService(nombre, nivel, año, profesorJefeId) {
     const cursoRepository = AppDataSource.getRepository(Curso);
     const profesorRepository = AppDataSource.getRepository(Profesor);
 
-    const profesorJefe = await profesorRepository.findOneBy({ id: profesorJefeId });
+    const profesorJefe = await profesorRepository.findOneBy({
+      id: profesorJefeId,
+    });
     if (!profesorJefe) {
       return [null, "Profesor Jefe no encontrado"];
     }
@@ -26,6 +28,17 @@ export async function createCursoService(nombre, nivel, año, profesorJefeId) {
   } catch (error) {
     console.error("Error al intentar crear curso:", error);
     return [null, "Error interno del servidor"];
+  }
+}
+
+export async function getCursosService() {
+  try {
+    const cursoRepository = AppDataSource.getRepository(Curso);
+    const cursos = await cursoRepository.findAll();
+    return cursos;
+  } catch (error) {
+    console.error("Error al obtener los cursos:", error);
+    return [];
   }
 }
 
@@ -55,7 +68,9 @@ export async function updateCursoService(id, data) {
 
     if (profesorJefeId) {
       const profesorRepository = AppDataSource.getRepository(Profesor);
-      const profesorJefe = await profesorRepository.findOneBy({ id: profesorJefeId });
+      const profesorJefe = await profesorRepository.findOneBy({
+        id: profesorJefeId,
+      });
       if (!profesorJefe) return [null, "Profesor Jefe no encontrado"];
       curso.profesorJefe = profesorJefe;
     }

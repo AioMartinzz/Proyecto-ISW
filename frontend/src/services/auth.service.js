@@ -3,12 +3,13 @@ import cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { convertirMinusculas } from '@helpers/formatData.js';
 
-/*export async function login(dataUser) {
+export async function login(dataUser) {
     try {
         const response = await axios.post('/auth/login', {
             email: dataUser.email, 
             password: dataUser.password
         });
+        console.log(response);
         const { status, data } = response;
         if (status === 200) {
             const { nombreCompleto, email, rut, rol } = jwtDecode(data.data.token);
@@ -19,10 +20,17 @@ import { convertirMinusculas } from '@helpers/formatData.js';
             return response.data
         }
     } catch (error) {
-        return error.response.data;
+        console.error("Error en la solicitud:", error);
+        if (error.response) {
+            console.error("Error de respuesta:", error.response);
+            return error.response.data;
+        } else {
+            console.error("Error de conexión:", error);
+            return { status: 'Error', message: 'Error de conexión' };
+        }
     }
 }
-*/
+
 export async function register(data) {
     try {
         const dataRegister = convertirMinusculas(data);

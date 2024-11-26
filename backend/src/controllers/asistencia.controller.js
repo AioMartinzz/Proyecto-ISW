@@ -15,13 +15,14 @@ import {
 } from "../services/asistencia.service.js";
 
 import {
+  createAsistenciaReportValidation,
   createAsistenciaValidation,
   updateAsistenciaValidation,
 } from "../validations/asistencia.validation.js";
 
 export async function createAsistencia(req, res) {
   try {
-    const { alumnoId, estado } = req.body;
+    const { alumnoId, estado, fecha } = req.body;
 
     const { error } = createAsistenciaValidation.validate(req.body);
 
@@ -34,7 +35,7 @@ export async function createAsistencia(req, res) {
       );
     }
 
-    const asistencia = await createAsistenciaService(alumnoId, estado);
+    const asistencia = await createAsistenciaService(alumnoId, estado, fecha);
 
     if (!asistencia) {
       return handleErrorClient(
@@ -92,10 +93,26 @@ export async function getAsistenciasByAlumno(req, res) {
 }
 
 export async function createAsistenciaReport(req, res) {
-  const { alumnoId } = req.params;
   try {
+    const { alumnoId } = req.params;
+    const { mes } = req.body;
+
+    const { errorValidation } = createAsistenciaReportValidation.validate(
+      req.body,
+    );
+
+    if (errorValidation) {
+      return handleErrorClient(
+        res,
+        400,
+        "Datos inválidos",
+        errorValidation.details[0].message,
+      );
+    }
+
+    const mesReal = mes - 1;
     const [nombreArchivo, pdfBuffer, error] =
-      await createAsistenciaReportService();
+      await createAsistenciaReportService(alumnoId, mesReal);
 
     if (error) {
       return handleErrorServer(res, 500, error.message);

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { getGrades } from '../services/gradeService';
+import { getGrades } from '../services/grade.service';
 
 const ViewGrades = () => {
     const [studentId, setStudentId] = useState('');

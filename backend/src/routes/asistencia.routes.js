@@ -10,17 +10,41 @@ import {
 
 import { authenticateJwt } from "../middlewares/authentication.middleware.js";
 import { authorizeRole } from "../middlewares/authorization.middleware.js";
+import { ROLES } from "../entity/roles.js";
 
 const router = Router();
 
-router.use(authenticateJwt);
+router.get(
+  "/",
+  authenticateJwt,
+  authorizeRole([ROLES.PROFESOR]),
+  getAsistencias,
+);
+router.get(
+  "/:id_alumno",
+  authenticateJwt,
+  authorizeRole([ROLES.PROFESOR]),
+  getAsistenciasByAlumno,
+);
+router.post(
+  "/informe/:alumnoId",
+  authenticateJwt,
+  authorizeRole([ROLES.PROFESOR]),
+  createAsistenciaReport,
+);
 
-router.get("/", getAsistencias);
-router.get("/:id_alumno", getAsistenciasByAlumno);
-router.get("/informe/:alumnoId", createAsistenciaReport);
+router.post(
+  "/",
+  authenticateJwt,
+  authorizeRole([ROLES.PROFESOR]),
+  createAsistencia,
+);
 
-router.post("/", createAsistencia);
-
-router.put("/:id", updateAsistencia);
+router.put(
+  "/:id",
+  authenticateJwt,
+  authorizeRole([ROLES.PROFESOR]),
+  updateAsistencia,
+);
 
 export default router;

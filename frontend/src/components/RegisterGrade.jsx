@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
-import { registerGrade } from '../services/gradeService';
+import { registerGrade } from '../services/grade.service';
 
 const RegisterGrade = () => {
-    const [grade, setGrade] = useState({ studentId: '', subjectId: '', score: '' });
+    const [grade, setGrade] = useState({ estudiante_id: '', asignatura_id: '', grade: '' });
     const [error, setError] = useState(null);
 
     const handleChange = (e) => {
@@ -16,7 +16,6 @@ const RegisterGrade = () => {
         if (error) {
             setError(error.message);
         } else {
-            // Manejar el registro exitoso (por ejemplo, redirigir o mostrar un mensaje)
             alert('Calificación registrada exitosamente');
         }
     };
