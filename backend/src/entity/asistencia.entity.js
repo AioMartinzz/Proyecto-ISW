@@ -1,6 +1,4 @@
-import { Entity } from "typeorm";
 import { EntitySchema } from "typeorm";
-import Alumno from "./alumno.entity.js";
 
 const AsistenciaSchema = new EntitySchema({
   name: "Asistencia",
