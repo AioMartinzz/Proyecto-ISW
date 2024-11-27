@@ -58,7 +58,7 @@ const Annotations = () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:3000/api/anotaciones', {
+            const response = await fetch('http://146.83.198.35:1311/api/anotaciones', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
