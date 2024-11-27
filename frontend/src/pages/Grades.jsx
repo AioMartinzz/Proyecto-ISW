@@ -100,7 +100,7 @@ const Grades = () => {
             <button
               className="delete-grade-button"
               disabled={selectedGrades.length === 0}
-              onClick={() => handleDelete(selectedGrades[0]?.grade_id)} // Cambiado a grade_id
+              onClick={() => handleDelete(selectedGrades[0]?.grade_id)}
             >
               {selectedGrades.length === 0 ? (
                 <img src={DeleteIconDisable} alt="delete-disabled" />
@@ -114,6 +114,7 @@ const Grades = () => {
           grades={filteredGrades} // Usamos las calificaciones filtradas
           columns={columns}
           onSelectionChange={handleSelectionChange}
+          selectedGrades={selectedGrades}
         />
       </div>
 
