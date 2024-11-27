@@ -52,9 +52,10 @@ export async function getGradesService() {
   try {
     const GradeRepository = AppDataSource.getRepository(Grade);
     const grades = await GradeRepository.find();
-    return grades;
+    if (!grades || grades.length === 0) return [null, "No hay calificaciones"];
+    return [grades, null];
   } catch (error) {
     console.error("Error al obtener las calificaciones:", error);
-    return [];
+    return [null, "Error interno del servidor"];
   }
 }

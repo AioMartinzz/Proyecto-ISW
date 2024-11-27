@@ -1,19 +1,12 @@
 import React from 'react';
-import Table from '@components/Table'; // Asegúrate de que este componente esté bien implementado
+import Table from './Table'; // Asegúrate de que Table sea un componente genérico
 
-const GradesTable = ({ grades }) => {
-  const columns = [
-    { title: "Grade ID", field: "grade_id" },
-    { title: "Estudiante ID", field: "estudiante_id" },
-    { title: "Asignatura ID", field: "asignatura_id" },
-    { title: "Fecha de Creación", field: "fechacreacion" },
-    { title: "Nota", field: "nota" }
-  ];
-
+const GradesTable = ({ grades, columns, onSelectionChange }) => {
   return (
     <Table
-      data={grades} 
-      columns={columns} 
+      data={grades}
+      columns={columns}
+      onSelectionChange={onSelectionChange}
     />
   );
 };

@@ -1,9 +1,11 @@
 import axios from './root.service.js';
+import { formatGradeData } from '@helpers/formatData.js';
 
 export const getGradesService = async () => {
   try {
-    const response = await axios.get('/grades');
-    return [response.data, null];
+    const { data } = await axios.get('/grades');
+    //const formattedData = data.data.map(formatGradeData);
+    return [data];
   } catch (error) {
     return [null, error.response?.data?.message || 'Error al obtener las calificaciones'];
   }
