@@ -9,46 +9,51 @@ export default function Asistencias() {
     const [selectedCourse, setSelectedCourse] = useState('')
     const [selectedDate, setSelectedDate] = useState('')
     const [attendanceList, setAttendanceList] = useState({})
-    const [lastFetchedDate, setLastFetchedDate] = useState('') // Para evitar solicitudes repetidas
+    const [lastFetchedDate, setLastFetchedDate] = useState('')
 
     const { cursos } = useGetCursos()
-    const { alumnos, loading, error, fetchAlumnos } = useGetAlumnos()
-    const { handlePostAsistencia } = usePostAsistencia(fetchAlumnos)
+    const { alumnos, loading, error } = useGetAlumnos()
+    const { handlePostAsistencia } = usePostAsistencia()
     const { asistencias, fetchAsistenciasByFecha } = useGetAsistenciasByFecha()
 
-    // Cargar las asistencias cuando se seleccione una fecha diferente
     useEffect(() => {
         if (
             selectedCourse &&
             selectedDate &&
             selectedDate !== lastFetchedDate
         ) {
-            fetchAsistenciasByFecha(selectedDate) // Pasa la fecha seleccionada
-            setLastFetchedDate(selectedDate) // Actualiza la fecha previamente solicitada
+            fetchAsistenciasByFecha(selectedDate)
+            setLastFetchedDate(selectedDate)
         }
     }, [selectedCourse, selectedDate, fetchAsistenciasByFecha, lastFetchedDate])
 
-    // Actualizar la lista de asistencia con la respuesta de la API
     useEffect(() => {
-        if (asistencias.length > 0) {
-            const updatedAttendanceList = asistencias.reduce(
-                (acc, asistencia) => ({
-                    ...acc,
-                    [asistencia.alumnoId]: asistencia.presente,
-                }),
+        if (selectedCourse && selectedDate) {
+            const alumnosDelCurso = alumnos.filter(
+                (alumno) => alumno.curso === parseInt(selectedCourse)
+            )
+
+            const updatedAttendanceList = alumnosDelCurso.reduce(
+                (acc, alumno) => {
+                    const asistencia = asistencias.find(
+                        (a) => a.alumnoId === alumno.id
+                    )
+                    acc[alumno.id] = asistencia
+                        ? asistencia.estado === 'Presente'
+                        : null
+                    return acc
+                },
                 {}
             )
-            setAttendanceList(updatedAttendanceList) // Actualizamos la lista con las asistencias previas
-        } else {
-            // Si no hay asistencias, podemos dejar la lista vacía
-            setAttendanceList({})
+
+            setAttendanceList(updatedAttendanceList)
         }
-    }, [asistencias])
+    }, [asistencias, alumnos, selectedCourse, selectedDate])
 
     const handleCourseChange = (e) => {
         setSelectedCourse(e.target.value)
-        setSelectedDate('') // Limpiamos la fecha
-        setAttendanceList({}) // Limpiamos la lista de asistencias
+        setSelectedDate('')
+        setAttendanceList({})
     }
 
     const handleDateChange = (e) => {
@@ -67,12 +72,18 @@ export default function Asistencias() {
             ([alumnoId, isPresent]) => ({
                 alumnoId,
                 fecha: selectedDate,
-                presente: isPresent,
+                estado: isPresent ? 'Presente' : 'Ausente',
             })
         )
 
-        await handlePostAsistencia(asistencias)
-        alert('Asistencias guardadas correctamente')
+        const asistenciaPost = await handlePostAsistencia(asistencias)
+
+        if (asistenciaPost) {
+            alert('Asistencias guardadas correctamente')
+        } else {
+            alert('Error al guardar las asistencias')
+        }
+
         setSelectedCourse('')
         setSelectedDate('')
         setAttendanceList({})
@@ -123,56 +134,60 @@ export default function Asistencias() {
                 {selectedCourse && selectedDate && (
                     <div>
                         <h2 className="alumnos-list-title">Lista de Alumnos</h2>
-                        <div className="alumnos-list">
-                            {alumnos
-                                .filter(
-                                    (alumno) =>
-                                        alumno.curso.id ===
-                                        parseInt(selectedCourse)
-                                )
-                                .map((alumno) => (
-                                    <div
-                                        key={alumno.id}
-                                        className="alumno-item"
-                                    >
-                                        <span>{alumno.nombreCompleto}</span>
-                                        <div>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    handleAttendanceChange(
-                                                        alumno.id,
-                                                        true
-                                                    )
-                                                }
-                                                className={`attendance-button ${
-                                                    attendanceList[alumno.id]
-                                                        ? 'present-button'
-                                                        : 'inactive-button'
-                                                }`}
-                                            >
-                                                Presente
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    handleAttendanceChange(
-                                                        alumno.id,
-                                                        false
-                                                    )
-                                                }
-                                                className={`attendance-button ${
-                                                    !attendanceList[alumno.id]
-                                                        ? 'absent-button'
-                                                        : 'inactive-button'
-                                                }`}
-                                            >
-                                                Ausente
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                        </div>
+                        <table className="alumnos-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Presente</th>
+                                    <th>Ausente</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {alumnos
+                                    .filter(
+                                        (alumno) =>
+                                            alumno.curso ===
+                                            parseInt(selectedCourse)
+                                    )
+                                    .map((alumno) => (
+                                        <tr key={alumno.id}>
+                                            <td>{alumno.nombreCompleto}</td>
+                                            <td>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={
+                                                        attendanceList[
+                                                            alumno.id
+                                                        ] === true
+                                                    }
+                                                    onChange={() =>
+                                                        handleAttendanceChange(
+                                                            alumno.id,
+                                                            true
+                                                        )
+                                                    }
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={
+                                                        attendanceList[
+                                                            alumno.id
+                                                        ] === false
+                                                    }
+                                                    onChange={() =>
+                                                        handleAttendanceChange(
+                                                            alumno.id,
+                                                            false
+                                                        )
+                                                    }
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
 

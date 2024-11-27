@@ -2,12 +2,15 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
 .asistencias-title {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
+    text-align: center;
+    color: #003366;
 }
 
 .asistencias-form {
@@ -22,8 +25,9 @@
 }
 
 .form-label {
-    display: block;
     margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
 }
 
 .form-select,
@@ -38,47 +42,33 @@
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
+    text-align: center;
 }
 
-.alumnos-list {
+.alumnos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.alumnos-table th,
+.alumnos-table td {
     border: 1px solid #ccc;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.alumno-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #ccc;
+    text-align: center;
 }
 
-.alumno-item:last-child {
-    border-bottom: none;
+.alumnos-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
 }
 
-.attendance-button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.alumnos-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-.present-button {
-    background-color: #4caf50;
-    color: white;
-    margin-right: 5px;
-}
-
-.absent-button {
-    background-color: #f44336;
-    color: white;
-}
-
-.inactive-button {
-    background-color: #f0f0f0;
-    color: black;
+.alumnos-table tbody tr:hover {
+    background-color: #eef;
 }
 
 .submit-button {
@@ -88,5 +78,16 @@
     color: white;
     border: none;
     border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.submit-button:hover {
+    background-color: #00509e;
+}
+
+input[type='checkbox'] {
+    transform: scale(1.5);
     cursor: pointer;
 }
