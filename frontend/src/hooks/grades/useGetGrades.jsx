@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getGrades } from '../../services/grade.service';
+import { getGradesService } from '../../services/grade.service';
 
 const useGrades = () => {
   const [grades, setGrades] = useState([]);
@@ -8,7 +8,8 @@ const useGrades = () => {
   useEffect(() => {
     const fetchGrades = async () => {
       setLoading(true);
-      const data = await getGrades();
+      const data = await getGradesService();
+      console.log('Datos recibidos:', data);
       setGrades(data);
       setLoading(false);
     };
