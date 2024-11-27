@@ -18,8 +18,7 @@ export default defineConfig({
       '@services': path.resolve(__dirname, './src/services'),
       '@styles': path.resolve(__dirname, './src/styles'),
       '@assets': path.resolve(__dirname, './src/assets'),
-      '@helpers': path.resolve(__dirname, './src/helpers'),
-      '@config': path.resolve(__dirname, './src/config')
+      '@helpers': path.resolve(__dirname, './src/helpers')
     }
   }
 });
