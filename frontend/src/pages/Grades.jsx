@@ -1,18 +1,18 @@
 import React, { useState, useCallback } from 'react';
-import Table from '@components/Table';
 import Search from '../components/Search';
 import RegisterGrade from '../components/RegisterGrade';
+import GradesTable from '../components/GradesTable';
 import DeleteIcon from '../assets/deleteIcon.svg';
 import UpdateIcon from '../assets/updateIcon.svg';
 import UpdateIconDisable from '../assets/updateIconDisabled.svg';
 import DeleteIconDisable from '../assets/deleteIconDisabled.svg';
-import useGrades from '@hooks/grades/useGetGrades';
+import useGetGrades from '@hooks/grades/useGetGrades';
 import useEditGrade from '@hooks/grades/useEditGrade';
 import useDeleteGrade from '@hooks/grades/useDeleteGrade';
 import '@styles/grades.css';
 
 const Grades = () => {
-  const { grades, setGrades, loading } = useGrades();
+  const { grades = [], setGrades, loading } = useGetGrades();
   const [filterStudent, setFilterStudent] = useState('');
   const [selectedGrades, setSelectedGrades] = useState([]);
   const [message, setMessage] = useState('');
@@ -38,10 +38,10 @@ const Grades = () => {
   }, [setSelectedGrade]);
 
   const columns = [
-    { title: "Estudiante ID", field: "studentId", width: 150, responsive: 0 },
-    { title: "Asignatura ID", field: "subjectId", width: 150, responsive: 0 },
-    { title: "Calificación", field: "score", width: 150, responsive: 0 },
-    { title: "Fecha", field: "createdAt", width: 200, responsive: 2 }
+    { title: "Estudiante ID", field: "estudiante_id", width: 150, responsive: 0 },
+    { title: "Asignatura ID", field: "asignatura_id", width: 150, responsive: 0 },
+    { title: "Calificación", field: "nota", width: 150, responsive: 0 },
+    { title: "Fecha de Creación", field: "fechacreacion", width: 200, responsive: 2 }
   ];
 
   const handleRegisterSuccess = () => {
@@ -56,6 +56,10 @@ const Grades = () => {
 
   if (loading) {
     return <div>Cargando...</div>;
+  }
+
+  if (!grades || grades.length === 0) {
+    return <div>No hay calificaciones disponibles.</div>;
   }
 
   return (
@@ -93,13 +97,10 @@ const Grades = () => {
             </button>
           </div>
         </div>
-        <Table
-          data={grades}
-          columns={columns}
-          filter={filterStudent}
-          dataToFilter={'studentId'}
-          initialSortName={'createdAt'}
-          onSelectionChange={handleSelectionChange}
+        <GradesTable 
+          grades={grades} 
+          columns={columns} 
+          onSelectionChange={handleSelectionChange} 
         />
       </div>
 

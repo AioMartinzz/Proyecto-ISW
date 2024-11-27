@@ -1,6 +1,6 @@
 import axios from './root.service.js';
 
-export const getGrades = async () => {
+export const getGradesService = async () => {
   try {
     const response = await axios.get('/grades');
     return [response.data, null];
@@ -8,6 +8,7 @@ export const getGrades = async () => {
     return [null, error.response?.data?.message || 'Error al obtener las calificaciones'];
   }
 };
+
 
 export const registerGrade = async (gradeData) => {
   try {
