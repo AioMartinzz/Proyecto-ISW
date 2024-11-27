@@ -48,7 +48,7 @@ router.get(
 router.get(
   "/student/:estudiante_id",
   authenticateJwt,
-  authorizeRole([ROLES.PROFESOR]),
+  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]),
   getGradesByStudent,
 );
 
