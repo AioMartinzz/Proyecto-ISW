@@ -1,5 +1,5 @@
 "use strict";
-import { createAsignaturaService, deleteAsignaturaService, updateAsignaturaService } from "../services/asignatura.service.js";
+import { createAsignaturaService, deleteAsignaturaService, updateAsignaturaService,  getAllAsignaturasService } from "../services/asignatura.service.js";
 
 // Controlador para crear una asignatura
 export async function createAsignatura(req, res) {
