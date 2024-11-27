@@ -29,7 +29,7 @@ const Annotations = () => {
         const { name, value } = e.target;
         setUser((prevUser) => ({
             ...prevUser,
-            [name]: value, 
+            [name]: value,
         }));
     };
 
@@ -84,7 +84,6 @@ const Annotations = () => {
         <div className="main-content">
             <h1>Registro de Anotaciones</h1>
             <form onSubmit={handleSubmit}>
-                {
                 <div>
                     <label htmlFor="profesorId">ID del Profesor:</label>
                     <input
@@ -97,7 +96,8 @@ const Annotations = () => {
                     />
                 </div>
 
-                {}
+
+
                 <div>
                     <label htmlFor="asignatura">Asignatura:</label>
                     <input
