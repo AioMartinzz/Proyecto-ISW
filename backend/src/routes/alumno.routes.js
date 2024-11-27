@@ -5,12 +5,30 @@ import {
   getAlumnos,
   updateAlumno,
 } from "../controllers/alumno.controller.js";
+import { authenticateJwt } from "../middlewares/authentication.middleware.js";
+import { authorizeRole } from "../middlewares/authorization.middleware.js";
+import { ROLES } from "../entity/roles.js";
 
 const router = express.Router();
 
-router.post("/", createAlumno);
-router.get("/", getAlumnos);
-router.put("/:id", updateAlumno);
-router.delete("/:id", deleteAlumno);
+router.post(
+  "/",
+  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR]),
+  createAlumno,
+);
+router.get("/", authenticateJwt, authorizeRole([ROLES.PROFESOR]), getAlumnos);
+router.put(
+  "/:id",
+  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR]),
+  updateAlumno,
+);
+router.delete(
+  "/:id",
+  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR]),
+  deleteAlumno,
+);
 
 export default router;

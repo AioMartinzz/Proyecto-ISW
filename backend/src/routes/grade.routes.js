@@ -2,26 +2,54 @@ import express from "express";
 import {
   createGrade,
   deleteGrade,
-  updateGrade,
   getGrades,
   getGradesByStudent,
+  updateGrade,
 } from "../controllers/grade.controller.js";
+import { authenticateJwt } from "../middlewares/authentication.middleware.js";
+import { authorizeRole } from "../middlewares/authorization.middleware.js";
+import { ROLES } from "../entity/roles.js";
 
 const router = express.Router();
 
 // Ruta para crear una calificacion
-router.post("/", createGrade);
+router.post(
+  "/",
+  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]),
+  createGrade,
+);
 
 // Ruta para actualizar una Grade
-router.put("/:id", updateGrade);
+router.put(
+  "/:id",
+  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]),
+  updateGrade,
+);
 
 // Ruta para eliminar una Grade
-router.delete("/:id", deleteGrade);
+router.delete(
+  "/:id",
+  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]),
+  deleteGrade,
+);
 
 // Ruta para obtener las calificaciones
-router.get("/", getGrades);
+router.get(
+  "/",
+  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]),
+  getGrades,
+);
 
 // Nueva ruta para obtener calificaciones por estudiante
-router.get("/student/:estudiante_id", getGradesByStudent);
+router.get(
+  "/student/:estudiante_id",
+  authenticateJwt,
+  authorizeRole([ROLES.PROFESOR]),
+  getGradesByStudent,
+);
 
 export default router;
