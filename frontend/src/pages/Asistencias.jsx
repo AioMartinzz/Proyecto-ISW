@@ -76,13 +76,7 @@ export default function Asistencias() {
             })
         )
 
-        const asistenciaPost = await handlePostAsistencia(asistencias)
-
-        if (asistenciaPost) {
-            alert('Asistencias guardadas correctamente')
-        } else {
-            alert('Error al guardar las asistencias')
-        }
+        await handlePostAsistencia(asistencias)
 
         setSelectedCourse('')
         setSelectedDate('')
