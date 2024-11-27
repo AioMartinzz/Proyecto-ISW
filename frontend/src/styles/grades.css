@@ -1,0 +1,60 @@
+.main-container {
+  padding: 20px;
+}
+
+.table-container {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.top-table {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title-table {
+  margin: 0;
+  font-size: 24px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.delete-grade-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-grade-button:disabled {
+  cursor: not-allowed;
+}
+
+.popup-content {
+  padding: 20px;
+}
+
+.popup-content h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.popup-content input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.popup-content input:focus {
+  outline: none;
+  border-color: #007bff;
+} 

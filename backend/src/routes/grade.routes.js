@@ -4,6 +4,7 @@ import {
   deleteGrade,
   updateGrade,
   getGrades,
+  getGradesByStudent,
 } from "../controllers/grade.controller.js";
 
 const router = express.Router();
@@ -19,5 +20,8 @@ router.delete("/:id", deleteGrade);
 
 // Ruta para obtener las calificaciones
 router.get("/", getGrades);
+
+// Nueva ruta para obtener calificaciones por estudiante
+router.get("/student/:estudiante_id", getGradesByStudent);
 
 export default router;

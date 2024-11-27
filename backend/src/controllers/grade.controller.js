@@ -6,13 +6,25 @@ import { createGradeService, deleteGradeService, updateGradeService, getGradesSe
 // Controlador para crear una calificacion
 export async function createGrade(req, res) {
   try {
-    const { nombre } = req.body;
-    const [newGrade, error] = await createGradeService({ nombre });
-    if (error) return res.status(500).json({ message: error });
+    const { score } = req.body;
+    
+    // Validación de calificación
+    if (score < 1.0 || score > 7.0) {
+      return res.status(400).json({
+        message: 'La calificación debe estar entre 1.0 y 7.0'
+      });
+    }
 
-    res.status(201).json({ message: "Grade creada exitosamente", data: newGrade });
+    const [grade, error] = await createGradeService(req.body);
+    if (error) {
+      return res.status(400).json({ message: error });
+    }
+
+    return res.status(201).json(grade);
   } catch (error) {
-    res.status(500).json({ message: "Error al crear la Grade" });
+    return res.status(500).json({
+      message: 'Error al crear la calificación'
+    });
   }
 }
 
@@ -20,13 +32,26 @@ export async function createGrade(req, res) {
 export async function updateGrade(req, res) {
   try {
     const { id } = req.params;
-    const { nombre } = req.body;
-    const [updatedGrade, error] = await updateGradeService(id, { nombre });
+    const { estudiante_id, asignatura_id, nota } = req.body;
+    
+    // Validación de calificación
+    if (nota < 1.0 || nota > 7.0) {
+      return res.status(400).json({
+        message: 'La calificación debe estar entre 1.0 y 7.0'
+      });
+    }
+
+    const [updatedGrade, error] = await updateGradeService(id, { 
+      estudiante_id, 
+      asignatura_id, 
+      nota 
+    });
+    
     if (error) return res.status(500).json({ message: error });
 
-    res.status(200).json({ message: "Calificacion actualizada exitosamente", data: updatedGrade });
+    res.status(200).json({ message: "Calificación actualizada exitosamente", data: updatedGrade });
   } catch (error) {
-    res.status(500).json({ message: "Error al actualizar la Calificacion" });
+    res.status(500).json({ message: "Error al actualizar la calificación" });
   }
 }
 
@@ -49,5 +74,16 @@ export async function getGrades(req, res) {
     res.status(200).json({ data: grades });
   } catch (error) {
     res.status(500).json({ message: "Error al obtener las calificaciones" });
+  }
+}
+
+// Agregar método para obtener calificaciones por estudiante
+export async function getGradesByStudent(req, res) {
+  try {
+    const { estudiante_id } = req.params;
+    const grades = await getGradesService({ estudiante_id });
+    res.status(200).json({ data: grades });
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las calificaciones del estudiante" });
   }
 } 

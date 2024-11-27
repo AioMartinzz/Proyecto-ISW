@@ -10,6 +10,7 @@ import ProtectedRoute from '@components/ProtectedRoute';
 import Annotations from '@pages/Annotations'; // Importar el componente de Anotaciones
 import { UserProvider } from '@context/UserContext'; // Importar el contexto de usuario
 import '@styles/styles.css';
+import Grades from '@pages/Grades';
 
 const router = createBrowserRouter([
     {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
                         <Annotations />
                     </ProtectedRoute>
                 ),
+            },
+            {
+                path: '/grades',
+                element: <Grades />,
             },
         ],
     },
