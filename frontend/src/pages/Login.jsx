@@ -16,8 +16,11 @@ const Login = () => {
     const loginSubmit = async (data) => {
         try {
             const response = await login(data);
+
             if (response.status === 'Success') {
-                navigate('/home');
+                const { token } = response.data; // Asumiendo que el token viene en response.data
+                localStorage.setItem('token', token); // Guardar el token en localStorage
+                navigate('/home'); // Redirigir al home
             } else if (response.status === 'Client error') {
                 errorData(response.details);
             }

@@ -8,6 +8,7 @@ import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
 import Annotations from '@pages/Annotations'; // Importar el componente de Anotaciones
+import { UserProvider } from '@context/UserContext'; // Importar el contexto de usuario
 import '@styles/styles.css';
 
 const router = createBrowserRouter([
@@ -53,6 +54,8 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <RouterProvider router={router} />
+    <UserProvider>
+        <RouterProvider router={router} />
+    </UserProvider>
 );
 
