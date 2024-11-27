@@ -17,7 +17,12 @@ router.post(
   authorizeRole([ROLES.ADMINISTRADOR]),
   createAlumno,
 );
-router.get("/", authenticateJwt, authorizeRole([ROLES.PROFESOR]), getAlumnos);
+router.get(
+  "/",
+  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]),
+  getAlumnos,
+);
 router.put(
   "/:id",
   authenticateJwt,
