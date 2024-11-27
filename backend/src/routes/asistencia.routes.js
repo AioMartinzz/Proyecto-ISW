@@ -5,6 +5,7 @@ import {
   createAsistenciaReport,
   getAsistencias,
   getAsistenciasByAlumno,
+  getAsistenciasByDate,
   updateAsistencia,
 } from "../controllers/asistencia.controller.js";
 
@@ -20,12 +21,21 @@ router.get(
   authorizeRole([ROLES.PROFESOR]),
   getAsistencias,
 );
+
 router.get(
   "/:id_alumno",
   authenticateJwt,
   authorizeRole([ROLES.PROFESOR]),
   getAsistenciasByAlumno,
 );
+
+router.post(
+  "/fecha",
+  authenticateJwt,
+  authorizeRole([ROLES.PROFESOR]),
+  getAsistenciasByDate,
+);
+
 router.post(
   "/informe/:alumnoId",
   authenticateJwt,

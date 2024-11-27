@@ -21,7 +21,6 @@ export async function createAsistenciaService(alumnoId, estado, fecha) {
       return null;
     }
 
-    // Validación para impedir creación de asistencia en una fecha futura
     const fechaHoy = new Date().toISOString().split("T")[0];
 
     if (fecha !== fechaHoy) {
@@ -127,6 +126,22 @@ export async function getAsistenciasByAlumnoService(id_alumno) {
 
     const asistencias = await asistenciaRepository.findOne({
       where: { alumno: alumno },
+    });
+
+    return asistencias;
+  } catch (error) {
+    console.error("Error al obtener asistencias:", error);
+    return null;
+  }
+}
+
+export async function getAsistenciasByDateService(fecha) {
+  try {
+    const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
+
+    const asistencias = await asistenciaRepository.find({
+      where: { fecha: fecha },
+      relations: ["alumno"],
     });
 
     return asistencias;

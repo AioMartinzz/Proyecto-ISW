@@ -3,14 +3,15 @@ import { getAlumnos } from '@services/alumno.service'
 
 const useGetAlumnos = () => {
     const [alumnos, setAlumnos] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
     const fetchAlumnos = async () => {
         try {
-            const data = await getAlumnos()
+            setLoading(true)
+            const response = await getAlumnos()
 
-            const alumnos = data.data
-
-            const alumnosFormateados = alumnos.map((alumno) => ({
+            const alumnosFormateados = response.map((alumno) => ({
                 id: alumno.id,
                 nombreCompleto: alumno.nombreCompleto,
                 rut: alumno.rut,
@@ -18,11 +19,15 @@ const useGetAlumnos = () => {
                 curso: alumno.curso.id,
             }))
 
-            console.log('Data Alumnos:', alumnosFormateados)
+            console.log('Alumnos:', alumnosFormateados)
 
-            setAlumnos(data)
+            setAlumnos(alumnosFormateados)
+            setError(null)
         } catch (error) {
             console.error('Error fetching alumnos:', error)
+            setError('Error al cargar los alumnos')
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -30,7 +35,7 @@ const useGetAlumnos = () => {
         fetchAlumnos()
     }, [])
 
-    return { alumnos, fetchAlumnos, setAlumnos }
+    return { alumnos, loading, error, fetchAlumnos, setAlumnos }
 }
 
 export default useGetAlumnos

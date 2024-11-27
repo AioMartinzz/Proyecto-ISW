@@ -10,6 +10,7 @@ import {
   createAsistenciaReportService,
   createAsistenciaService,
   getAsistenciasByAlumnoService,
+  getAsistenciasByDateService,
   getAsistenciasService,
   updateAsistenciaService,
 } from "../services/asistencia.service.js";
@@ -17,6 +18,7 @@ import {
 import {
   createAsistenciaReportValidation,
   createAsistenciaValidation,
+  getAsistenciasByDateValidation,
   updateAsistenciaValidation,
 } from "../validations/asistencia.validation.js";
 
@@ -88,6 +90,39 @@ export async function getAsistenciasByAlumno(req, res) {
 
     handleSuccess(res, 200, "Asistencias encontradas", asistencias);
   } catch (error) {
+    handleErrorServer(res, 500, error.message);
+  }
+}
+
+export async function getAsistenciasByDate(req, res) {
+  try {
+    const { fecha } = req.body;
+
+    const { error } = getAsistenciasByDateValidation.validate(req.body);
+
+    if (error) {
+      return handleErrorClient(
+        res,
+        400,
+        "Datos inválidos",
+        error.details[0].message,
+      );
+    }
+
+    const asistencias = await getAsistenciasByDateService(fecha);
+
+    if (!asistencias || asistencias.length === 0) {
+      return handleErrorClient(
+        res,
+        404,
+        "No se encontraron asistencias",
+        "No se encontraron asistencias para mostrar",
+      );
+    }
+
+    handleSuccess(res, 200, "Asistencias encontradas", asistencias);
+  } catch (error) {
+    console.error("Error en getAsistenciasByDate:", error);
     handleErrorServer(res, 500, error.message);
   }
 }
