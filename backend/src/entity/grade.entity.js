@@ -19,11 +19,9 @@ const GradeSchema = new EntitySchema({
       nullable: false,
     },
     nota: {
-      type: "float",
-      nullable: false,
-      precision: 3,
-      scale: 1,
-      check: "nota >= 1.0 AND nota <= 7.0"
+      type: "numeric",
+      nullable: true,
+      default: 1.0
     },
     fechacreacion: {
       type: "timestamp with time zone",
@@ -39,11 +37,11 @@ const GradeSchema = new EntitySchema({
   },
   indices: [
     {
-      name: "IDX_GRADE_STUDENT",
+      name: "IDX_GRADE_STUDENT_2024",
       columns: ["estudiante_id"]
     },
     {
-      name: "IDX_GRADE_SUBJECT",
+      name: "IDX_GRADE_SUBJECT_2024",
       columns: ["asignatura_id"]
     }
   ]

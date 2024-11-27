@@ -8,7 +8,7 @@ import cursoRoutes from "./curso.routes.js";
 import alumnoRoutes from "./alumno.routes.js";
 import asistencuaRoutes from "./asistencia.routes.js"; 
 import emailRoutes from "./email.routes.js";
-import calificacionRoutes from "./grade.routes.js"; 
+import gradeRoutes from "./grade.routes.js"; 
 
 const router = Router();
 
@@ -21,6 +21,6 @@ router
   .use("/alumnos", alumnoRoutes)
   .use("/email", emailRoutes)
   .use("/asistencias", asistencuaRoutes)
-  .use("/calificaciones", calificacionRoutes); 
+  .use("/grades", gradeRoutes); 
 
 export default router;
