@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { getAlumnos } from '@services/alumno.service'; // Servicio para obtener alumnos
-import { useUser } from '../context/UserContext'; // Importar el contexto
+import { getAlumnos } from '@services/alumno.service';
+import { useUser } from '../context/UserContext';
 import '../styles/Annotations.css';
 
 const Annotations = () => {
-    const { user, setUser } = useUser(); // Obtener y permitir actualizar datos del contexto
-    const [alumnos, setAlumnos] = useState([]); // Estado para almacenar los alumnos
-    const [selectedAlumno, setSelectedAlumno] = useState(''); // Estado para el alumno seleccionado
-    const [tipo, setTipo] = useState('Positiva'); // Estado para el tipo de anotación
-    const [descripcion, setDescripcion] = useState(''); // Estado para la descripción
-    const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]); // Estado para la fecha con valor inicial
+    const { user, setUser } = useUser(); 
+    const [alumnos, setAlumnos] = useState([]); 
+    const [selectedAlumno, setSelectedAlumno] = useState(''); 
+    const [tipo, setTipo] = useState('Positiva'); 
+    const [descripcion, setDescripcion] = useState(''); 
+    const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]); 
 
     useEffect(() => {
         const fetchAlumnos = async () => {
@@ -29,7 +29,7 @@ const Annotations = () => {
         const { name, value } = e.target;
         setUser((prevUser) => ({
             ...prevUser,
-            [name]: value, // Actualiza el campo editado (id o subject)
+            [name]: value, 
         }));
     };
 
@@ -84,7 +84,7 @@ const Annotations = () => {
         <div className="main-content">
             <h1>Registro de Anotaciones</h1>
             <form onSubmit={handleSubmit}>
-                {/* ID del Profesor (editable) */}
+                {
                 <div>
                     <label htmlFor="profesorId">ID del Profesor:</label>
                     <input
@@ -97,7 +97,7 @@ const Annotations = () => {
                     />
                 </div>
 
-                {/* Asignatura del Profesor (editable) */}
+                {}
                 <div>
                     <label htmlFor="asignatura">Asignatura:</label>
                     <input
@@ -110,7 +110,7 @@ const Annotations = () => {
                     />
                 </div>
 
-                {/* Selección de Alumno */}
+                {}
                 <div>
                     <label htmlFor="alumno">Alumno:</label>
                     <select
@@ -127,7 +127,7 @@ const Annotations = () => {
                     </select>
                 </div>
 
-                {/* Selección de Tipo */}
+                {}
                 <div>
                     <label htmlFor="tipo">Tipo de Anotación:</label>
                     <select
@@ -140,7 +140,7 @@ const Annotations = () => {
                     </select>
                 </div>
 
-                {/* Campo de Descripción */}
+                {}
                 <div>
                     <label htmlFor="descripcion">Descripción:</label>
                     <textarea
@@ -151,7 +151,7 @@ const Annotations = () => {
                     />
                 </div>
 
-                {/* Campo de Fecha */}
+                {}
                 <div>
                     <label htmlFor="fecha">Fecha:</label>
                     <input
@@ -162,7 +162,7 @@ const Annotations = () => {
                     />
                 </div>
 
-                {/* Botón de Envío */}
+                {}
                 <button type="submit">Registrar Anotación</button>
             </form>
         </div>

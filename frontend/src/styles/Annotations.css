@@ -1,5 +1,11 @@
 /* General Styles */
-
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9; /* Fondo claro */
+    color: #333;
+}
 
 .main-content {
     margin: 80px auto; /* Espaciado superior para evitar solapamiento con el navbar */

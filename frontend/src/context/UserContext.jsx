@@ -6,8 +6,8 @@ const UserContext = createContext();
 // Proveedor del contexto
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState({
-        id: '123', // Ejemplo de ID del profesor
-        subject: 'Matemáticas', // Ejemplo de asignatura
+        id: '23',
+        subject: '1',
     });
 
     return (

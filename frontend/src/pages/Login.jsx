@@ -18,8 +18,9 @@ const Login = () => {
             const response = await login(data);
 
             if (response.status === 'Success') {
-                const { token } = response.data; // Asumiendo que el token viene en response.data
-                localStorage.setItem('token', token); // Guardar el token en localStorage
+                const { token, role } = response.data; // Suponiendo que el backend devuelve "role"
+                localStorage.setItem('token', token); // Guardar token
+                localStorage.setItem('role', role); // Guardar rol
                 navigate('/home'); // Redirigir al home
             } else if (response.status === 'Client error') {
                 errorData(response.details);
@@ -45,7 +46,9 @@ const Login = () => {
                         maxLength: 30,
                         errorMessageData: errorEmail,
                         validate: {
-                            emailDomain: (value) => value.endsWith('@gmail.cl') || 'El correo debe terminar en @gmail.cl'
+                            emailDomain: (value) => 
+                                (/@(gmail\.cl|gmail\.com|example\.com)$/.test(value)) || 
+                                'El correo debe terminar en @gmail.cl, @gmail.com o @example.com'
                         },
                         onChange: (e) => handleInputChange('email', e.target.value),
                     },
