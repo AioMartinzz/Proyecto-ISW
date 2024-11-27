@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-export const getGradesService = async () => {
-    
+export const getGrades = async () => {
   try {
     const response = await axios.get(`${API_URL}/grades`);
     return [response.data, null];
