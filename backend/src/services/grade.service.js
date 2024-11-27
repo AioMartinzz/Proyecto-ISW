@@ -20,8 +20,8 @@ export async function createGradeService(data) {
 export async function updateGradeService(id, data) {
   try {
     const GradeRepository = AppDataSource.getRepository(Grade);
-    const Grade = await GradeRepository.findOne({ where: { id } });
-    if (!Grade) return [null, "Calificacion no encontrada"];
+    const grade = await GradeRepository.findOne({ where: { id } });
+    if (!grade) return [null, "Calificacion no encontrada"];
 
     GradeRepository.merge(grade, data);
     const updatedGrade = await GradeRepository.save(grade);
