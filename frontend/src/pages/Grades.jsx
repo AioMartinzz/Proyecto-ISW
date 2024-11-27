@@ -15,6 +15,7 @@ const Grades = () => {
   const { grades, setGrades, loading } = useGrades();
   const [filterStudent, setFilterStudent] = useState('');
   const [selectedGrades, setSelectedGrades] = useState([]);
+  const [message, setMessage] = useState('');
 
   const {
     handleClickUpdate,
@@ -44,8 +45,13 @@ const Grades = () => {
   ];
 
   const handleRegisterSuccess = () => {
-    // Recargar las calificaciones
-    window.location.reload();
+    setMessage('Calificación registrada correctamente.');
+    setTimeout(() => setMessage(''), 3000);
+  };
+
+  const handleRegisterError = (error) => {
+    setMessage(`Error al registrar la calificación: ${error.message}`);
+    setTimeout(() => setMessage(''), 3000);
   };
 
   if (loading) {
@@ -54,6 +60,7 @@ const Grades = () => {
 
   return (
     <div className='main-container'>
+      {message && <div className='message'>{message}</div>}
       <div className='table-container'>
         <div className='top-table'>
           <h1 className='title-table'>Calificaciones</h1>
@@ -96,7 +103,7 @@ const Grades = () => {
         />
       </div>
 
-      <RegisterGrade onSuccess={handleRegisterSuccess} />
+      <RegisterGrade onSuccess={handleRegisterSuccess} onError={handleRegisterError} />
     </div>
   );
 };
