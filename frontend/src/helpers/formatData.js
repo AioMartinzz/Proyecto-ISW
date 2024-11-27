@@ -30,3 +30,14 @@ export function formatPostUpdate(user) {
         createdAt: formatTempo(user.createdAt, "DD-MM-YYYY")
     };
 }
+
+export const formatGradeData = (grade) => {
+  return {
+    id: grade.id,
+    studentId: grade.estudiante_id,
+    subjectId: grade.asignatura_id,
+    score: grade.nota,
+    createdAt: new Date(grade.fechacreacion),
+    updatedAt: new Date(grade.fechaactualizacion),
+  };
+};

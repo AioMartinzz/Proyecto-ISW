@@ -39,8 +39,8 @@ router.delete(
 // Ruta para obtener las calificaciones
 router.get(
   "/",
-  authenticateJwt,
-  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]),
+ /*  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]), */
   getGrades,
 );
 
