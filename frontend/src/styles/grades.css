@@ -57,4 +57,13 @@
 .popup-content input:focus {
   outline: none;
   border-color: #007bff;
+}
+
+.message {
+    padding: 10px;
+    margin: 10px 0;
+    color: green;
+    background-color: #e0ffe0;
+    border: 1px solid green;
+    border-radius: 5px;
 } 

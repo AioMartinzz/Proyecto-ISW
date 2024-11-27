@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { registerGrade } from '../services/grade.service';
 
-const RegisterGrade = ({ onSuccess }) => {
+const RegisterGrade = ({ onSuccess, onError }) => {
     const [gradeData, setGradeData] = useState({
         estudiante_id: '',
         asignatura_id: '',
@@ -27,6 +27,7 @@ const RegisterGrade = ({ onSuccess }) => {
             
             if (error) {
                 setError(error.message);
+                onError?.(error);
             } else {
                 setGradeData({ estudiante_id: '', asignatura_id: '', nota: '' });
                 onSuccess?.();
@@ -34,6 +35,7 @@ const RegisterGrade = ({ onSuccess }) => {
         } catch (err) {
             setError('Error al registrar la calificación');
             console.error(err);
+            onError?.(err);
         }
     };
 
