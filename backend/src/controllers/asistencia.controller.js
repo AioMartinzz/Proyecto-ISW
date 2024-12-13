@@ -112,12 +112,7 @@ export async function getAsistenciasByDate(req, res) {
     const asistencias = await getAsistenciasByDateService(fecha);
 
     if (!asistencias || asistencias.length === 0) {
-      return handleErrorClient(
-        res,
-        404,
-        "No se encontraron asistencias",
-        "No se encontraron asistencias para mostrar",
-      );
+      [];
     }
 
     handleSuccess(res, 200, "Asistencias encontradas", asistencias);
@@ -129,8 +124,7 @@ export async function getAsistenciasByDate(req, res) {
 
 export async function createAsistenciaReport(req, res) {
   try {
-    const { alumnoId } = req.params;
-    const { mes } = req.body;
+    const { alumnoId, mes } = req.body;
 
     const { errorValidation } = createAsistenciaReportValidation.validate(
       req.body,
@@ -153,12 +147,15 @@ export async function createAsistenciaReport(req, res) {
       return handleErrorServer(res, 500, error.message);
     }
 
+    // Configurar encabezados
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
       `attachment; filename=Informe_Asistencia_${nombreArchivo}.pdf`,
     );
-    res.send(pdfBuffer);
+
+    // Enviar el buffer
+    res.status(200).send(pdfBuffer);
   } catch (error) {
     res.status(500).json({ message: "Error al generar el informe", error });
   }

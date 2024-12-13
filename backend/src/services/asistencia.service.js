@@ -21,9 +21,16 @@ export async function createAsistenciaService(alumnoId, estado, fecha) {
       return null;
     }
 
-    const fechaHoy = new Date().toISOString().split("T")[0];
+    // Obtener fecha actual de Chile
+    const fechaChile = new Date().toLocaleDateString("es-CL", {
+      timeZone: "America/Santiago",
+    });
 
-    if (fecha !== fechaHoy) {
+    // Formatear fecha de Chile a yyyy-mm-dd
+    const [dia, mes, anio] = fechaChile.split("-");
+    const fechaChileFormateada = `${anio}-${mes}-${dia}`;
+
+    if (fecha !== fechaChileFormateada) {
       console.error("Solo se puede crear asistencia para hoy");
       return null;
     }
@@ -167,6 +174,7 @@ export async function createAsistenciaReportService(alumnoId, mes, res) {
 
   // Obtener el primer y último día del mes seleccionado del año actual
   const now = new Date();
+
   const primerDiaMes = new Date(now.getFullYear(), mes, 1);
   const ultimoDiaMes = new Date(now.getFullYear(), mes + 1, 0);
 
