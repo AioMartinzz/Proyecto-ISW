@@ -7,10 +7,8 @@ const useGetCursos = () => {
     const fetchCursos = async () => {
         try {
             const response = await getCursos()
-            console.log('Response Cursos:', response)
-            const data = response.data
 
-            console.log('Data Cursos:', data)
+            const data = response.data
 
             setCursos(data)
         } catch (error) {

@@ -19,8 +19,6 @@ const useGetAlumnos = () => {
                 curso: alumno.curso.id,
             }))
 
-            console.log('Alumnos:', alumnosFormateados)
-
             setAlumnos(alumnosFormateados)
             setError(null)
         } catch (error) {

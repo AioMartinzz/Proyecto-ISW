@@ -37,7 +37,7 @@ router.post(
 );
 
 router.post(
-  "/informe/:alumnoId",
+  "/informe/",
   authenticateJwt,
   authorizeRole([ROLES.PROFESOR]),
   createAsistenciaReport,
