@@ -17,7 +17,6 @@ export const postAsistenciasByFecha = async (fecha) => {
 
 export const updateAsistencia = async (id, asistencia) => {
     const response = await axios.put(`/asistencias/${id}`, asistencia)
-    console.log('Response:', response)
     return response.data
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import useGetCursos from '@hooks/cursos/useGetCursos'
 import useGetAlumnos from '@hooks/alumnos/useGetAlumnos'
 import usePostAsistencia from '@hooks/asistencias/usePostAsistencia'
@@ -98,6 +98,7 @@ export default function Asistencias() {
         setSelectedDate(e.target.value)
         setAttendanceList({})
         setShouldFetchAttendance(true)
+        setSubmitError(null)
     }
 
     const handleAttendanceChange = (alumnoId, isPresent) => {
@@ -111,23 +112,25 @@ export default function Asistencias() {
         e.preventDefault()
         if (!selectedCurso || !selectedDate) return
 
-        // Validar que la fecha no sea futura
         const hoy = new Date().toLocaleDateString('es-Cl', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
         })
-        console.log('hoy', hoy)
-        const selected = new Date(selectedDate).toLocaleTimeString('es-Cl', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-        })
 
-        console.log('selected', selected)
-        if (selected > hoy) {
+        const [day, month, year] = hoy.split('-')
+        const hoyFormatted = `${year}-${month}-${day}`
+
+        if (selectedDate > hoyFormatted) {
             setSubmitError(
                 'No se puede marcar asistencia para una fecha futura.'
+            )
+            return
+        }
+
+        if (selectedDate < hoyFormatted) {
+            setSubmitError(
+                'No se puede marcar asistencia para una fecha pasada.'
             )
             return
         }
@@ -176,11 +179,11 @@ export default function Asistencias() {
     const handleGenerateReport = async () => {
         if (reportCurso && reporteMes && reporteAlumno) {
             try {
-                const informe = await createInformeAsistencia({
+                await createInformeAsistencia({
                     alumnoId: reporteAlumno,
                     mes: reporteMes,
                 })
-                console.log('Informe generado:', informe)
+
                 handleCloseModal()
             } catch (error) {
                 console.error('Error al generar el informe:', error)
@@ -253,7 +256,7 @@ export default function Asistencias() {
                                             <td>{alumno.nombreCompleto}</td>
                                             <td>
                                                 <input
-                                                    type="radio"
+                                                    type="checkbox"
                                                     name={`asistencia-${alumno.id}`}
                                                     checked={
                                                         attendanceList[
@@ -270,7 +273,7 @@ export default function Asistencias() {
                                             </td>
                                             <td>
                                                 <input
-                                                    type="radio"
+                                                    type="checkbox"
                                                     name={`asistencia-${alumno.id}`}
                                                     checked={
                                                         attendanceList[

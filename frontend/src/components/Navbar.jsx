@@ -2,7 +2,6 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { logout } from '@services/auth.service.js'
 import '@styles/navbar.css'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 
 const Navbar = () => {
     const navigate = useNavigate()
