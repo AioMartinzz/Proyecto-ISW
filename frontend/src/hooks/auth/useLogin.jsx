@@ -19,9 +19,9 @@ const useLogin = () => {
     };
 
     const handleInputChange = (field, value) => {
-        setInputData(prevState => ({
+        setInputData((prevState) => ({
             ...prevState,
-            [field]: value
+            [field]: value,
         }));
     };
 

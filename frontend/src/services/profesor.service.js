@@ -10,3 +10,15 @@ export const getUsuarioActual = async () => {
         throw error;
     }
 };
+
+
+// Obtener todos los profesores
+export const getProfesores = async () => {
+    try {
+      const response = await axios.get('/profesores'); // Llama al endpoint del backend
+      return response.data; // Retorna los datos de los profesores
+    } catch (error) {
+      console.error('Error al obtener los profesores:', error.message);
+      throw error;
+    }
+  };

@@ -12,3 +12,18 @@ export const getAlumnos = async () => {
         throw error
     }
 }
+
+export const getAlumnosByApoderado = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/alumnos', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data.data.filter((alumno) => alumno.apoderado === jwtDecode(token).id);
+    } catch (error) {
+        console.error('Error fetching alumnos for apoderado:', error);
+        throw error;
+    }
+};

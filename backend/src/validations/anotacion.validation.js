@@ -1,19 +1,15 @@
 "use strict";
 import Joi from "joi";
 
-// Función personalizada para validar fechas con ajuste automático de la fecha ingresada (+1 día)
 const todayOrFuture = (value, helpers) => {
   const currentDate = new Date();
   const inputDate = new Date(value);
 
-  // Sumar un día a la fecha ingresada
   inputDate.setDate(inputDate.getDate() + 1);
 
-  // Ajustar ambas fechas a medianoche en la zona horaria local
   const currentDateLocal = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
   const inputDateLocal = new Date(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
 
-  // Logs para depuración
   console.log("Fecha actual (ajustada a medianoche, local):", currentDateLocal);
   console.log("Fecha ingresada después de ajustar (+1 día, ajustada a medianoche, local):", inputDateLocal);
 
