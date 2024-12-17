@@ -14,14 +14,18 @@ function useTable({ data, columns, filter, dataToFilter, initialSortName }) {
                 data: [],
                 columns: columns,
                 layout: "fitDataStretch",
-                responsiveLayout: "collapse",
+                responsiveLayout: "hide",
+                responsiveLayoutCollapseStartOpen: false,
+                responsiveLayoutCollapseUseFormatters: true,
                 pagination: true,
                 paginationSize: 6,
                 rowHeight: 46,
                 selectable: false,
                 width: '100%',
+                responsiveLayoutCollapseStart: 800,
                 columnDefaults: {
                     resizable: true,
+                    responsive: 1
                 },
                 langs: {
                     "default": {

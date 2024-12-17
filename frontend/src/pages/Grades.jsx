@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Search from '../components/Search';
 import RegisterGrade from '../components/RegisterGrade';
 import GradesTable from '../components/GradesTable';
@@ -11,7 +11,7 @@ const Grades = () => {
   const { grades = [], setGrades, loading, error } = useGetGrades(); // Añadimos manejo de errores
   const [filterStudent, setFilterStudent] = useState('');
   const [selectedGrades, setSelectedGrades] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
   const {
@@ -21,9 +21,9 @@ const Grades = () => {
     setIsPopupOpen,
     selectedGrade,
     setSelectedGrade
-  } = useEditGrade(setGrades);
+  } = useEditGrade(setGrades, setMessage);
 
-  const { handleDelete } = useDeleteGrade(setGrades);
+  const { handleDelete } = useDeleteGrade(setGrades, setMessage);
 
   const handleFilterChange = (e) => {
     setFilterStudent(e.target.value);
@@ -48,26 +48,44 @@ const Grades = () => {
       title: 'Estudiante ID',
       field: 'estudiante_id',
       width: '15%',
+      responsive: 0
     },
     {
       title: 'Asignatura ID',
       field: 'asignatura_id',
       width: '15%',
+      responsive: 0
     },
     {
-      title: 'Calificación',
+      title: 'Nota',
       field: 'nota',
       width: '15%',
+      responsive: 0
     },
     {
       title: 'Fecha de Creación',
       field: 'fechacreacion',
       width: '35%',
+      responsive: 1,
+      formatter: (cell) => {
+        const date = new Date(cell.getValue());
+        const formattedDate = date.toLocaleString('es-CL', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+        return formattedDate.replace(',', '');
+      }
     },
     {
       title: 'Acciones',
       field: 'actions',
       width: '20%',
+      responsive: 0,
       render: (rowData) => (
         <div className="action-buttons">
           <button 
@@ -88,14 +106,23 @@ const Grades = () => {
   ];
 
   const handleRegisterSuccess = () => {
-    setMessage('Calificación registrada correctamente.');
-    setTimeout(() => setMessage(''), 3000);
+    setMessage({ text: 'Calificación registrada exitosamente', type: 'success' });
+    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   };
 
   const handleRegisterError = (error) => {
-    setMessage(`Error al registrar la calificación: ${error.message}`);
-    setTimeout(() => setMessage(''), 3000);
+    setMessage({ 
+      text: `Error al registrar la calificación: ${error.message}`, 
+      type: 'error' 
+    });
+    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   };
+
+  useEffect(() => {
+    if (message.text) {
+      setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+    }
+  }, [message]);
 
   if (loading) {
     return <div>Cargando calificaciones...</div>;
@@ -111,7 +138,11 @@ const Grades = () => {
 
   return (
     <div className="main-container">
-      {message && <div className="message">{message}</div>}
+      {message.text && (
+        <div className={`message ${message.type}`}>
+          {message.text}
+        </div>
+      )}
       <div className="table-container">
         <div className="top-table">
           <h1 className="title-table">Calificaciones</h1>
