@@ -93,13 +93,15 @@ export async function verificarInasistenciasService(alumnoId) {
     });
 
     const emailApoderado = apoderado.usuario.email;
+    const nombreAlumno = alumno.nombreCompleto;
+    const nombreApoderado = apoderado.usuario.nombreCompleto;
 
-    const resEmail = await sendEmailDefault({
+    await sendEmailDefault({
       body: {
         email: emailApoderado,
         subject: "Inasistencias",
-        message: `Estimado/a ${apoderado.usuario.nombreCompleto}, su pupilo/a ${alumno.nombreCompleto} ha 
-        acumulado ${inasistenciasMes} inasistencias en el mes actual. Por favor, justifique las inasistencias.`,
+        message: `Estimado/a ${nombreApoderado}, su pupilo/a ${nombreAlumno} ha acumulado ${inasistenciasMes} 
+        inasistencias en el mes actual. Por favor, contacte al colegio para más información.`,
       },
     });
   }
