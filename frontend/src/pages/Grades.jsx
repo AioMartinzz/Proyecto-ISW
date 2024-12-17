@@ -44,35 +44,30 @@ const Grades = () => {
     : grades;
 
   const columns = [
-    { 
-      title: 'Estudiante ID', 
-      field: 'estudiante_id', 
-      width: 120, // Reducido
-      responsive: 0 
+    {
+      title: 'Estudiante ID',
+      field: 'estudiante_id',
+      width: '15%',
     },
-    { 
-      title: 'Asignatura ID', 
-      field: 'asignatura_id', 
-      width: 120, // Reducido
-      responsive: 0 
+    {
+      title: 'Asignatura ID',
+      field: 'asignatura_id',
+      width: '15%',
     },
-    { 
-      title: 'Calificación', 
-      field: 'nota', 
-      width: 100, // Reducido
-      responsive: 0 
+    {
+      title: 'Calificación',
+      field: 'nota',
+      width: '15%',
     },
-    { 
-      title: 'Fecha de Creación', 
-      field: 'fechacreacion', 
-      width: 180, // Ajustado
-      responsive: 2 
+    {
+      title: 'Fecha de Creación',
+      field: 'fechacreacion',
+      width: '35%',
     },
     {
       title: 'Acciones',
       field: 'actions',
-      width: 100,
-      responsive: 0,
+      width: '20%',
       render: (rowData) => (
         <div className="action-buttons">
           <button 

@@ -3,34 +3,26 @@ import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import "tabulator-tables/dist/css/tabulator.min.css";
 import '@styles/table.css';
 
-function useTable({ data, columns, filter, dataToFilter, initialSortName, onSelectionChange }) {
+function useTable({ data, columns, filter, dataToFilter, initialSortName }) {
     const tableRef = useRef(null);
     const [table, setTable] = useState(null);
     const [isTableBuilt, setIsTableBuilt] = useState(false);
 
     useEffect(() => {
         if (tableRef.current) {
-            const updatedColumns = [
-                { 
-                    formatter: "rowSelection", 
-                    titleFormatter: false, 
-                    hozAlign: "center", 
-                    headerSort: false, 
-                    cellClick: function (e, cell) {
-                        cell.getRow().toggleSelect();
-                    } 
-                },
-                ...columns
-            ];
             const tabulatorTable = new Tabulator(tableRef.current, {
                 data: [],
-                columns: updatedColumns,
-                layout: "fitColumns",
+                columns: columns,
+                layout: "fitDataStretch",
                 responsiveLayout: "collapse",
                 pagination: true,
                 paginationSize: 6,
-                selectableRows: 1,
                 rowHeight: 46,
+                selectable: false,
+                width: '100%',
+                columnDefaults: {
+                    resizable: true,
+                },
                 langs: {
                     "default": {
                         "pagination": {
@@ -45,15 +37,13 @@ function useTable({ data, columns, filter, dataToFilter, initialSortName, onSele
                     { column: initialSortName, dir: "asc" }
                 ],
             });
-            tabulatorTable.on("rowSelectionChanged", function(selectedData) {
-                if (onSelectionChange) {
-                    onSelectionChange(selectedData);
-                }
-            });
+
             tabulatorTable.on("tableBuilt", function() {
                 setIsTableBuilt(true);
             });
+            
             setTable(tabulatorTable);
+            
             return () => {
                 tabulatorTable.destroy();
                 setIsTableBuilt(false);
