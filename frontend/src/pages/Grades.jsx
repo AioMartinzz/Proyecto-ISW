@@ -5,10 +5,14 @@ import GradesTable from '../components/GradesTable';
 import useGetGrades from '@hooks/grades/useGetGrades';
 import useEditGrade from '@hooks/grades/useEditGrade';
 import useDeleteGrade from '@hooks/grades/useDeleteGrade';
+import useUserInfo from '../hooks/useUserInfo';
+import useFilteredGrades from '../hooks/useFilteredGrades';
 import '@styles/grades.css';
 
 const Grades = () => {
   const { grades = [], setGrades, loading, error } = useGetGrades(); // Añadimos manejo de errores
+  const userInfo = useUserInfo();
+  const filteredGrades = useFilteredGrades(grades, userInfo);
   const [filterStudent, setFilterStudent] = useState('');
   const [selectedGrades, setSelectedGrades] = useState([]);
   const [message, setMessage] = useState({ text: '', type: '' });
@@ -18,6 +22,8 @@ const Grades = () => {
     totalSubjects: 0,
     generalAverage: 0
   });
+
+  const canAddGrades = userInfo.role === 'PROFESOR' || userInfo.role === 'ADMINISTRADOR';
 
   const {
     handleClickUpdate,
@@ -42,16 +48,6 @@ const Grades = () => {
     },
     [setSelectedGrade]
   );
-
-  const filteredGrades = grades.filter(grade => {
-    if (!filterStudent.trim()) return true;
-    
-    return (
-      grade.nombre_estudiante?.toLowerCase().includes(filterStudent.toLowerCase()) ||
-      grade.nombre_asignatura?.toLowerCase().includes(filterStudent.toLowerCase()) ||
-      grade.grade_id?.toString().includes(filterStudent)
-    );
-  });
 
   const columns = [
     {
@@ -217,13 +213,15 @@ const Grades = () => {
               onChange={handleFilterChange}
             />
           </div>
-          <button
-            className="register-button"
-            onClick={() => setIsRegisterModalOpen(true)}
-          >
-            <i className="fas fa-plus"></i>
-            Registrar Calificación
-          </button>
+          {canAddGrades && (
+            <button
+              className="register-button"
+              onClick={() => setIsRegisterModalOpen(true)}
+            >
+              <i className="fas fa-plus"></i>
+              Registrar Calificación
+            </button>
+          )}
         </div>
       {filteredGrades.length === 0 ? (
         <div className="no-results">No se encontraron resultados para la búsqueda</div>
@@ -238,12 +236,15 @@ const Grades = () => {
       <div className="tabulator-footer">
       </div>
 
-      <RegisterGrade 
-        isOpen={isRegisterModalOpen}
-        onClose={() => setIsRegisterModalOpen(false)}
-        onSuccess={handleRegisterSuccess}
-        onError={handleRegisterError}
-      />
+      {canAddGrades && (
+        <RegisterGrade 
+          isOpen={isRegisterModalOpen}
+          onClose={() => setIsRegisterModalOpen(false)}
+          onSuccess={handleRegisterSuccess}
+          onError={handleRegisterError}
+          asignaturaId={userInfo.role === 'PROFESOR' ? userInfo.asignatura_id : null}
+        />
+      )}
 
       {isPopupOpen && (
         <div className="modal-overlay">
