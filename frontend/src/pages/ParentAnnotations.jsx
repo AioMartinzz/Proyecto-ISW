@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useGetAlumnos from "../hooks/alumnos/useGetAlumnos";
+import useGetAlumnos from "../hooks/alumnos/useGetAlumnoIdByApoderado";
 import { getAnotaciones } from "../services/anotacion.service";
 import "@styles/ParentAnnotations.css";
 

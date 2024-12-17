@@ -7,10 +7,12 @@ import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
+import Asistencias from '@pages/Asistencias';
 import Annotations from '@pages/Annotations'; // Importar el componente de Anotaciones
 import { UserProvider } from '@context/UserContext'; // Importar el contexto de usuario
 import '@styles/styles.css';
-import Grades from '@pages/Grades'
+import Grades from '@pages/Grades';
+
 const router = createBrowserRouter([
     {
         path: '/',
@@ -30,16 +32,28 @@ const router = createBrowserRouter([
                 ),
             },
             {
-                path: '/annotations', // Ruta para Anotaciones generales
+                path: '/annotations',
                 element: (
-                    <ProtectedRoute allowedRoles={['profesor']}>
+                    <ProtectedRoute allowedRoles={['profesor', 'apoderado']}>
                         <Annotations />
                     </ProtectedRoute>
                 ),
             },
             {
+                path: '/asistencias',
+                element: (
+                    <ProtectedRoute allowedRoles={['profesor']}>
+                        <Asistencias />
+                    </ProtectedRoute>
+                ),
+            },
+            {
                 path: '/grades',
-                element: <Grades />,
+                element: (
+                    <ProtectedRoute allowedRoles={['profesor', 'apoderado']}>
+                        <Grades />
+                    </ProtectedRoute>
+                ),
             },
         ],
     },
@@ -52,10 +66,10 @@ const router = createBrowserRouter([
         element: <Register />,
     },
     {
-        path: '*', // Manejar rutas no existentes
+        path: '*',
         element: <Error404 />,
     },
-])
+]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <UserProvider>
