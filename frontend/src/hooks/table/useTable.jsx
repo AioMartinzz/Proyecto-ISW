@@ -65,7 +65,11 @@ function useTable({ data, columns, filter, dataToFilter, initialSortName }) {
     useEffect(() => {
         if (table && isTableBuilt) {
             if (filter) {
-                table.setFilter(dataToFilter, "like", filter);
+                table.setFilter(function(data){
+                    return dataToFilter.some(field => 
+                        data[field]?.toLowerCase().includes(filter.toLowerCase())
+                    );
+                });
             } else {
                 table.clearFilter();
             }

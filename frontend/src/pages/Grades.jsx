@@ -42,6 +42,7 @@ const Grades = () => {
   const { handleDelete } = useDeleteGrade(setGrades, setMessage);
 
   const handleFilterChange = (e) => {
+    e.preventDefault();
     const value = e.target.value;
     setFilterStudent(value);
   };
@@ -216,6 +217,7 @@ const Grades = () => {
               placeholder="Buscar por nombre o materia..."
               value={filterStudent}
               onChange={handleFilterChange}
+              onSubmit={(e) => e.preventDefault()}
             />
           </div>
           {canAddGrades && (
