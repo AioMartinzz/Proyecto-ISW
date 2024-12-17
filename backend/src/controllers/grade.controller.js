@@ -71,7 +71,7 @@ export async function deleteGrade(req, res) {
 export async function getGrades(req, res) {
   try {
     const grades = await getGradesService();
-    res.status(200).json({ data: grades });
+    res.status(200).json(grades);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener las calificaciones" });
   }
