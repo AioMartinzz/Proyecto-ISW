@@ -59,12 +59,7 @@ export async function getAsistencias(req, res) {
     const asistencias = await getAsistenciasService();
 
     if (!asistencias) {
-      return handleErrorClient(
-        res,
-        404,
-        "No se encontraron asistencias",
-        "No se encontraron asistencias para mostrar",
-      );
+      return { asistencias: [] };
     }
 
     handleSuccess(res, 200, "Asistencias encontradas", asistencias);
