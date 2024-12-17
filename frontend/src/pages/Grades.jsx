@@ -2,10 +2,6 @@ import React, { useState, useCallback } from 'react';
 import Search from '../components/Search';
 import RegisterGrade from '../components/RegisterGrade';
 import GradesTable from '../components/GradesTable';
-import DeleteIcon from '../assets/deleteIcon.svg';
-import UpdateIcon from '../assets/updateIcon.svg';
-import UpdateIconDisable from '../assets/updateIconDisabled.svg';
-import DeleteIconDisable from '../assets/deleteIconDisabled.svg';
 import useGetGrades from '@hooks/grades/useGetGrades';
 import useEditGrade from '@hooks/grades/useEditGrade';
 import useDeleteGrade from '@hooks/grades/useDeleteGrade';
@@ -16,6 +12,7 @@ const Grades = () => {
   const [filterStudent, setFilterStudent] = useState('');
   const [selectedGrades, setSelectedGrades] = useState([]);
   const [message, setMessage] = useState('');
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
   const {
     handleClickUpdate,
@@ -47,10 +44,52 @@ const Grades = () => {
     : grades;
 
   const columns = [
-    { title: 'Estudiante ID', field: 'estudiante_id', width: 150, responsive: 0 },
-    { title: 'Asignatura ID', field: 'asignatura_id', width: 150, responsive: 0 },
-    { title: 'Calificación', field: 'nota', width: 150, responsive: 0 },
-    { title: 'Fecha de Creación', field: 'fechacreacion', width: 200, responsive: 2 }
+    { 
+      title: 'Estudiante ID', 
+      field: 'estudiante_id', 
+      width: 120, // Reducido
+      responsive: 0 
+    },
+    { 
+      title: 'Asignatura ID', 
+      field: 'asignatura_id', 
+      width: 120, // Reducido
+      responsive: 0 
+    },
+    { 
+      title: 'Calificación', 
+      field: 'nota', 
+      width: 100, // Reducido
+      responsive: 0 
+    },
+    { 
+      title: 'Fecha de Creación', 
+      field: 'fechacreacion', 
+      width: 180, // Ajustado
+      responsive: 2 
+    },
+    {
+      title: 'Acciones',
+      field: 'actions',
+      width: 100,
+      responsive: 0,
+      render: (rowData) => (
+        <div className="action-buttons">
+          <button 
+            className="action-button edit-button"
+            onClick={() => handleClickUpdate(rowData)}
+          >
+            <i className="fas fa-pen-to-square"></i>
+          </button>
+          <button 
+            className="action-button delete-button"
+            onClick={() => handleDelete(rowData.grade_id)}
+          >
+            <i className="fas fa-trash"></i>
+          </button>
+        </div>
+      )
+    }
   ];
 
   const handleRegisterSuccess = () => {
@@ -82,43 +121,65 @@ const Grades = () => {
         <div className="top-table">
           <h1 className="title-table">Calificaciones</h1>
           <div className="filter-actions">
+            <button
+              className="register-button"
+              onClick={() => setIsRegisterModalOpen(true)}
+            >
+              Registrar Calificación
+            </button>
             <Search
               value={filterStudent}
               onChange={handleFilterChange}
               placeholder={'Filtrar por ID de estudiante'}
             />
-            <button
-              onClick={() => handleClickUpdate(selectedGrades[0])}
-              disabled={selectedGrades.length !== 1}
-            >
-              {selectedGrades.length !== 1 ? (
-                <img src={UpdateIconDisable} alt="edit-disabled" />
-              ) : (
-                <img src={UpdateIcon} alt="edit" />
-              )}
-            </button>
-            <button
-              className="delete-grade-button"
-              disabled={selectedGrades.length === 0}
-              onClick={() => handleDelete(selectedGrades[0]?.grade_id)}
-            >
-              {selectedGrades.length === 0 ? (
-                <img src={DeleteIconDisable} alt="delete-disabled" />
-              ) : (
-                <img src={DeleteIcon} alt="delete" />
-              )}
-            </button>
           </div>
         </div>
+        
         <GradesTable
-          grades={filteredGrades} // Usamos las calificaciones filtradas
+          grades={filteredGrades}
           columns={columns}
-          onSelectionChange={handleSelectionChange}
-          selectedGrades={selectedGrades}
         />
       </div>
 
-      <RegisterGrade onSuccess={handleRegisterSuccess} onError={handleRegisterError} />
+      <RegisterGrade 
+        isOpen={isRegisterModalOpen}
+        onClose={() => setIsRegisterModalOpen(false)}
+        onSuccess={handleRegisterSuccess}
+        onError={handleRegisterError}
+      />
+
+      {isPopupOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Modificar Calificación</h2>
+            
+            <div className="grade-info">
+              <p><strong>Estudiante ID:</strong> {selectedGrade?.estudiante_id}</p>
+              <p><strong>Asignatura ID:</strong> {selectedGrade?.asignatura_id}</p>
+            </div>
+
+            <label className="grade-label">Nueva calificación:</label>
+            <input
+              type="number"
+              min="1.0"
+              max="7.0"
+              step="0.1"
+              value={selectedGrade?.nota || ''}
+              onChange={(e) => setSelectedGrade({...selectedGrade, nota: e.target.value})}
+              placeholder="Ingrese la nueva calificación"
+            />
+            
+            <div className="modal-footer">
+              <button onClick={() => setIsPopupOpen(false)}>
+                Cancelar
+              </button>
+              <button onClick={() => handleUpdate(selectedGrade)}>
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

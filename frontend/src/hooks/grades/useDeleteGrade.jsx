@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { deleteGradeService } from '../../services/grade.service';
 
 const useDeleteGrade = (setGrades) => {
   const handleDelete = useCallback(async (grade_id) => {
@@ -7,20 +8,23 @@ const useDeleteGrade = (setGrades) => {
       return;
     }
 
-    try {
-      const response = await fetch(`/api/grades/${grade_id}`, {
-        method: 'DELETE',
-      });
+    if (window.confirm('¿Está seguro de que desea eliminar esta calificación?')) {
+      try {
+        console.log('Intentando eliminar grade_id:', grade_id);
+        const [data, error] = await deleteGradeService(grade_id);
+        
+        if (error) {
+          console.error('Error del servidor:', error);
+          throw new Error(error);
+        }
 
-      if (!response.ok) {
-        throw new Error('Error al eliminar la calificación');
+        setGrades(prevGrades => 
+          prevGrades.filter(grade => grade.grade_id !== grade_id)
+        );
+      } catch (error) {
+        console.error('Error en la eliminación:', error);
+        alert('Error al eliminar la calificación');
       }
-
-      // Actualiza el estado después de eliminar
-      setGrades((prevGrades) => prevGrades.filter((grade) => grade.grade_id !== grade_id));
-    } catch (error) {
-      console.error('Error en la eliminación:', error);
-      // Manejo de errores, podrías mostrar un mensaje al usuario aquí
     }
   }, [setGrades]);
 

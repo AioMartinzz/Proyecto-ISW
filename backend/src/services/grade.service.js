@@ -20,7 +20,7 @@ export async function createGradeService(data) {
 export async function updateGradeService(id, data) {
   try {
     const GradeRepository = AppDataSource.getRepository(Grade);
-    const grade = await GradeRepository.findOne({ where: { id } });
+    const grade = await GradeRepository.findOne({ where: { grade_id: id } });
     if (!grade) return [null, "Calificacion no encontrada"];
 
     GradeRepository.merge(grade, data);
@@ -36,13 +36,21 @@ export async function updateGradeService(id, data) {
 export async function deleteGradeService(id) {
   try {
     const GradeRepository = AppDataSource.getRepository(Grade);
-    const Grade = await GradeRepository.findOne({ where: { id } });
-    if (!Grade) return [null, "Calificacion no encontrada"];
+    const grade = await GradeRepository.findOneBy({ grade_id: id });
+    
+    if (!grade) {
+      return [null, "Calificación no encontrada"];
+    }
 
-    await GradeRepository.remove(Grade);
-    return [Grade, null];
+    const result = await GradeRepository.delete({ grade_id: id });
+    
+    if (result.affected > 0) {
+      return [grade, null];
+    } else {
+      return [null, "No se pudo eliminar la calificación"];
+    }
   } catch (error) {
-    console.error("Error al eliminar la Calificacion:", error);
+    console.error("Error al eliminar la calificación:", error);
     return [null, "Error interno del servidor"];
   }
 }

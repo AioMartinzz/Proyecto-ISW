@@ -1,86 +1,135 @@
 import React, { useState } from 'react';
 import { registerGrade } from '../services/grade.service';
 
-const RegisterGrade = ({ onSuccess, onError }) => {
-    const [gradeData, setGradeData] = useState({
-        estudiante_id: '',
-        asignatura_id: '',
-        nota: ''
-    });
-    const [error, setError] = useState(null);
+const RegisterGrade = ({ isOpen, onClose, onSuccess, onError }) => {
+  const [formData, setFormData] = useState({
+    estudiante_id: '',
+    asignatura_id: '',
+    nota: ''
+  });
+  const [errors, setErrors] = useState({});
 
-    const handleChange = (e) => {
-        setGradeData({
-            ...gradeData,
-            [e.target.name]: e.target.value
-        });
-    };
+  if (!isOpen) return null;
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const [data, error] = await registerGrade({
-                estudiante_id: parseInt(gradeData.estudiante_id),
-                asignatura_id: parseInt(gradeData.asignatura_id),
-                nota: parseFloat(gradeData.nota)
-            });
-            
-            if (error) {
-                setError(error.message);
-                onError?.(error);
-            } else {
-                setGradeData({ estudiante_id: '', asignatura_id: '', nota: '' });
-                onSuccess?.();
-            }
-        } catch (err) {
-            setError('Error al registrar la calificación');
-            console.error(err);
-            onError?.(err);
-        }
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Limpiar error del campo cuando el usuario empiece a escribir
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
 
-    return (
-        <div className="register-grade-form">
-            <h2>Registrar Nueva Calificación</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <input 
-                        type="number" 
-                        name="estudiante_id"
-                        value={gradeData.estudiante_id}
-                        placeholder="ID del Estudiante" 
-                        onChange={handleChange} 
-                        required 
-                    />
-                </div>
-                <div className="form-group">
-                    <input 
-                        type="number" 
-                        name="asignatura_id"
-                        value={gradeData.asignatura_id}
-                        placeholder="ID de la Asignatura" 
-                        onChange={handleChange} 
-                        required 
-                    />
-                </div>
-                <div className="form-group">
-                    <input 
-                        type="number" 
-                        name="nota"
-                        value={gradeData.nota}
-                        placeholder="Calificación" 
-                        min="1" 
-                        max="7" 
-                        step="0.1" 
-                        onChange={handleChange} 
-                        required 
-                    />
-                </div>
-                <button type="submit">Registrar Calificación</button>
-                {error && <p className="error-message">{error}</p>}
-            </form>
-        </div>
-    );
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.estudiante_id) {
+      newErrors.estudiante_id = 'El ID del estudiante es requerido';
+    }
+    if (!formData.asignatura_id) {
+      newErrors.asignatura_id = 'El ID de la asignatura es requerido';
+    }
+    if (!formData.nota) {
+      newErrors.nota = 'La calificación es requerida';
+    } else if (formData.nota < 1.0 || formData.nota > 7.0) {
+      newErrors.nota = 'La calificación debe estar entre 1.0 y 7.0';
+    }
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newErrors = validateForm();
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      const [data, error] = await registerGrade(formData);
+      if (error) {
+        throw new Error(error);
+      }
+      onSuccess();
+      onClose();
+      setFormData({ estudiante_id: '', asignatura_id: '', nota: '' });
+    } catch (error) {
+      onError(error);
+    }
+  };
+
+  return (
+    <div className="register-modal-overlay">
+      <div className="register-modal-content">
+        <h2>Registrar Nueva Calificación</h2>
+        
+        <form onSubmit={handleSubmit} className="register-form">
+          <div className="form-group">
+            <label htmlFor="estudiante_id">ID del Estudiante:</label>
+            <input
+              type="number"
+              id="estudiante_id"
+              name="estudiante_id"
+              value={formData.estudiante_id}
+              onChange={handleChange}
+              placeholder="Ingrese el ID del estudiante"
+            />
+            {errors.estudiante_id && (
+              <span className="error-message">{errors.estudiante_id}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="asignatura_id">ID de la Asignatura:</label>
+            <input
+              type="number"
+              id="asignatura_id"
+              name="asignatura_id"
+              value={formData.asignatura_id}
+              onChange={handleChange}
+              placeholder="Ingrese el ID de la asignatura"
+            />
+            {errors.asignatura_id && (
+              <span className="error-message">{errors.asignatura_id}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="nota">Calificación:</label>
+            <input
+              type="number"
+              id="nota"
+              name="nota"
+              step="0.1"
+              min="1.0"
+              max="7.0"
+              value={formData.nota}
+              onChange={handleChange}
+              placeholder="Ingrese la calificación (1.0 - 7.0)"
+            />
+            {errors.nota && (
+              <span className="error-message">{errors.nota}</span>
+            )}
+          </div>
+
+          <div className="register-modal-footer">
+            <button type="button" onClick={onClose}>
+              Cancelar
+            </button>
+            <button type="submit">
+              Registrar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default RegisterGrade;

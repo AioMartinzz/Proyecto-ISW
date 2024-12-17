@@ -11,10 +11,15 @@ const useEditGrade = (setGrades) => {
   };
 
   const handleUpdate = async (updatedData) => {
-    const [updatedGrade, error] = await updateGradeService(selectedGrade.id, updatedData);
+    const [data, error] = await updateGradeService(updatedData.grade_id, {
+      nota: parseFloat(updatedData.nota)
+    });
+
     if (!error) {
       setGrades((prevGrades) =>
-        prevGrades.map((grade) => (grade.id === updatedGrade.id ? updatedGrade : grade))
+        prevGrades.map((grade) =>
+          grade.grade_id === updatedData.grade_id ? data : grade
+        )
       );
       setIsPopupOpen(false);
     } else {
@@ -32,4 +37,4 @@ const useEditGrade = (setGrades) => {
   };
 };
 
-export default useEditGrade; 
+export default useEditGrade;
