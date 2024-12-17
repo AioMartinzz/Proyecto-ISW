@@ -24,7 +24,7 @@ const Grades = () => {
   });
 
   const allowedRoles = ['profesor', 'administrador'];
-  const canAddGrades = allowedRoles.includes(user?.rol?.toLowerCase());
+  const canManageGrades = allowedRoles.includes(user?.rol?.toLowerCase());
 
   const {
     handleClickUpdate,
@@ -51,7 +51,7 @@ const Grades = () => {
     [setSelectedGrade]
   );
 
-  const columns = [
+  const baseColumns = [
     {
       title: 'Estudiante',
       field: 'nombre_estudiante',
@@ -93,30 +93,33 @@ const Grades = () => {
           hour12: false
         });
       }
-    },
-    {
-      title: 'Acciones',
-      field: 'actions',
-      width: '20%',
-      responsive: 0,
-      render: (rowData) => (
-        <div className="action-buttons">
-          <button 
-            className="action-button edit-button"
-            onClick={() => handleClickUpdate(rowData)}
-          >
-            <i className="fas fa-pen-to-square"></i>
-          </button>
-          <button 
-            className="action-button delete-button"
-            onClick={() => handleDelete(rowData.grade_id)}
-          >
-            <i className="fas fa-trash"></i>
-          </button>
-        </div>
-      )
     }
   ];
+
+  const actionColumn = {
+    title: 'Acciones',
+    field: 'actions',
+    width: '20%',
+    responsive: 0,
+    render: (rowData) => (
+      <div className="action-buttons">
+        <button 
+          className="action-button edit-button"
+          onClick={() => handleClickUpdate(rowData)}
+        >
+          <i className="fas fa-pen-to-square"></i>
+        </button>
+        <button 
+          className="action-button delete-button"
+          onClick={() => handleDelete(rowData.grade_id)}
+        >
+          <i className="fas fa-trash"></i>
+        </button>
+      </div>
+    )
+  };
+
+  const columns = canManageGrades ? [...baseColumns, actionColumn] : baseColumns;
 
   const handleRegisterSuccess = () => {
     setMessage({ text: 'Calificación registrada exitosamente', type: 'success' });
@@ -135,23 +138,63 @@ const Grades = () => {
     }
   }, [message]);
 
+  const filterGradesByRole = useCallback((grades) => {
+    if (!user || !grades) return [];
+    
+    switch (user.rol?.toLowerCase()) {
+      case 'apoderado':
+        // Filtrar solo las notas del estudiante asociado al apoderado
+        return grades.filter(grade => grade.estudiante_id === user.estudiante_id);
+      case 'profesor':
+        // Si es profesor, mostrar solo las notas de su asignatura
+        return grades.filter(grade => grade.asignatura_id === user.asignatura_id);
+      case 'administrador':
+        // El administrador puede ver todas las notas
+        return grades;
+      default:
+        return [];
+    }
+  }, [user]);
+
   const calculateStats = useCallback(() => {
     if (!grades.length) return;
 
-    // Obtener estudiantes y materias únicos basados en nombres
-    const uniqueStudents = new Set(grades.map(grade => grade.nombre_estudiante));
-    const uniqueSubjects = new Set(grades.map(grade => grade.nombre_asignatura));
+    // Filtrar las notas según el rol antes de calcular estadísticas
+    const filteredGrades = filterGradesByRole(grades);
 
-    // Calcular promedio general
-    const totalGrades = grades.reduce((sum, grade) => sum + Number(grade.nota), 0);
-    const average = (totalGrades / grades.length).toFixed(1);
+    // Para apoderado, calcular el promedio de generación
+    if (user?.rol?.toLowerCase() === 'apoderado') {
+      const uniqueSubjects = new Set(filteredGrades.map(grade => grade.nombre_asignatura));
+      
+      // Obtener todas las notas de la misma asignatura del estudiante
+      const generationGrades = grades.filter(grade => 
+        filteredGrades[0]?.asignatura_id === grade.asignatura_id
+      );
+      
+      const generationAverage = generationGrades.length 
+        ? (generationGrades.reduce((sum, grade) => sum + Number(grade.nota), 0) / generationGrades.length).toFixed(1) 
+        : 0;
+
+      setStats({
+        totalStudents: 0, // No se mostrará
+        totalSubjects: uniqueSubjects.size,
+        generalAverage: generationAverage // Ahora es promedio generación
+      });
+      return;
+    }
+
+    // Resto del código existente para otros roles...
+    const uniqueStudents = new Set(filteredGrades.map(grade => grade.nombre_estudiante));
+    const uniqueSubjects = new Set(filteredGrades.map(grade => grade.nombre_asignatura));
+    const totalGrades = filteredGrades.reduce((sum, grade) => sum + Number(grade.nota), 0);
+    const average = filteredGrades.length ? (totalGrades / filteredGrades.length).toFixed(1) : 0;
 
     setStats({
       totalStudents: uniqueStudents.size,
       totalSubjects: uniqueSubjects.size,
       generalAverage: average
     });
-  }, [grades]);
+  }, [grades, filterGradesByRole, user]);
 
   useEffect(() => {
     calculateStats();
@@ -169,18 +212,30 @@ const Grades = () => {
     <div className="main-container">
       <div className="header">
         <div className="header-text">
-          <h1>Portal de Notas</h1>
+          <h1>
+            {`Portal de notas ${
+              user?.rol?.toLowerCase() === 'administrador'
+                ? 'administrador'
+                : user?.rol?.toLowerCase() === 'profesor'
+                ? 'profesores'
+                : user?.rol?.toLowerCase() === 'apoderado'
+                ? 'apoderados'
+                : ''
+            }`}
+          </h1>
         </div>
       </div>
 
       <div className="stats-container">
-        <div className="stat-card">
-          <div className="stat-header">
-            <i className="fa-solid fa-user"></i>
-            <p className="stat-title">Total de Estudiantes</p>
+        {user?.rol?.toLowerCase() !== 'apoderado' && (
+          <div className="stat-card">
+            <div className="stat-header">
+              <i className="fa-solid fa-user"></i>
+              <p className="stat-title">Total de Estudiantes</p>
+            </div>
+            <p className="stat-value">{stats.totalStudents}</p>
           </div>
-          <p className="stat-value">{stats.totalStudents}</p>
-        </div>
+        )}
 
         <div className="stat-card">
           <div className="stat-header">
@@ -193,7 +248,9 @@ const Grades = () => {
         <div className="stat-card">
           <div className="stat-header">
             <i className="fa-solid fa-calculator"></i>
-            <p className="stat-title">Promedio General</p>
+            <p className="stat-title">
+              {user?.rol?.toLowerCase() === 'apoderado' ? 'Promedio Generación' : 'Promedio General'}
+            </p>
           </div>
           <p className="stat-value">{stats.generalAverage}</p>
         </div>
@@ -205,31 +262,33 @@ const Grades = () => {
         </div>
       )}
       <div className="top-controls">
-          <div className="search-container">
-            <input
-              type="text"
-              placeholder="Buscar por nombre o materia..."
-              value={filterStudent}
-              onChange={handleFilterChange}
-              onSubmit={(e) => e.preventDefault()}
-            />
-          </div>
-          {canAddGrades && (
-            <button
-              className="register-button"
-              onClick={() => setIsRegisterModalOpen(true)}
-            >
-              <i className="fas fa-plus"></i>
-              Registrar Calificación
-            </button>
-          )}
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por nombre o materia..."
+            value={filterStudent}
+            onChange={handleFilterChange}
+            onSubmit={(e) => e.preventDefault()}
+          />
         </div>
+        {canManageGrades && (
+          <button
+            className="register-button"
+            onClick={() => setIsRegisterModalOpen(true)}
+          >
+            <i className="fas fa-plus"></i>
+            Registrar Calificación
+          </button>
+        )}
+      </div>
       {filteredGrades.length === 0 ? (
-        <div className="no-results">No se encontraron resultados para la búsqueda</div>
+        <div className="no-results">
+          No se encontraron resultados para la búsqueda
+        </div>
       ) : (
         <div className="table-container">
           <GradesTable
-            grades={filteredGrades}
+            grades={filterGradesByRole(grades)}
             columns={columns}
             filter={filterStudent}
             dataToFilter={["nombre_estudiante", "nombre_asignatura"]}
@@ -239,7 +298,7 @@ const Grades = () => {
       <div className="tabulator-footer">
       </div>
 
-      {canAddGrades && (
+      {canManageGrades && (
         <RegisterGrade 
           isOpen={isRegisterModalOpen}
           onClose={() => setIsRegisterModalOpen(false)}

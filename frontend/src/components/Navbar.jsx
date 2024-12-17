@@ -111,7 +111,7 @@ const Navbar = () => {
                     )}
 
                     {(userRole === 'profesor' ||
-                        userRole === 'administrador') && (
+                        userRole === 'administrador' || userRole === 'apoderado') && (
                         <li>
                             <NavLink
                                 to="/grades"
