@@ -5,14 +5,16 @@ import GradesTable from '../components/GradesTable';
 import useGetGrades from '@hooks/grades/useGetGrades';
 import useEditGrade from '@hooks/grades/useEditGrade';
 import useDeleteGrade from '@hooks/grades/useDeleteGrade';
-import useUserInfo from '../hooks/useUserInfo';
 import useFilteredGrades from '../hooks/useFilteredGrades';
 import '@styles/grades.css';
+import { useAuth } from '@context/AuthContext';
 
 const Grades = () => {
   const { grades = [], setGrades, loading, error } = useGetGrades(); // Añadimos manejo de errores
-  const userInfo = useUserInfo();
-  const filteredGrades = useFilteredGrades(grades, userInfo);
+  const { user } = useAuth();
+  console.log('Role from context:', user?.rol); // Debug log
+  console.log('Full user:', user); // Debug log completo
+  const filteredGrades = useFilteredGrades(grades, user);
   const [filterStudent, setFilterStudent] = useState('');
   const [selectedGrades, setSelectedGrades] = useState([]);
   const [message, setMessage] = useState({ text: '', type: '' });
@@ -23,7 +25,10 @@ const Grades = () => {
     generalAverage: 0
   });
 
-  const canAddGrades = userInfo.role === 'PROFESOR' || userInfo.role === 'ADMINISTRADOR';
+  const allowedRoles = ['profesor', 'administrador']; // Definir los roles permitidos igual que en main.jsx
+  console.log('Current user role:', user?.rol); // Debug log
+  
+  const canAddGrades = allowedRoles.includes(user?.rol?.toLowerCase());
 
   const {
     handleClickUpdate,
@@ -230,6 +235,8 @@ const Grades = () => {
           <GradesTable
             grades={filteredGrades}
             columns={columns}
+            filter={filterStudent}
+            dataToFilter={["nombre_estudiante", "nombre_asignatura"]}
           />
         </div>
       )}
@@ -242,7 +249,7 @@ const Grades = () => {
           onClose={() => setIsRegisterModalOpen(false)}
           onSuccess={handleRegisterSuccess}
           onError={handleRegisterError}
-          asignaturaId={userInfo.role === 'PROFESOR' ? userInfo.asignatura_id : null}
+          asignaturaId={user?.rol === 'profesor' ? user?.asignatura_id : null}
         />
       )}
 
