@@ -31,7 +31,8 @@ const Grades = () => {
   const { handleDelete } = useDeleteGrade(setGrades, setMessage);
 
   const handleFilterChange = (e) => {
-    setFilterStudent(e.target.value);
+    const value = e.target.value;
+    setFilterStudent(value);
   };
 
   const handleSelectionChange = useCallback(
@@ -42,11 +43,15 @@ const Grades = () => {
     [setSelectedGrade]
   );
 
-  const filteredGrades = filterStudent
-    ? grades.filter((grade) => 
-        String(grade.estudiante_id).includes(filterStudent)
-      )
-    : grades;
+  const filteredGrades = grades.filter(grade => {
+    if (!filterStudent.trim()) return true;
+    
+    return (
+      grade.estudiante_id?.toString().includes(filterStudent) ||
+      grade.asignatura_id?.toString().includes(filterStudent) ||
+      grade.grade_id?.toString().includes(filterStudent)
+    );
+  });
 
   const columns = [
     {
@@ -172,10 +177,6 @@ const Grades = () => {
     return <div>Error al cargar calificaciones: {error}</div>;
   }
 
-  if (!filteredGrades || filteredGrades.length === 0) {
-    return <div>No hay calificaciones disponibles.</div>;
-  }
-
   return (
     <div className="main-container">
       <div className="header">
@@ -232,12 +233,16 @@ const Grades = () => {
             Registrar Calificación
           </button>
         </div>
-      <div className="table-container">
-        <GradesTable
-          grades={filteredGrades}
-          columns={columns}
-        />
-      </div>
+      {filteredGrades.length === 0 ? (
+        <div className="no-results">No se encontraron resultados para la búsqueda</div>
+      ) : (
+        <div className="table-container">
+          <GradesTable
+            grades={filteredGrades}
+            columns={columns}
+          />
+        </div>
+      )}
       <div className="tabulator-footer">
       </div>
 
