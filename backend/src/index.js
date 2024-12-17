@@ -23,6 +23,7 @@ async function setupServer() {
       cors({
         credentials: true,
         origin: true,
+        exposedHeaders: ["Content-Disposition"],
       }),
     );
 
@@ -89,6 +90,3 @@ setupAPI()
   .catch((error) =>
     console.log("Error en index.js -> setupAPI(), el error es: ", error),
   );
-
-
-

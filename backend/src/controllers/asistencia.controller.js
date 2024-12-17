@@ -146,7 +146,7 @@ export async function createAsistenciaReport(req, res) {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=Informe_Asistencia_${nombreArchivo}.pdf`,
+      `attachment; filename=${nombreArchivo}`,
     );
 
     // Enviar el buffer

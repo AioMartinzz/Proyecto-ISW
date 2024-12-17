@@ -13,7 +13,10 @@ const useCreateInformeAsistencia = () => {
 
             const { alumnoId, mes } = informe
 
-            const pdfBlob = await createAsistenciaReport(alumnoId, mes)
+            const { blob: pdfBlob, fileName } = await createAsistenciaReport(
+                alumnoId,
+                mes
+            )
 
             if (!pdfBlob) {
                 throw new Error('No se recibió el archivo')
@@ -22,7 +25,7 @@ const useCreateInformeAsistencia = () => {
             const url = window.URL.createObjectURL(pdfBlob)
             const a = document.createElement('a')
             a.href = url
-            a.download = `Informe_Asistencia_${alumnoId}_${mes}.pdf`
+            a.download = fileName
             document.body.appendChild(a)
             a.click()
             a.remove()
