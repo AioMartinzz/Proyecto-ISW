@@ -98,7 +98,7 @@ export async function verificarInasistenciasService(alumnoId) {
       body: {
         email: emailApoderado,
         subject: "Inasistencias",
-        message: `Estimado/a ${apoderado.nombreCompleto}, su pupilo/a ${alumno.nombreCompleto} ha 
+        message: `Estimado/a ${apoderado.usuario.nombreCompleto}, su pupilo/a ${alumno.nombreCompleto} ha 
         acumulado ${inasistenciasMes} inasistencias en el mes actual. Por favor, justifique las inasistencias.`,
       },
     });
