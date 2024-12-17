@@ -1,5 +1,7 @@
 .main-container {
   padding: 20px;
+  padding-top: 20px;
+  min-height: 100vh;
 }
 
 .table-container {
@@ -107,7 +109,7 @@
 
 .register-button {
   padding: 8px 16px;
-  background-color: #28a745 !important;
+  background-color: #10b981 !important;
   color: white !important;
   border: none;
   border-radius: 4px;
@@ -376,4 +378,318 @@
   color: #dc3545;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+}
+
+
+/* Estilos para la tabla */
+.tabulator {
+  border: none !important;
+  background-color: transparent !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.tabulator-header {
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #dee2e6 !important;
+}
+
+.tabulator-header .tabulator-col {
+  background-color: transparent !important;
+  border-right: none !important;
+  padding: 12px 15px !important;
+}
+
+.tabulator-header .tabulator-col-title {
+  color: #6c757d !important;
+  font-weight: 500 !important;
+}
+
+.tabulator-row {
+  border-bottom: 1px solid #dee2e6 !important;
+  background-color: white !important;
+}
+
+.tabulator-row .tabulator-cell {
+  padding: 15px !important;
+  border-right: none !important;
+}
+
+.tabulator-row:hover {
+  background-color: #f8f9fa !important;
+}
+
+/* Estilo para las calificaciones */
+.grade-cell {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 500;
+  min-width: 45px;
+  text-align: center;
+  color: #0f172a;
+}
+
+.grade-low {
+  background-color: #fce8e6;
+  color: #d93025;
+}
+
+/* Estilos para los IDs */
+.id-cell {
+  font-weight: 500;
+  color: #495057;
+}
+
+/* Estilos para la paginación */
+.tabulator-footer {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 20px !important;
+  background-color: #f8f9fa !important;
+  border-top: 1px solid #dee2e6 !important;
+}
+
+.tabulator-paginator {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+.tabulator-page {
+  padding: 6px 12px !important;
+  margin: 0 2px !important;
+  border: 1px solid #dee2e6 !important;
+  background-color: white !important;
+  color: #495057 !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+}
+
+.tabulator-page:hover {
+  background-color: #e9ecef !important;
+  border-color: #dee2e6 !important;
+  color: #212529 !important;
+}
+
+.tabulator-page[disabled] {
+  opacity: 0.5 !important;
+  cursor: default !important;
+}
+
+.tabulator-page.active {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: white !important;
+}
+
+/* Estilos para los botones de acción */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.action-button {
+  padding: 6px 10px;
+  border: 1px solid #dee2e6;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-button:hover {
+  background-color: #e9ecef;
+}
+
+.edit-button {
+  color: #1967d2;
+}
+
+.delete-button {
+  color: #d93025;
+}
+
+/* Estilos para el contador de páginas */
+.tabulator-pages {
+  margin: 0 10px !important;
+}
+
+.tabulator-page-size {
+  padding: 6px 12px !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  background-color: white !important;
+  color: #495057 !important;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin: 0 60px;
+  padding: 32px;
+  border-radius: 12px;
+  background-color: #0d6efd;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+}
+
+.header-text h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.header-text p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 4px 0 0 0;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin: 40px 60px;
+  padding: 0;
+}
+
+.stat-card {
+  padding: 20px 30px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Primera card - Violeta suave */
+.stat-card:nth-child(1) {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+/* Segunda card - Verde menta */
+.stat-card:nth-child(2) {
+  background-color: #10b981;
+  color: white;
+}
+
+/* Tercera card - Índigo suave */
+.stat-card:nth-child(3) {
+  background-color: #6366f1;
+  color: white;
+}
+
+.stat-title {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+/* Ajuste del header principal */
+.header {
+  margin: 20px 20px 0;  /* Ajustado el margen para que sea visible */
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #0d6efd;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.header-text h1 {
+  color: rgb(255, 255, 255);
+  font-size: 28px;
+  font-weight: 600;
+  margin-top: 0px;
+}
+
+.header-text p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 16px;
+  margin: 8px 0 0 0;
+}
+
+.top-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 60px;
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-container input {
+  width: 300px;
+  padding: 8px 12px;
+  border: none;
+  font-size: 14px;
+  color: #64748b;
+  background-color: transparent;
+}
+
+.register-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.register-button:hover {
+  background-color: #0b5ed7;
+}
+
+/* Asegurarnos que la paginación esté a la derecha */
+.tabulator-paginator {
+  margin-left: auto !important;
 }

@@ -13,6 +13,11 @@ const Grades = () => {
   const [selectedGrades, setSelectedGrades] = useState([]);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    totalSubjects: 0,
+    generalAverage: 0
+  });
 
   const {
     handleClickUpdate,
@@ -47,25 +52,37 @@ const Grades = () => {
     {
       title: 'Estudiante ID',
       field: 'estudiante_id',
-      width: '15%',
-      responsive: 0
+      width: '25%',
+      responsive: 0,
+      formatter: function(cell) {
+        return `<span class="id-cell">${cell.getValue()}</span>`;
+      }
     },
     {
       title: 'Asignatura ID',
       field: 'asignatura_id',
-      width: '15%',
-      responsive: 0
+      width: '25%',
+      responsive: 0,
+      formatter: function(cell) {
+        return `<span class="id-cell">${cell.getValue()}</span>`;
+      }
     },
     {
-      title: 'Nota',
+      title: 'Calificación',
       field: 'nota',
       width: '15%',
-      responsive: 0
+      responsive: 0,
+      formatter: function(cell) {
+        const value = cell.getValue();
+        const colorClass = value < 4.0 ? 'grade-low' : '';
+        return `<span class="grade-cell ${colorClass}">${value}</span>`;
+      },
+      hozAlign: "center"
     },
     {
-      title: 'Fecha de Creación',
+      title: 'Fecha',
       field: 'fechacreacion',
-      width: '35%',
+      width: '20%',
       responsive: 1,
       formatter: (cell) => {
         const date = new Date(cell.getValue());
@@ -78,7 +95,6 @@ const Grades = () => {
           second: '2-digit',
           hour12: false
         });
-        return formattedDate.replace(',', '');
       }
     },
     {
@@ -124,6 +140,30 @@ const Grades = () => {
     }
   }, [message]);
 
+  // Función para calcular estadísticas
+  const calculateStats = useCallback(() => {
+    if (!grades.length) return;
+
+    // Obtener estudiantes y materias únicos
+    const uniqueStudents = new Set(grades.map(grade => grade.estudiante_id));
+    const uniqueSubjects = new Set(grades.map(grade => grade.asignatura_id));
+
+    // Calcular promedio general
+    const totalGrades = grades.reduce((sum, grade) => sum + Number(grade.nota), 0);
+    const average = (totalGrades / grades.length).toFixed(1);
+
+    setStats({
+      totalStudents: uniqueStudents.size,
+      totalSubjects: uniqueSubjects.size,
+      generalAverage: average
+    });
+  }, [grades]);
+
+  // Calcular estadísticas cuando cambian las calificaciones
+  useEffect(() => {
+    calculateStats();
+  }, [grades, calculateStats]);
+
   if (loading) {
     return <div>Cargando calificaciones...</div>;
   }
@@ -138,33 +178,67 @@ const Grades = () => {
 
   return (
     <div className="main-container">
+      <div className="header">
+        <div className="header-text">
+          <h1>Portal de Notas</h1>
+        </div>
+      </div>
+
+      <div className="stats-container">
+        <div className="stat-card">
+          <div className="stat-header">
+            <i className="fa-solid fa-user"></i>
+            <p className="stat-title">Total de Estudiantes</p>
+          </div>
+          <p className="stat-value">{stats.totalStudents}</p>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-header">
+            <i className="fa-solid fa-book"></i>
+            <p className="stat-title">Total de Materias</p>
+          </div>
+          <p className="stat-value">{stats.totalSubjects}</p>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-header">
+            <i className="fa-solid fa-calculator"></i>
+            <p className="stat-title">Promedio General</p>
+          </div>
+          <p className="stat-value">{stats.generalAverage}</p>
+        </div>
+      </div>
+
       {message.text && (
         <div className={`message ${message.type}`}>
           {message.text}
         </div>
       )}
-      <div className="table-container">
-        <div className="top-table">
-          <h1 className="title-table">Calificaciones</h1>
-          <div className="filter-actions">
-            <button
-              className="register-button"
-              onClick={() => setIsRegisterModalOpen(true)}
-            >
-              Registrar Calificación
-            </button>
-            <Search
+      <div className="top-controls">
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Buscar por nombre o materia..."
               value={filterStudent}
               onChange={handleFilterChange}
-              placeholder={'Filtrar por ID de estudiante'}
             />
           </div>
+          <button
+            className="register-button"
+            onClick={() => setIsRegisterModalOpen(true)}
+          >
+            <i className="fas fa-plus"></i>
+            Registrar Calificación
+          </button>
         </div>
-        
+      <div className="table-container">
         <GradesTable
           grades={filteredGrades}
           columns={columns}
         />
+      </div>
+      <div className="tabulator-footer">
       </div>
 
       <RegisterGrade 
