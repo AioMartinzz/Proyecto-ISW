@@ -10,6 +10,7 @@ import {
   createAsistenciaReportService,
   createAsistenciaService,
   getAsistenciasByAlumnoService,
+  getAsistenciasByDateService,
   getAsistenciasService,
   updateAsistenciaService,
 } from "../services/asistencia.service.js";
@@ -17,6 +18,7 @@ import {
 import {
   createAsistenciaReportValidation,
   createAsistenciaValidation,
+  getAsistenciasByDateValidation,
   updateAsistenciaValidation,
 } from "../validations/asistencia.validation.js";
 
@@ -57,12 +59,7 @@ export async function getAsistencias(req, res) {
     const asistencias = await getAsistenciasService();
 
     if (!asistencias) {
-      return handleErrorClient(
-        res,
-        404,
-        "No se encontraron asistencias",
-        "No se encontraron asistencias para mostrar",
-      );
+      return { asistencias: [] };
     }
 
     handleSuccess(res, 200, "Asistencias encontradas", asistencias);
@@ -92,10 +89,37 @@ export async function getAsistenciasByAlumno(req, res) {
   }
 }
 
+export async function getAsistenciasByDate(req, res) {
+  try {
+    const { fecha } = req.body;
+
+    const { error } = getAsistenciasByDateValidation.validate(req.body);
+
+    if (error) {
+      return handleErrorClient(
+        res,
+        400,
+        "Datos inválidos",
+        error.details[0].message,
+      );
+    }
+
+    const asistencias = await getAsistenciasByDateService(fecha);
+
+    if (!asistencias || asistencias.length === 0) {
+      [];
+    }
+
+    handleSuccess(res, 200, "Asistencias encontradas", asistencias);
+  } catch (error) {
+    console.error("Error en getAsistenciasByDate:", error);
+    handleErrorServer(res, 500, error.message);
+  }
+}
+
 export async function createAsistenciaReport(req, res) {
   try {
-    const { alumnoId } = req.params;
-    const { mes } = req.body;
+    const { alumnoId, mes } = req.body;
 
     const { errorValidation } = createAsistenciaReportValidation.validate(
       req.body,
@@ -118,12 +142,15 @@ export async function createAsistenciaReport(req, res) {
       return handleErrorServer(res, 500, error.message);
     }
 
+    // Configurar encabezados
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
       `attachment; filename=Informe_Asistencia_${nombreArchivo}.pdf`,
     );
-    res.send(pdfBuffer);
+
+    // Enviar el buffer
+    res.status(200).send(pdfBuffer);
   } catch (error) {
     res.status(500).json({ message: "Error al generar el informe", error });
   }

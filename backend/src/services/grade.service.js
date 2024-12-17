@@ -20,8 +20,8 @@ export async function createGradeService(data) {
 export async function updateGradeService(id, data) {
   try {
     const GradeRepository = AppDataSource.getRepository(Grade);
-    const Grade = await GradeRepository.findOne({ where: { id } });
-    if (!Grade) return [null, "Calificacion no encontrada"];
+    const grade = await GradeRepository.findOne({ where: { id } });
+    if (!grade) return [null, "Calificacion no encontrada"];
 
     GradeRepository.merge(grade, data);
     const updatedGrade = await GradeRepository.save(grade);
@@ -52,9 +52,10 @@ export async function getGradesService() {
   try {
     const GradeRepository = AppDataSource.getRepository(Grade);
     const grades = await GradeRepository.find();
-    return grades;
+    if (!grades || grades.length === 0) return [null, "No hay calificaciones"];
+    return [grades, null];
   } catch (error) {
     console.error("Error al obtener las calificaciones:", error);
-    return [];
+    return [null, "Error interno del servidor"];
   }
 }

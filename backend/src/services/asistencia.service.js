@@ -21,10 +21,16 @@ export async function createAsistenciaService(alumnoId, estado, fecha) {
       return null;
     }
 
-    // Validación para impedir creación de asistencia en una fecha futura
-    const fechaHoy = new Date().toISOString().split("T")[0];
+    // Obtener fecha actual de Chile
+    const fechaChile = new Date().toLocaleDateString("es-CL", {
+      timeZone: "America/Santiago",
+    });
 
-    if (fecha !== fechaHoy) {
+    // Formatear fecha de Chile a yyyy-mm-dd
+    const [dia, mes, anio] = fechaChile.split("-");
+    const fechaChileFormateada = `${anio}-${mes}-${dia}`;
+
+    if (fecha !== fechaChileFormateada) {
       console.error("Solo se puede crear asistencia para hoy");
       return null;
     }
@@ -87,13 +93,15 @@ export async function verificarInasistenciasService(alumnoId) {
     });
 
     const emailApoderado = apoderado.usuario.email;
+    const nombreAlumno = alumno.nombreCompleto;
+    const nombreApoderado = apoderado.usuario.nombreCompleto;
 
-    const resEmail = await sendEmailDefault({
+    await sendEmailDefault({
       body: {
         email: emailApoderado,
         subject: "Inasistencias",
-        message:
-          "Su pupilo ha acumulado 5 inasistencias en el mes actual. Por favor, contacte al liceo para más información.",
+        message: `Estimado/a ${nombreApoderado}, su pupilo/a ${nombreAlumno} ha acumulado ${inasistenciasMes} 
+        inasistencias en el mes actual. Por favor, contacte al colegio para más información.`,
       },
     });
   }
@@ -136,6 +144,22 @@ export async function getAsistenciasByAlumnoService(id_alumno) {
   }
 }
 
+export async function getAsistenciasByDateService(fecha) {
+  try {
+    const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
+
+    const asistencias = await asistenciaRepository.find({
+      where: { fecha: fecha },
+      relations: ["alumno"],
+    });
+
+    return asistencias;
+  } catch (error) {
+    console.error("Error al obtener asistencias:", error);
+    return null;
+  }
+}
+
 export async function createAsistenciaReportService(alumnoId, mes, res) {
   const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
   const alumnoRepository = AppDataSource.getRepository(AlumnoSchema);
@@ -152,6 +176,7 @@ export async function createAsistenciaReportService(alumnoId, mes, res) {
 
   // Obtener el primer y último día del mes seleccionado del año actual
   const now = new Date();
+
   const primerDiaMes = new Date(now.getFullYear(), mes, 1);
   const ultimoDiaMes = new Date(now.getFullYear(), mes + 1, 0);
 

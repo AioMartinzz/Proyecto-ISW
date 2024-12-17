@@ -11,7 +11,12 @@ const router = Router();
 router.post("/login", login);
 
 // Ruta para que el Administrador registre nuevos usuarios con roles específicos
-router.post("/register", authenticateJwt, authorizeRole([ROLES.ADMINISTRADOR]), register);
+router.post(
+  "/register",
+  authenticateJwt,
+  authorizeRole([ROLES.ADMINISTRADOR]),
+  register,
+);
 
 // Ruta para cerrar sesión (disponible para todos los usuarios autenticados)
 router.post("/logout", authenticateJwt, logout);

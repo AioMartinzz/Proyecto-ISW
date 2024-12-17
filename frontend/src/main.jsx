@@ -7,8 +7,7 @@ import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
-import Annotations from '@pages/Annotations'; // Ruta existente para Anotaciones
-import ParentAnnotations from '@pages/ParentAnnotations'; // Importar el componente para apoderados
+import Annotations from '@pages/Annotations'; // Importar el componente de Anotaciones
 import { UserProvider } from '@context/UserContext'; // Importar el contexto de usuario
 import '@styles/styles.css';
 
@@ -38,14 +37,6 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
-            {
-                path: '/annotations-apoderado', // Nueva ruta para Anotaciones de Apoderados
-                element: (
-                    <ProtectedRoute allowedRoles={['apoderado']}>
-                        <ParentAnnotations />
-                    </ProtectedRoute>
-                ),
-            },
         ],
     },
     {
@@ -60,10 +51,11 @@ const router = createBrowserRouter([
         path: '*', // Manejar rutas no existentes
         element: <Error404 />,
     },
-]);
+])
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <UserProvider>
         <RouterProvider router={router} />
     </UserProvider>
 );
+

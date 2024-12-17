@@ -1,4 +1,3 @@
-
 "use strict";
 import { EntitySchema } from "typeorm";
 
@@ -20,8 +19,9 @@ const GradeSchema = new EntitySchema({
       nullable: false,
     },
     nota: {
-      type: "float",
-      nullable: false,
+      type: "numeric",
+      nullable: true,
+      default: 1.0
     },
     fechacreacion: {
       type: "timestamp with time zone",
@@ -35,6 +35,16 @@ const GradeSchema = new EntitySchema({
       nullable: false,
     },
   },
+  indices: [
+    {
+      name: "IDX_GRADE_STUDENT_2024",
+      columns: ["estudiante_id"]
+    },
+    {
+      name: "IDX_GRADE_SUBJECT_2024",
+      columns: ["asignatura_id"]
+    }
+  ]
 });
 
 export default GradeSchema;

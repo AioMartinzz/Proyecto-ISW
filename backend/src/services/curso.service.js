@@ -34,7 +34,8 @@ export async function createCursoService(nombre, nivel, año, profesorJefeId) {
 export async function getCursosService() {
   try {
     const cursoRepository = AppDataSource.getRepository(Curso);
-    const cursos = await cursoRepository.findAll();
+    const cursos = await cursoRepository.find();
+
     return cursos;
   } catch (error) {
     console.error("Error al obtener los cursos:", error);
