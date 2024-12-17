@@ -98,8 +98,8 @@ export async function verificarInasistenciasService(alumnoId) {
       body: {
         email: emailApoderado,
         subject: "Inasistencias",
-        message:
-          "Su pupilo ha acumulado 5 inasistencias en el mes actual. Por favor, contacte al liceo para más información.",
+        message: `Estimado/a ${apoderado.nombreCompleto}, su pupilo/a ${alumno.nombreCompleto} ha 
+        acumulado ${inasistenciasMes} inasistencias en el mes actual. Por favor, justifique las inasistencias.`,
       },
     });
   }
