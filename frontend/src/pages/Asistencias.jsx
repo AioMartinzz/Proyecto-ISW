@@ -27,22 +27,18 @@ export default function Asistencias() {
         loading: alumnosLoading,
         error: alumnosError,
     } = useGetAlumnos()
-    const {
-        handlePostAsistencia,
-        loading: postLoading,
-        error: postError,
-    } = usePostAsistencia()
+
+    const { handlePostAsistencia } = usePostAsistencia()
+
     const {
         asistencias,
         fetchAsistenciasByFecha,
         loading: asistenciasLoading,
         error: asistenciasError,
     } = useGetAsistenciasByFecha()
-    const {
-        handleUpdateAsistencia,
-        loading: updateLoading,
-        error: updateError,
-    } = useUpdateAsistencia()
+
+    const { handleUpdateAsistencia } = useUpdateAsistencia()
+
     const { createInformeAsistencia, loading: creatingInforme } =
         useCreateInformeAsistencia()
 
@@ -159,7 +155,6 @@ export default function Asistencias() {
 
             setShouldFetchAttendance(true)
             await fetchAttendance()
-            console.log('Asistencias actualizadas correctamente')
         } catch (error) {
             console.error('Error al actualizar asistencias:', error)
             setSubmitError(

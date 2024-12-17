@@ -5,13 +5,13 @@ export const getAsistencias = async (cursoId) => {
     return response.data
 }
 
-export const postAsistenciasByFecha = async (fecha) => {
-    const response = await axios.post(`/asistencias/fecha`, { fecha })
+export const postAsistencia = async (asistencia) => {
+    const response = await axios.post(`/asistencias`, asistencia)
     return response.data
 }
 
-export const postAsistencia = async (asistencia) => {
-    const response = await axios.post(`/asistencias`, asistencia)
+export const postAsistenciasByFecha = async (fecha) => {
+    const response = await axios.post(`/asistencias/fecha`, { fecha })
     return response.data
 }
 

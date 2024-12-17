@@ -12,8 +12,3 @@ export const getAlumnos = async () => {
         throw error
     }
 }
-
-export const postAsistencia = async (asistencias) => {
-    const response = await axios.post(`/asistencias`, { asistencias })
-    return response.data
-}
