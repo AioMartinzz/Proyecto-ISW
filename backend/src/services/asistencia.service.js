@@ -177,17 +177,34 @@ export async function createAsistenciaReportService(alumnoId, mes, res) {
   // Obtener el primer y último día del mes seleccionado del año actual
   const now = new Date();
 
-  const primerDiaMes = new Date(now.getFullYear(), mes, 1);
-  const ultimoDiaMes = new Date(now.getFullYear(), mes + 1, 0);
-
-  console.log(
-    "mes: ",
-    mes,
-    "primerdia: ",
-    primerDiaMes,
-    "ultimodia: ",
-    ultimoDiaMes,
+  const primerDiaMes = new Date(now.getFullYear(), mes, 1).toLocaleDateString(
+    "es-CL",
+    {
+      timeZone: "America/Santiago",
+    },
   );
+  const ultimoDiaMes = new Date(
+    now.getFullYear(),
+    mes + 1,
+    0,
+  ).toLocaleDateString("es-CL", {
+    timeZone: "America/Santiago",
+  });
+
+  const mesNombre = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ][mes];
 
   const asistencias = await asistenciaRepository.find({
     where: {
@@ -195,6 +212,10 @@ export async function createAsistenciaReportService(alumnoId, mes, res) {
       fecha: Between(primerDiaMes, ultimoDiaMes),
     },
   });
+
+  const porcentajeAsistencias = asistencias.filter(
+    (asistencia) => asistencia.estado === "Presente",
+  ).length;
 
   const doc = new PDFDocument({ margin: 30 });
 
@@ -218,6 +239,16 @@ export async function createAsistenciaReportService(alumnoId, mes, res) {
       .text(`Curso: ${alumno.curso.nombre}`, { align: "left" })
       .text(`Fecha de Nacimiento: ${alumno.fechaNacimiento}`, { align: "left" })
       .moveDown();
+
+    doc
+      .text(`Mes: ${mesNombre}`, { align: "left" })
+      .text(
+        `Porcentaje de Asistencias: ${((porcentajeAsistencias / asistencias.length) * 100).toFixed(2)}%`,
+        { align: "left" },
+      )
+      .moveDown();
+
+    doc.moveDown();
 
     // Crear encabezados y filas como arrays de arrays
     const table = {
