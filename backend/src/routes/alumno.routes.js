@@ -20,7 +20,7 @@ router.post(
 router.get(
   "/",
   authenticateJwt,
-  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]),
+  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR, ROLES.APODERADO]),
   getAlumnos,
 );
 router.put(
