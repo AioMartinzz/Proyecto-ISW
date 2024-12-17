@@ -10,10 +10,8 @@ import '@styles/grades.css';
 import { useAuth } from '@context/AuthContext';
 
 const Grades = () => {
-  const { grades = [], setGrades, loading, error } = useGetGrades(); // Añadimos manejo de errores
+  const { grades = [], setGrades, loading, error } = useGetGrades();
   const { user } = useAuth();
-  console.log('Role from context:', user?.rol); // Debug log
-  console.log('Full user:', user); // Debug log completo
   const filteredGrades = useFilteredGrades(grades, user);
   const [filterStudent, setFilterStudent] = useState('');
   const [selectedGrades, setSelectedGrades] = useState([]);
@@ -25,9 +23,7 @@ const Grades = () => {
     generalAverage: 0
   });
 
-  const allowedRoles = ['profesor', 'administrador']; // Definir los roles permitidos igual que en main.jsx
-  console.log('Current user role:', user?.rol); // Debug log
-  
+  const allowedRoles = ['profesor', 'administrador'];
   const canAddGrades = allowedRoles.includes(user?.rol?.toLowerCase());
 
   const {
@@ -139,13 +135,12 @@ const Grades = () => {
     }
   }, [message]);
 
-  // Función para calcular estadísticas
   const calculateStats = useCallback(() => {
     if (!grades.length) return;
 
-    // Obtener estudiantes y materias únicos
-    const uniqueStudents = new Set(grades.map(grade => grade.estudiante_id));
-    const uniqueSubjects = new Set(grades.map(grade => grade.asignatura_id));
+    // Obtener estudiantes y materias únicos basados en nombres
+    const uniqueStudents = new Set(grades.map(grade => grade.nombre_estudiante));
+    const uniqueSubjects = new Set(grades.map(grade => grade.nombre_asignatura));
 
     // Calcular promedio general
     const totalGrades = grades.reduce((sum, grade) => sum + Number(grade.nota), 0);
@@ -158,7 +153,6 @@ const Grades = () => {
     });
   }, [grades]);
 
-  // Calcular estadísticas cuando cambian las calificaciones
   useEffect(() => {
     calculateStats();
   }, [grades, calculateStats]);
