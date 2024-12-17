@@ -11,6 +11,7 @@ import { connectDB } from "./config/configDb.js";
 import { createUsers } from "./config/initialSetup.js";
 import { passportJwtSetup } from "./auth/passport.auth.js";
 import gradeRoutes from "./routes/grade.routes.js";
+import profesorRoutes from "./routes/profesor.routes.js"; // Importación de rutas de profesores
 
 async function setupServer() {
   try {
@@ -60,8 +61,10 @@ async function setupServer() {
 
     passportJwtSetup();
 
+    // Rutas
     app.use("/api", indexRoutes);
     app.use("/api", gradeRoutes);
+    app.use("/api/profesores", profesorRoutes); // Configuración de la nueva ruta para profesores
 
     app.listen(PORT, () => {
       console.log(`=> Servidor corriendo en ${HOST}:${PORT}/api`);
@@ -86,5 +89,6 @@ setupAPI()
   .catch((error) =>
     console.log("Error en index.js -> setupAPI(), el error es: ", error),
   );
+
 
 

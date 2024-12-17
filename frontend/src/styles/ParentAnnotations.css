@@ -1,0 +1,27 @@
+.anotaciones-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar los elementos horizontalmente */
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .anotacion-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 80%; /* Ajustar el ancho para centrar mejor */
+    max-width: 600px; /* Establecer un máximo para evitar que sean demasiado grandes */
+    text-align: left; /* Alinear el texto a la izquierda dentro de la tarjeta */
+  }
+  
+  .anotacion-card p {
+    margin: 0.5rem 0;
+  }
+  
+  .anotacion-card p strong {
+    color: #333;
+  }
+  

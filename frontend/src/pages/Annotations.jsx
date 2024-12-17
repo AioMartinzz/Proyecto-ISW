@@ -1,174 +1,221 @@
 import React, { useEffect, useState } from 'react';
+import axios from '@services/root.service'; // Instancia configurada de Axios
 import { getAlumnos } from '@services/alumno.service';
+import { getAnotacionesByProfesor, updateAnotacion } from '@services/anotacion.service';
+import { getProfesores } from '@services/profesor.service';
 import { useUser } from '../context/UserContext';
 import '../styles/Annotations.css';
 
 const Annotations = () => {
-    const { user, setUser } = useUser(); 
-    const [alumnos, setAlumnos] = useState([]); 
-    const [selectedAlumno, setSelectedAlumno] = useState(''); 
-    const [tipo, setTipo] = useState('Positiva'); 
-    const [descripcion, setDescripcion] = useState(''); 
-    const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]); 
+    const { user } = useUser();
+    const [activeView, setActiveView] = useState(''); // Controla la vista activa
+    const [anotaciones, setAnotaciones] = useState([]);
+    const [editAnotacion, setEditAnotacion] = useState(null);
+    const [selectedAlumno, setSelectedAlumno] = useState('');
+    const [tipo, setTipo] = useState('Positiva');
+    const [descripcion, setDescripcion] = useState('');
+    const [fecha, setFecha] = useState('');
+    const [profesorId, setProfesorId] = useState('');
+    const [asignaturaId, setAsignaturaId] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [alumnos, setAlumnos] = useState([]);
 
+    // Obtener alumnos al montar
     useEffect(() => {
         const fetchAlumnos = async () => {
             try {
-                const alumnosData = await getAlumnos(); // Obtén los datos del backend
-                setAlumnos(alumnosData); // Actualiza el estado con los alumnos
+                const alumnosData = await getAlumnos();
+                setAlumnos(alumnosData);
             } catch (error) {
                 console.error('Error al obtener alumnos:', error.message);
             }
         };
-
         fetchAlumnos();
     }, []);
 
-    // Actualizar dinámicamente los datos del contexto para ID y asignatura
-    const handleUserChange = (e) => {
-        const { name, value } = e.target;
-        setUser((prevUser) => ({
-            ...prevUser,
-            [name]: value,
-        }));
+    // Configurar profesorId y asignaturaId
+    useEffect(() => {
+        const fetchProfesorData = async () => {
+            try {
+                if (user && user.id) {
+                    setProfesorId(user.id);
+                    const { data } = await getProfesores();
+                    const profesorData = data.find((prof) => Number(prof.usuarioId) === Number(user.id));
+                    if (profesorData) setAsignaturaId(profesorData.asignaturaId);
+                }
+            } catch (error) {
+                console.error('Error al obtener datos del profesor:', error.message);
+            }
+        };
+        fetchProfesorData();
+    }, [user]);
+
+    // Obtener anotaciones
+    const fetchAnotaciones = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const { data } = await getAnotacionesByProfesor();
+            setAnotaciones(data);
+        } catch (error) {
+            console.error('Error al obtener anotaciones:', error.message);
+            setError('Hubo un problema al obtener las anotaciones.');
+        } finally {
+            setLoading(false);
+        }
     };
 
+    // Guardar anotación editada
+    const handleSaveEdit = async (e) => {
+        e.preventDefault();
+        if (!editAnotacion) return;
+
+        const updatedAnotacion = { descripcion, fecha, tipo };
+        try {
+            await updateAnotacion(editAnotacion.id, updatedAnotacion);
+            alert('Anotación actualizada con éxito.');
+            fetchAnotaciones();
+            setActiveView('ver');
+        } catch (error) {
+            console.error('Error al actualizar anotación:', error.message);
+            alert('Error al actualizar la anotación.');
+        }
+    };
+
+    // Eliminar anotación
+    const handleDelete = async (id) => {
+        if (!window.confirm('¿Está seguro de eliminar esta anotación?')) return;
+        try {
+            await axios.delete(`/anotaciones/${id}`);
+            alert('Anotación eliminada con éxito.');
+            fetchAnotaciones();
+        } catch (error) {
+            console.error('Error al eliminar anotación:', error.message);
+            alert('Error al eliminar la anotación.');
+        }
+    };
+
+    // Cargar anotación para edición
+    const handleEditClick = (anotacion) => {
+        setEditAnotacion(anotacion);
+        setDescripcion(anotacion.descripcion);
+        setFecha(anotacion.fecha);
+        setTipo(anotacion.tipo);
+        setActiveView('editar');
+    };
+
+    // Crear anotación
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!selectedAlumno || !tipo || !descripcion || !fecha || !user.id || !user.subject) {
+        if (!selectedAlumno || !tipo || !descripcion || !fecha || !profesorId || !asignaturaId) {
             alert('Por favor, complete todos los campos.');
             return;
         }
 
-        const anotacion = {
-            tipo,
-            descripcion,
-            fecha,
-            alumnoId: selectedAlumno,
-            profesorId: user.id,
-            asignaturaId: user.subject,
-        };
+        const anotacion = { tipo, descripcion, fecha, alumnoId: selectedAlumno, profesorId, asignaturaId };
 
         try {
-            const token = localStorage.getItem('token'); // Recuperar el token JWT
-
-            if (!token) {
-                alert('Usuario no autenticado. Inicie sesión nuevamente.');
-                return;
-            }
-
-            const response = await fetch('http://146.83.198.35:1311/api/anotaciones', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, // Incluir el token en los encabezados
-                },
-                body: JSON.stringify(anotacion),
-            });
-
-            if (response.ok) {
-                alert('Anotación registrada con éxito');
-            } else {
-                const errorData = await response.json();
-                console.error('Error al registrar la anotación:', errorData);
-                alert('Error al registrar la anotación. Verifique los datos ingresados.');
-            }
+            await axios.post('/anotaciones', anotacion);
+            alert('Anotación registrada con éxito.');
+            fetchAnotaciones();
+            setActiveView('ver');
         } catch (error) {
-            console.error('Error al registrar anotación:', error);
-            alert('Hubo un problema al conectar con el servidor.');
+            console.error('Error al crear anotación:', error.message);
+            alert('Hubo un problema al crear la anotación.');
+        }
+    };
+
+    // Renderizar las diferentes vistas
+    const renderView = () => {
+        switch (activeView) {
+            case 'crear':
+                return (
+                    <div>
+                        <h2>Crear Anotación</h2>
+                        <form onSubmit={handleSubmit}>
+                            <label>Alumno:</label>
+                            <select value={selectedAlumno} onChange={(e) => setSelectedAlumno(e.target.value)}>
+                                <option value="">Seleccione un alumno</option>
+                                {alumnos.map((alumno) => (
+                                    <option key={alumno.id} value={alumno.id}>
+                                        {alumno.nombreCompleto || alumno.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                            <label>ID Profesor:</label>
+                            <input value={profesorId} readOnly />
+                            <label>ID Asignatura:</label>
+                            <input value={asignaturaId} readOnly />
+                            <label>Tipo:</label>
+                            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+                                <option value="Positiva">Positiva</option>
+                                <option value="Negativa">Negativa</option>
+                            </select>
+                            <label>Descripción:</label>
+                            <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
+                            <label>Fecha:</label>
+                            <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+                            <button type="submit">Guardar</button>
+                        </form>
+                    </div>
+                );
+            case 'editar':
+                return (
+                    <div>
+                        <h2>Editar Anotación</h2>
+                        <form onSubmit={handleSaveEdit}>
+                            <label>Descripción:</label>
+                            <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
+                            <label>Tipo:</label>
+                            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+                                <option value="Positiva">Positiva</option>
+                                <option value="Negativa">Negativa</option>
+                            </select>
+                            <label>Fecha:</label>
+                            <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+                            <button type="submit">Guardar Cambios</button>
+                            <button type="button" onClick={() => setActiveView('ver')}>
+                                Cancelar
+                            </button>
+                        </form>
+                    </div>
+                );
+            case 'ver':
+                return (
+                    <div>
+                        <h2>Anotaciones Creadas</h2>
+                        {loading ? (
+                            <p>Cargando...</p>
+                        ) : error ? (
+                            <p style={{ color: 'red' }}>{error}</p>
+                        ) : (
+                            anotaciones.map((anotacion) => (
+                                <div key={anotacion.id} className="anotacion-card">
+                                    <p><strong>Descripción:</strong> {anotacion.descripcion}</p>
+                                    <p><strong>Tipo:</strong> {anotacion.tipo}</p>
+                                    <p><strong>Fecha:</strong> {anotacion.fecha}</p>
+                                    <p><strong>Alumno:</strong> {anotacion.alumno.nombreCompleto}</p>
+                                    <button onClick={() => handleEditClick(anotacion)}>Editar</button>
+                                    <button onClick={() => handleDelete(anotacion.id)}>Eliminar</button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                );
+            default:
+                return <p>Seleccione una opción.</p>;
         }
     };
 
     return (
         <div className="main-content">
-            <h1>Registro de Anotaciones</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="profesorId">ID del Profesor:</label>
-                    <input
-                        id="profesorId"
-                        name="id"
-                        type="text"
-                        value={user?.id || ''}
-                        onChange={handleUserChange} // Actualiza el contexto
-                        placeholder="Escribe el ID del profesor"
-                    />
-                </div>
-
-
-
-                <div>
-                    <label htmlFor="asignatura">Asignatura:</label>
-                    <input
-                        id="asignatura"
-                        name="subject"
-                        type="text"
-                        value={user?.subject || ''}
-                        onChange={handleUserChange} // Actualiza el contexto
-                        placeholder="Escribe la asignatura"
-                    />
-                </div>
-
-                {}
-                <div>
-                    <label htmlFor="alumno">Alumno:</label>
-                    <select
-                        id="alumno"
-                        value={selectedAlumno}
-                        onChange={(e) => setSelectedAlumno(e.target.value)}
-                    >
-                        <option value="" disabled>Seleccione un alumno</option>
-                        {alumnos.map((alumno) => (
-                            <option key={alumno.id} value={alumno.id}>
-                                {alumno.nombreCompleto || alumno.nombre}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                {}
-                <div>
-                    <label htmlFor="tipo">Tipo de Anotación:</label>
-                    <select
-                        id="tipo"
-                        value={tipo}
-                        onChange={(e) => setTipo(e.target.value)}
-                    >
-                        <option value="Positiva">Positiva</option>
-                        <option value="Negativa">Negativa</option>
-                    </select>
-                </div>
-
-                {}
-                <div>
-                    <label htmlFor="descripcion">Descripción:</label>
-                    <textarea
-                        id="descripcion"
-                        value={descripcion}
-                        onChange={(e) => setDescripcion(e.target.value)}
-                        placeholder="Escribe aquí la descripción..."
-                    />
-                </div>
-
-                {}
-                <div>
-                    <label htmlFor="fecha">Fecha:</label>
-                    <input
-                        id="fecha"
-                        type="date"
-                        value={fecha}
-                        onChange={(e) => setFecha(e.target.value)}
-                    />
-                </div>
-
-                {}
-                <button type="submit">Registrar Anotación</button>
-            </form>
+            <h1>Gestión de Anotaciones</h1>
+            <button onClick={() => setActiveView('crear')}>Crear Anotación</button>
+            <button onClick={() => { setActiveView('ver'); fetchAnotaciones(); }}>Ver Anotaciones</button>
+            {renderView()}
         </div>
     );
 };
 
 export default Annotations;
-
-

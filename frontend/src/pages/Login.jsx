@@ -20,6 +20,7 @@ const Login = () => {
             if (response.status === 'Success') {
                 const { token, role } = response.data; // Suponiendo que el backend devuelve "role"
                 localStorage.setItem('token', token); // Guardar token
+                console.log('Token guardado en localStorage:', token); 
                 localStorage.setItem('role', role); // Guardar rol
                 navigate('/home'); // Redirigir al home
             } else if (response.status === 'Client error') {
@@ -78,5 +79,8 @@ const Login = () => {
         </main>
     );
 };
+
+
+
 
 export default Login;

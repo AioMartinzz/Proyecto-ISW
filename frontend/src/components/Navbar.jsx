@@ -44,6 +44,10 @@ const Navbar = () => {
         });
     };
 
+    // Definir la ruta de anotaciones basada en el rol
+    const annotationsPath =
+        userRole === 'profesor' ? '/annotations' : '/annotations-apoderado';
+
     return (
         <nav className="navbar">
             <div className={`nav-menu ${menuOpen ? 'activado' : ''}`}>
@@ -94,7 +98,7 @@ const Navbar = () => {
                     {(userRole === 'profesor' || userRole === 'apoderado') && (
                         <li>
                             <NavLink
-                                to="/annotations"
+                                to={annotationsPath} // Ruta dinámica según el rol
                                 onClick={() => {
                                     setMenuOpen(false);
                                     addActiveClass();

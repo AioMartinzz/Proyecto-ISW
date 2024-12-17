@@ -7,7 +7,8 @@ import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
-import Annotations from '@pages/Annotations'; // Importar el componente de Anotaciones
+import Annotations from '@pages/Annotations'; // Ruta existente para Anotaciones
+import ParentAnnotations from '@pages/ParentAnnotations'; // Importar el componente para apoderados
 import { UserProvider } from '@context/UserContext'; // Importar el contexto de usuario
 import '@styles/styles.css';
 
@@ -30,10 +31,18 @@ const router = createBrowserRouter([
                 ),
             },
             {
-                path: '/annotations', // Ruta para Anotaciones
+                path: '/annotations', // Ruta para Anotaciones generales
                 element: (
-                    <ProtectedRoute allowedRoles={['profesor', 'apoderado']}>
+                    <ProtectedRoute allowedRoles={['profesor']}>
                         <Annotations />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: '/annotations-apoderado', // Nueva ruta para Anotaciones de Apoderados
+                element: (
+                    <ProtectedRoute allowedRoles={['apoderado']}>
+                        <ParentAnnotations />
                     </ProtectedRoute>
                 ),
             },
@@ -58,4 +67,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <RouterProvider router={router} />
     </UserProvider>
 );
-
