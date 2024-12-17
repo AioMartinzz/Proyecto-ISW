@@ -219,7 +219,12 @@ export async function createAsistenciaReportService(alumnoId, mes, res) {
 
   const doc = new PDFDocument({ margin: 30 });
 
-  const nombreArchivo = `Informe_Asistencia_${alumno.nombreCompleto}.pdf`;
+  //Reemplazar espacios en blanco con guin bajo
+  const nombreArchivo =
+    `Informe_Asistencia_${alumno.nombreCompleto}_${mesNombre}.pdf`.replace(
+      /\s/g,
+      "_",
+    );
 
   const pdfBuffer = await new Promise((resolve, reject) => {
     const buffers = [];
