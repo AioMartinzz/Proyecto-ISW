@@ -17,13 +17,7 @@ const useGrades = () => {
 
         // Verificar la estructura del JSON recibido
         if (response && Array.isArray(response) && response[0]?.data) {
-          // Extraer calificaciones del primer índice y asegurar que sea un array plano
-          const extractedGrades = response[0].data?.[0] || [];
-          if (Array.isArray(extractedGrades)) {
-            setGrades(extractedGrades);
-          } else {
-            throw new Error('Los datos de calificaciones no tienen la estructura esperada.');
-          }
+          setGrades(response[0].data);
         } else {
           throw new Error('La estructura de los datos no es la esperada.');
         }
