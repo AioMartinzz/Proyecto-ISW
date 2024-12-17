@@ -58,10 +58,29 @@ export async function deleteGradeService(id) {
 // Servicio para obtener todas las calificaciones
 export async function getGradesService() {
   try {
-    const GradeRepository = AppDataSource.getRepository(Grade);
-    const grades = await GradeRepository.find();
+    const gradeRepository = AppDataSource.getRepository(Grade);
+    const grades = await gradeRepository
+      .createQueryBuilder("grade")
+      .leftJoin("Alumno", "alumno", "grade.estudiante_id = alumno.id")
+      .leftJoin("Asignatura", "asignatura", "grade.asignatura_id = asignatura.id")
+      .select([
+        "grade.grade_id AS grade_id",
+        "grade.nota AS nota",
+        "alumno.nombreCompleto AS nombre_estudiante",
+        "asignatura.nombre AS nombre_asignatura",
+        "grade.fechacreacion AS fechacreacion"
+      ])
+      .getRawMany();
+
+    console.log('Grades from DB:', grades);
+
+    const formattedGrades = grades.map(grade => ({
+      ...grade,
+      nota: grade.nota || 0,
+    }));
+
     if (!grades || grades.length === 0) return [null, "No hay calificaciones"];
-    return [grades, null];
+    return [formattedGrades, null];
   } catch (error) {
     console.error("Error al obtener las calificaciones:", error);
     return [null, "Error interno del servidor"];

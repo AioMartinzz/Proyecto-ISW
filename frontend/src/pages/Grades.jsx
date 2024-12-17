@@ -47,30 +47,24 @@ const Grades = () => {
     if (!filterStudent.trim()) return true;
     
     return (
-      grade.estudiante_id?.toString().includes(filterStudent) ||
-      grade.asignatura_id?.toString().includes(filterStudent) ||
+      grade.nombre_estudiante?.toLowerCase().includes(filterStudent.toLowerCase()) ||
+      grade.nombre_asignatura?.toLowerCase().includes(filterStudent.toLowerCase()) ||
       grade.grade_id?.toString().includes(filterStudent)
     );
   });
 
   const columns = [
     {
-      title: 'Estudiante ID',
-      field: 'estudiante_id',
+      title: 'Estudiante',
+      field: 'nombre_estudiante',
       width: '25%',
       responsive: 0,
-      formatter: function(cell) {
-        return `<span class="id-cell">${cell.getValue()}</span>`;
-      }
     },
     {
-      title: 'Asignatura ID',
-      field: 'asignatura_id',
+      title: 'Asignatura',
+      field: 'nombre_asignatura',
       width: '25%',
       responsive: 0,
-      formatter: function(cell) {
-        return `<span class="id-cell">${cell.getValue()}</span>`;
-      }
     },
     {
       title: 'Calificación',
@@ -91,7 +85,7 @@ const Grades = () => {
       responsive: 1,
       formatter: (cell) => {
         const date = new Date(cell.getValue());
-        const formattedDate = date.toLocaleString('es-CL', {
+        return date.toLocaleString('es-CL', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -128,15 +122,13 @@ const Grades = () => {
 
   const handleRegisterSuccess = () => {
     setMessage({ text: 'Calificación registrada exitosamente', type: 'success' });
-    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   };
 
   const handleRegisterError = (error) => {
-    setMessage({ 
-      text: `Error al registrar la calificación: ${error.message}`, 
-      type: 'error' 
-    });
-    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+    setMessage({ text: `Error al registrar la calificación: ${error}`, type: 'error' });
   };
 
   useEffect(() => {

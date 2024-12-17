@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { registerGrade } from '../services/grade.service';
+import axios from '../services/root.service';
 
 const RegisterGrade = ({ isOpen, onClose, onSuccess, onError }) => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,44 @@ const RegisterGrade = ({ isOpen, onClose, onSuccess, onError }) => {
     nota: ''
   });
   const [errors, setErrors] = useState({});
+  const [estudiantes, setEstudiantes] = useState([]);
+  const [asignaturas, setAsignaturas] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [alumnosResponse, asignaturasResponse] = await Promise.all([
+          axios.get('/alumnos'),
+          axios.get('/asignaturas')
+        ]);
+
+        const alumnosData = Array.isArray(alumnosResponse.data) ? alumnosResponse.data : 
+                          (alumnosResponse.data?.data || []);
+        
+        const asignaturasData = Array.isArray(asignaturasResponse.data) ? asignaturasResponse.data : 
+                               (asignaturasResponse.data?.data || []);
+
+        console.log('Datos alumnos:', alumnosData);
+        console.log('Datos asignaturas:', asignaturasData);
+
+        setEstudiantes(alumnosData);
+        setAsignaturas(asignaturasData);
+      } catch (error) {
+        console.error('Error al cargar datos:', error);
+        if (error.response?.status === 401) {
+          onError('No autorizado. Por favor, inicie sesión nuevamente.');
+        } else if (error.response?.status === 403) {
+          onError('No tiene permisos para acceder a estos datos.');
+        } else {
+          onError('Error al cargar los datos necesarios');
+        }
+      }
+    };
+
+    if (isOpen) {
+      fetchData();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -71,30 +110,38 @@ const RegisterGrade = ({ isOpen, onClose, onSuccess, onError }) => {
         
         <form onSubmit={handleSubmit} className="register-form">
           <div className="form-group">
-            <label htmlFor="estudiante_id">ID del Estudiante:</label>
-            <input
-              type="number"
-              id="estudiante_id"
+            <label htmlFor="estudiante_id">Estudiante:</label>
+            <select
               name="estudiante_id"
               value={formData.estudiante_id}
               onChange={handleChange}
-              placeholder="Ingrese el ID del estudiante"
-            />
+            >
+              <option value="">Seleccione un estudiante</option>
+              {estudiantes && estudiantes.map(estudiante => (
+                <option key={estudiante.id} value={estudiante.id}>
+                  {estudiante.nombreCompleto}
+                </option>
+              ))}
+            </select>
             {errors.estudiante_id && (
               <span className="error-message">{errors.estudiante_id}</span>
             )}
           </div>
 
           <div className="form-group">
-            <label htmlFor="asignatura_id">ID de la Asignatura:</label>
-            <input
-              type="number"
-              id="asignatura_id"
+            <label htmlFor="asignatura_id">Asignatura:</label>
+            <select
               name="asignatura_id"
               value={formData.asignatura_id}
               onChange={handleChange}
-              placeholder="Ingrese el ID de la asignatura"
-            />
+            >
+              <option value="">Seleccione una asignatura</option>
+              {asignaturas && asignaturas.map(asignatura => (
+                <option key={asignatura.id} value={asignatura.id}>
+                  {asignatura.nombre}
+                </option>
+              ))}
+            </select>
             {errors.asignatura_id && (
               <span className="error-message">{errors.asignatura_id}</span>
             )}
