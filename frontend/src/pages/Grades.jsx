@@ -47,25 +47,37 @@ const Grades = () => {
     {
       title: 'Estudiante ID',
       field: 'estudiante_id',
-      width: '15%',
-      responsive: 0
+      width: '25%',
+      responsive: 0,
+      formatter: function(cell) {
+        return `<span class="id-cell">${cell.getValue()}</span>`;
+      }
     },
     {
       title: 'Asignatura ID',
       field: 'asignatura_id',
-      width: '15%',
-      responsive: 0
+      width: '25%',
+      responsive: 0,
+      formatter: function(cell) {
+        return `<span class="id-cell">${cell.getValue()}</span>`;
+      }
     },
     {
-      title: 'Nota',
+      title: 'Calificación',
       field: 'nota',
       width: '15%',
-      responsive: 0
+      responsive: 0,
+      formatter: function(cell) {
+        const value = cell.getValue();
+        const colorClass = value >= 4.0 ? 'grade-medium' : 'grade-low';
+        return `<span class="grade-cell ${colorClass}">${value}</span>`;
+      },
+      hozAlign: "center"
     },
     {
-      title: 'Fecha de Creación',
+      title: 'Fecha',
       field: 'fechacreacion',
-      width: '35%',
+      width: '20%',
       responsive: 1,
       formatter: (cell) => {
         const date = new Date(cell.getValue());
@@ -84,24 +96,33 @@ const Grades = () => {
     {
       title: 'Acciones',
       field: 'actions',
-      width: '20%',
+      width: '15%',
       responsive: 0,
-      render: (rowData) => (
-        <div className="action-buttons">
-          <button 
-            className="action-button edit-button"
-            onClick={() => handleClickUpdate(rowData)}
-          >
-            <i className="fas fa-pen-to-square"></i>
-          </button>
-          <button 
-            className="action-button delete-button"
-            onClick={() => handleDelete(rowData.grade_id)}
-          >
-            <i className="fas fa-trash"></i>
-          </button>
-        </div>
-      )
+      formatter: (cell) => {
+        return `
+          <div class="action-buttons">
+            <button class="action-button edit-button" data-action="edit">
+              <i class="fas fa-pen-to-square"></i>
+            </button>
+            <button class="action-button delete-button" data-action="delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+      },
+      cellClick: function(e, cell) {
+        const button = e.target.closest('button');
+        if (!button) return;
+
+        const action = button.getAttribute('data-action');
+        const rowData = cell.getRow().getData();
+
+        if (action === 'edit') {
+          handleClickUpdate(rowData);
+        } else if (action === 'delete') {
+          handleDelete(rowData.grade_id);
+        }
+      }
     }
   ];
 

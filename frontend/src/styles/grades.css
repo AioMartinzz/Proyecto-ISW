@@ -377,3 +377,148 @@
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
+
+/* Estilos para la tabla */
+.tabulator {
+  border: none !important;
+  background-color: transparent !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.tabulator-header {
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #dee2e6 !important;
+}
+
+.tabulator-header .tabulator-col {
+  background-color: transparent !important;
+  border-right: none !important;
+  padding: 12px 15px !important;
+}
+
+.tabulator-header .tabulator-col-title {
+  color: #6c757d !important;
+  font-weight: 500 !important;
+}
+
+.tabulator-row {
+  border-bottom: 1px solid #dee2e6 !important;
+  background-color: white !important;
+}
+
+.tabulator-row .tabulator-cell {
+  padding: 15px !important;
+  border-right: none !important;
+}
+
+.tabulator-row:hover {
+  background-color: #f8f9fa !important;
+}
+
+/* Estilo para las calificaciones */
+.grade-cell {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 500;
+  min-width: 45px;
+  text-align: center;
+}
+
+.grade-medium {
+  background-color: #e8f0fe;
+  color: #1967d2;
+}
+
+.grade-low {
+  background-color: #fce8e6;
+  color: #d93025;
+}
+
+/* Estilos para los IDs */
+.id-cell {
+  font-weight: 500;
+  color: #495057;
+}
+
+/* Estilos para la paginación */
+.tabulator-footer {
+  background-color: #f8f9fa !important;
+  border-top: 1px solid #dee2e6 !important;
+  padding: 8px !important;
+}
+
+.tabulator-paginator {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.tabulator-page {
+  padding: 6px 12px !important;
+  margin: 0 2px !important;
+  border: 1px solid #dee2e6 !important;
+  background-color: white !important;
+  color: #495057 !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+}
+
+.tabulator-page:hover {
+  background-color: #e9ecef !important;
+  border-color: #dee2e6 !important;
+  color: #212529 !important;
+}
+
+.tabulator-page[disabled] {
+  opacity: 0.5 !important;
+  cursor: default !important;
+}
+
+.tabulator-page.active {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: white !important;
+}
+
+/* Estilos para los botones de acción */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.action-button {
+  padding: 6px 10px;
+  border: 1px solid #dee2e6;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-button:hover {
+  background-color: #e9ecef;
+}
+
+.edit-button {
+  color: #1967d2;
+}
+
+.delete-button {
+  color: #d93025;
+}
+
+/* Estilos para el contador de páginas */
+.tabulator-pages {
+  margin: 0 10px !important;
+}
+
+.tabulator-page-size {
+  padding: 6px 12px !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  background-color: white !important;
+  color: #495057 !important;
+}
