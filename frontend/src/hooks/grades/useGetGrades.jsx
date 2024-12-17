@@ -16,8 +16,8 @@ const useGrades = () => {
         console.log('Datos recibidos:', response);
 
         // Verificar la estructura del JSON recibido
-        if (response && Array.isArray(response) && response[0]?.data) {
-          setGrades(response[0].data);
+        if (response && Array.isArray(response) && response[0] && Array.isArray(response[0][0])) {
+          setGrades(response[0][0]);
         } else {
           throw new Error('La estructura de los datos no es la esperada.');
         }
