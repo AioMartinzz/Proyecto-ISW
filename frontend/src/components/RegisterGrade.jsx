@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { registerGrade } from '../services/grade.service';
 import axios from '../services/root.service';
 
-const RegisterGrade = ({ isOpen, onClose, onSuccess, onError }) => {
+const RegisterGrade = ({ isOpen, onClose, onSuccess, onError, user }) => {
   const [formData, setFormData] = useState({
     estudiante_id: '',
     asignatura_id: '',
@@ -15,19 +15,37 @@ const RegisterGrade = ({ isOpen, onClose, onSuccess, onError }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [alumnosResponse, asignaturasResponse] = await Promise.all([
+        const [alumnosResponse, asignaturasResponse, profesorResponse] = await Promise.all([
           axios.get('/alumnos'),
-          axios.get('/asignaturas')
+          axios.get('/asignaturas'),
+          axios.get('/profesores')
         ]);
 
         const alumnosData = Array.isArray(alumnosResponse.data) ? alumnosResponse.data : 
                           (alumnosResponse.data?.data || []);
         
-        const asignaturasData = Array.isArray(asignaturasResponse.data) ? asignaturasResponse.data : 
-                               (asignaturasResponse.data?.data || []);
+        let asignaturasData = Array.isArray(asignaturasResponse.data) ? asignaturasResponse.data : 
+                             (asignaturasResponse.data?.data || []);
 
-        console.log('Datos alumnos:', alumnosData);
-        console.log('Datos asignaturas:', asignaturasData);
+        if (user?.rol === 'profesor') {
+          const profesorData = Array.isArray(profesorResponse.data) ? profesorResponse.data :
+                             (profesorResponse.data?.data || []);
+          
+          const profesor = profesorData.find(p => p.userId === user.id);
+          
+          console.log('Profesor encontrado:', profesor);
+          console.log('Datos del profesor:', profesorData);
+
+          if (profesor) {
+            asignaturasData = asignaturasData.filter(asignatura => 
+              Number(asignatura.id) === Number(profesor.asignaturaId)
+            );
+            setFormData(prev => ({
+              ...prev,
+              asignatura_id: profesor.asignaturaId
+            }));
+          }
+        }
 
         setEstudiantes(alumnosData);
         setAsignaturas(asignaturasData);
@@ -46,7 +64,7 @@ const RegisterGrade = ({ isOpen, onClose, onSuccess, onError }) => {
     if (isOpen) {
       fetchData();
     }
-  }, [isOpen]);
+  }, [isOpen, user, onError]);
 
   if (!isOpen) return null;
 

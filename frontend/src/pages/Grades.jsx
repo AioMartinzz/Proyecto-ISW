@@ -14,6 +14,7 @@ import 'jspdf-autotable';
 const Grades = () => {
   const { grades = [], setGrades, loading, error } = useGetGrades();
   const { user } = useAuth();
+  console.log(user);
   const filteredGrades = useFilteredGrades(grades, user);
   const [filterStudent, setFilterStudent] = useState('');
   const [selectedGrades, setSelectedGrades] = useState([]);
@@ -374,7 +375,7 @@ const Grades = () => {
           onClose={() => setIsRegisterModalOpen(false)}
           onSuccess={handleRegisterSuccess}
           onError={handleRegisterError}
-          asignaturaId={user?.rol === 'profesor' ? user?.asignatura_id : null}
+          user={user}
         />
       )}
 

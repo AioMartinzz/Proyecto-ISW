@@ -55,11 +55,13 @@ export async function deleteGradeService(id) {
   }
 }
 
-// Servicio para obtener todas las calificaciones
-export async function getGradesService() {
+// Servicio para obtener todas las calificaciones con filtros según el usuario
+export async function getGradesService(user) {
   try {
     const gradeRepository = AppDataSource.getRepository(Grade);
-    const grades = await gradeRepository
+
+    // joins
+    let query = gradeRepository
       .createQueryBuilder("grade")
       .leftJoin("Alumno", "alumno", "grade.estudiante_id = alumno.id")
       .leftJoin("Asignatura", "asignatura", "grade.asignatura_id = asignatura.id")
@@ -69,8 +71,22 @@ export async function getGradesService() {
         "alumno.nombreCompleto AS nombre_estudiante",
         "asignatura.nombre AS nombre_asignatura",
         "grade.fechacreacion AS fechacreacion"
-      ])
-      .getRawMany();
+      ]);
+
+    // caso profesor
+    if (user.rol?.toLowerCase() === 'profesor') {
+      query = query
+        .leftJoin("Profesor", "profesor", "profesor.usuarioId = :userId", { userId: user.id })
+        .andWhere("grade.asignatura_id = profesor.asignaturaId");
+    } else if (user.rol?.toLowerCase() === 'apoderado') {
+      // caso apoderado
+      query = query
+        .leftJoin("Apoderado", "apoderado", "apoderado.usuarioId = :userId", { userId: user.id })
+        .leftJoin("Alumno", "alumno_apoderado", "alumno_apoderado.apoderadoUsuarioId = apoderado.usuarioId")
+        .andWhere("grade.estudiante_id = alumno_apoderado.id");
+    }
+
+    const grades = await query.getRawMany();
 
     console.log('Grades from DB:', grades);
 
