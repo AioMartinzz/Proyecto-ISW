@@ -5,11 +5,7 @@ const Home = () => {
     return (
         <div className="home-container">
             <header className="home-header">
-                <h1>Bienvenido al Sistema Integrado de Gestión Académica</h1>
-                <p>
-                    Explora nuestras funcionalidades y comienza a usar la
-                    aplicación.
-                </p>
+                <h1>Sistema Integrado de Gestión Académica</h1>
             </header>
             <div className="home-features">
                 <div className="feature-card">
