@@ -20,7 +20,7 @@ const Home = () => {
                 <div className="feature-card">
                     <div className="feature-card-content">
                         <i className="fas fa-calendar-check"></i>
-                        <h2>Portal de Asistencia 2</h2>
+                        <h2>Portal de Asistencia</h2>
                         <p>Digitalización de la asistencia.</p>
                         <p>Generación de informes de asistencia.</p>
                         <p>Envío de aviso por correo electrónico.</p>
