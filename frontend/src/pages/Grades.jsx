@@ -8,6 +8,8 @@ import useDeleteGrade from '@hooks/grades/useDeleteGrade';
 import useFilteredGrades from '../hooks/useFilteredGrades';
 import '@styles/grades.css';
 import { useAuth } from '@context/AuthContext';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Grades = () => {
   const { grades = [], setGrades, loading, error } = useGetGrades();
@@ -21,6 +23,11 @@ const Grades = () => {
     totalStudents: 0,
     totalSubjects: 0,
     generalAverage: 0
+  });
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportFilters, setReportFilters] = useState({
+    estudiante: '',
+    asignatura: ''
   });
 
   const allowedRoles = ['profesor', 'administrador'];
@@ -200,6 +207,58 @@ const Grades = () => {
     calculateStats();
   }, [grades, calculateStats]);
 
+  const uniqueStudents = Array.from(new Set(grades.map(grade => grade.nombre_estudiante)));
+  const uniqueSubjects = Array.from(new Set(grades.map(grade => grade.nombre_asignatura)));
+
+  const handleOpenReportModal = () => {
+    setReportFilters({ estudiante: '', asignatura: '' });
+    setIsReportModalOpen(true);
+  };
+
+  const handleCloseReportModal = () => {
+    setIsReportModalOpen(false);
+  };
+
+  const handleReportFilterChange = (e) => {
+    const { name, value } = e.target;
+    setReportFilters(prev => ({ ...prev, [name]: value }));
+  };
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text('Reporte de Calificaciones', 14, 22);
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+
+    // Filtrar las calificaciones según los filtros seleccionados
+    const filteredForReport = grades.filter(grade => {
+      const matchesEstudiante = reportFilters.estudiante ? grade.nombre_estudiante === reportFilters.estudiante : true;
+      const matchesAsignatura = reportFilters.asignatura ? grade.nombre_asignatura === reportFilters.asignatura : true;
+      return matchesEstudiante && matchesAsignatura;
+    });
+
+    // Preparar los datos para la tabla
+    const tableColumn = ["Estudiante", "Asignatura", "Calificación", "Fecha"];
+    const tableRows = [];
+
+    filteredForReport.forEach(grade => {
+      const gradeData = [
+        grade.nombre_estudiante,
+        grade.nombre_asignatura,
+        grade.nota,
+        new Date(grade.fechacreacion).toLocaleString('es-CL')
+      ];
+      tableRows.push(gradeData);
+    });
+
+    doc.autoTable(tableColumn, tableRows, { startY: 30 });
+
+    doc.save('reporte_calificaciones.pdf');
+    setIsReportModalOpen(false);
+  };
+
   if (loading) {
     return <div>Cargando calificaciones...</div>;
   }
@@ -271,15 +330,26 @@ const Grades = () => {
             onSubmit={(e) => e.preventDefault()}
           />
         </div>
-        {canManageGrades && (
-          <button
-            className="register-button"
-            onClick={() => setIsRegisterModalOpen(true)}
-          >
-            <i className="fas fa-plus"></i>
-            Registrar Calificación
-          </button>
-        )}
+        <div className="button-group">
+          {canManageGrades && (
+            <>
+              <button
+                className="register-button"
+                onClick={() => setIsRegisterModalOpen(true)}
+              >
+                <i className="fas fa-plus"></i>
+                Registrar Calificación
+              </button>
+              <button
+                className="report-button"
+                onClick={handleOpenReportModal}
+              >
+                <i className="fas fa-file-pdf"></i>
+                Generar Informe
+              </button>
+            </>
+          )}
+        </div>
       </div>
       {filteredGrades.length === 0 ? (
         <div className="no-results">
@@ -337,6 +407,52 @@ const Grades = () => {
                 Guardar
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {isReportModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Generar Informe</h2>
+            <form onSubmit={(e) => e.preventDefault()}>
+              <div className="form-group">
+                <label htmlFor="estudiante">Seleccionar Estudiante:</label>
+                <select
+                  name="estudiante"
+                  id="estudiante"
+                  value={reportFilters.estudiante}
+                  onChange={handleReportFilterChange}
+                >
+                  <option value="">Todos</option>
+                  {uniqueStudents.map((student, index) => (
+                    <option key={index} value={student}>{student}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="asignatura">Seleccionar Asignatura:</label>
+                <select
+                  name="asignatura"
+                  id="asignatura"
+                  value={reportFilters.asignatura}
+                  onChange={handleReportFilterChange}
+                >
+                  <option value="">Todos</option>
+                  {uniqueSubjects.map((subject, index) => (
+                    <option key={index} value={subject}>{subject}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="modal-footer">
+                <button type="button" onClick={handleCloseReportModal}>
+                  Cancelar
+                </button>
+                <button type="button" onClick={generatePDF}>
+                  Generar PDF
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
