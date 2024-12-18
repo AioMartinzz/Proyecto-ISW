@@ -198,12 +198,15 @@ export default function Asistencias() {
 
     return (
         <div className="asistencias-container">
-            <h1 className="asistencias-title">Control de Asistencias</h1>
+            <h1 className="asistencias-title">
+                <i className="fas fa-check-circle"></i> Control de Asistencias
+            </h1>
 
             <form onSubmit={handleSubmit} className="asistencias-form">
                 <div className="form-group">
                     <label htmlFor="curso" className="form-label">
-                        Selecciona un curso
+                        <i className="fas fa-graduation-cap"></i> Selecciona un
+                        curso
                     </label>
                     <select
                         id="curso"
@@ -222,7 +225,8 @@ export default function Asistencias() {
 
                 <div className="form-group">
                     <label htmlFor="fecha" className="form-label">
-                        Selecciona una fecha
+                        <i className="fas fa-calendar-alt"></i> Selecciona una
+                        fecha
                     </label>
                     <input
                         type="date"
@@ -235,13 +239,21 @@ export default function Asistencias() {
 
                 {selectedCurso && selectedDate && (
                     <div>
-                        <h2 className="alumnos-list-title">Lista de Alumnos</h2>
+                        <h2 className="alumnos-list-title">
+                            <i className="fas fa-list-alt"></i> Lista de Alumnos
+                        </h2>
                         <table className="alumnos-table">
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
-                                    <th>Presente</th>
-                                    <th>Ausente</th>
+                                    <th>
+                                        <i className="fas fa-check-circle"></i>{' '}
+                                        Presente
+                                    </th>
+                                    <th>
+                                        <i className="fas fa-times-circle"></i>{' '}
+                                        Ausente
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -297,14 +309,19 @@ export default function Asistencias() {
                             className="submit-button"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting
-                                ? 'Actualizando...'
-                                : isExistingAttendance
-                                ? 'Actualizar Asistencias'
-                                : 'Crear Asistencias'}
+                            {isSubmitting ? (
+                                <i className="fas fa-spinner fa-spin"></i>
+                            ) : isExistingAttendance ? (
+                                'Actualizar Asistencias'
+                            ) : (
+                                'Crear Asistencias'
+                            )}
                         </button>
                         {submitError && (
-                            <p className="error-message">{submitError}</p>
+                            <p className="error-message">
+                                <i className="fas fa-exclamation-circle"></i>{' '}
+                                {submitError}
+                            </p>
                         )}
                     </div>
                 )}
@@ -314,7 +331,8 @@ export default function Asistencias() {
                 onClick={handleOpenModal}
                 className="generate-report-button"
             >
-                Generar Informe de Asistencia
+                <i className="fas fa-file-alt"></i> Generar Informe de
+                Asistencia
             </button>
 
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
