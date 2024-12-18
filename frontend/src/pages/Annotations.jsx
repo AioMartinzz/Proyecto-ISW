@@ -5,6 +5,8 @@ import { getAnotacionesByProfesor, updateAnotacion } from '@services/anotacion.s
 import { getProfesores } from '@services/profesor.service';
 import { useUser } from '../context/UserContext';
 import '../styles/Annotations.css';
+import useGetProfesorIdByEmail from '../hooks/profesores/useGetProfesores';
+
 
 const Annotations = () => {
     const { user } = useUser();
@@ -20,6 +22,7 @@ const Annotations = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [alumnos, setAlumnos] = useState([]);
+    const { profesorId: hookProfesorId } = useGetProfesorIdByEmail();
 
     // Obtener alumnos al montar
     useEffect(() => {
@@ -34,34 +37,35 @@ const Annotations = () => {
         fetchAlumnos();
     }, []);
 
-
-// Configurar profesorId y asignaturaId
-useEffect(() => {
-    const fetchProfesorData = async () => {
-        try {
-            if (user && user.id) {
-                console.log('Usuario ID:', user.id); // Mostrar el ID del usuario
-                setProfesorId(user.id);
-
-                const { data } = await getProfesores();
-                console.log('Datos de Profesores:', data); // Mostrar los datos obtenidos de profesores
-
-                const profesorData = data.find((prof) => Number(prof.usuarioId) === Number(user.id));
-                if (profesorData) {
-                    setAsignaturaId(profesorData.asignaturaId);
-                    console.log('Profesor Encontrado:', profesorData); // Mostrar datos del profesor encontrado
-                    console.log('Asignatura ID:', profesorData.asignaturaId); // Mostrar asignaturaId asignado
-                } else {
-                    console.log('No se encontró al profesor con usuarioId:', user.id);
+    // Configurar profesorId y asignaturaId
+    useEffect(() => {
+        const fetchAsignatura = async () => {
+            try {
+                if (hookProfesorId) {
+                    setProfesorId(hookProfesorId); // Configura el ID del profesor
+    
+                    // Obtener datos de profesores
+                    const { data } = await getProfesores();
+    
+                    // Buscar profesor con el ID
+                    const profesorData = data.find((prof) => Number(prof.usuarioId) === Number(hookProfesorId));
+    
+                    // Verificar y asignar asignaturaId
+                    if (profesorData?.asignaturaId) {
+                        console.log('Asignatura encontrada:', profesorData.asignaturaId);
+                        setAsignaturaId(profesorData.asignaturaId);
+                    } else {
+                        console.error('AsignaturaId no encontrada en profesorData:', profesorData);
+                    }
                 }
+            } catch (error) {
+                console.error('Error al obtener datos de asignatura:', error.message);
             }
-        } catch (error) {
-            console.error('Error al obtener datos del profesor:', error.message);
-        }
-    };
-    fetchProfesorData();
-}, [user]);
-
+        };
+    
+        fetchAsignatura();
+    }, [hookProfesorId]);
+    
 
     // Obtener anotaciones
     const fetchAnotaciones = async () => {
@@ -157,6 +161,7 @@ useEffect(() => {
                             </select>
                             <label>ID Profesor:</label>
                             <input value={profesorId} readOnly />
+
                             <label>ID Asignatura:</label>
                             <input value={asignaturaId} readOnly />
                             <label>Tipo:</label>
