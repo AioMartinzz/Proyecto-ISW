@@ -32,9 +32,6 @@ const RegisterGrade = ({ isOpen, onClose, onSuccess, onError, user }) => {
                              (profesorResponse.data?.data || []);
           
           const profesor = profesorData.find(p => p.userId === user.id);
-          
-          console.log('Profesor encontrado:', profesor);
-          console.log('Datos del profesor:', profesorData);
 
           if (profesor) {
             asignaturasData = asignaturasData.filter(asignatura => 

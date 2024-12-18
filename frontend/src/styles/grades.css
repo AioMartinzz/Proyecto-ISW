@@ -484,7 +484,7 @@
   color: white !important;
 }
 
-/* Estilos para los botones de acción */
+/* Estilos para los botones de la columna acciones */
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -596,19 +596,19 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Primera card - Violeta suave */
+/* Primera card violeta suave */
 .stat-card:nth-child(1) {
   background-color: #8b5cf6;
   color: white;
 }
 
-/* Segunda card - Verde menta */
+/* Segunda card verde menta */
 .stat-card:nth-child(2) {
   background-color: #10b981;
   color: white;
 }
 
-/* Tercera card - Índigo suave */
+/* Tercera card indigo suave */
 .stat-card:nth-child(3) {
   background-color: #6366f1;
   color: white;
@@ -691,7 +691,7 @@
   background-color: #0b5ed7;
 }
 
-/* Asegurarnos que la paginación esté a la derecha */
+/* Paginación */
 .tabulator-paginator {
   margin-left: auto !important;
 }

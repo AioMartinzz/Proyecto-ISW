@@ -3,7 +3,7 @@ import { AppDataSource } from "../config/configDb.js";
 import Grade from "../entity/grade.entity.js";
 
 
-// Servicio para crear una nueva Grade
+// Servicio para crear una nueva nota
 export async function createGradeService(data) {
   try {
     const GradeRepository = AppDataSource.getRepository(Grade);
@@ -16,7 +16,7 @@ export async function createGradeService(data) {
   }
 }
 
-// Servicio para actualizar una Calificacion
+// Servicio para actualizar una nota
 export async function updateGradeService(id, data) {
   try {
     const GradeRepository = AppDataSource.getRepository(Grade);
@@ -32,7 +32,7 @@ export async function updateGradeService(id, data) {
   }
 }
 
-// Servicio para eliminar una calificacion
+// Servicio para eliminar una nota
 export async function deleteGradeService(id) {
   try {
     const GradeRepository = AppDataSource.getRepository(Grade);
@@ -55,7 +55,7 @@ export async function deleteGradeService(id) {
   }
 }
 
-// Servicio para obtener todas las calificaciones con filtros según el usuario
+// Servicio para obtener todas las notas con filtros según el usuario
 export async function getGradesService(user) {
   try {
     const gradeRepository = AppDataSource.getRepository(Grade);

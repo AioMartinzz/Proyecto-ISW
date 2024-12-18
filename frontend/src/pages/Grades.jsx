@@ -174,7 +174,7 @@ const Grades = () => {
       setStats({
         totalStudents: 0, // No se muestra 
         totalSubjects: uniqueSubjects.size,
-        generalAverage: generationAverage // Cambia el nombre a promedio alumno
+        generalAverage: generationAverage // Cambia el nombre a promedio alumno (llama a la otra constante)
       });
       return;
     }

@@ -13,15 +13,14 @@ const useGrades = () => {
 
       try {
         const response = await getGradesService();
-        console.log('Datos recibidos:', response);
 
-        // Manejo de diferentes estructuras de respuesta
+        // Manejo de diferentes estructuras de respuesta en caso de error de formato
         if (response && Array.isArray(response)) {
-          // Caso 1: Estructura del servidor
+          // Caso Estructura del servidor
           if (response[0]?.data && Array.isArray(response[0].data)) {
             setGrades(response[0].data);
           }
-          // Caso 2: Estructura local
+          // Caso Estructura local
           else if (response[0] && Array.isArray(response[0][0])) {
             setGrades(response[0][0]);
           } 
