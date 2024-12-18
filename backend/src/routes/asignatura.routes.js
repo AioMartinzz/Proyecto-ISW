@@ -38,7 +38,7 @@ router.delete(
 router.get(
   "/",
   authenticateJwt,
-  authorizeRole([ROLES.ADMINISTRADOR]),
+  authorizeRole([ROLES.ADMINISTRADOR, ROLES.PROFESOR]),
   getAllAsignaturas,
 );
 
