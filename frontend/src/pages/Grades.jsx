@@ -268,6 +268,26 @@ const Grades = () => {
     return <div>Error al cargar calificaciones: {error}</div>;
   }
 
+  // Verificar si hay calificaciones para apoderados
+  const noGrades = !grades || 
+                   grades.length === 0 || 
+                   (Array.isArray(grades) && grades[1] === 'No hay calificaciones');
+
+  if (user?.rol?.toLowerCase() === 'apoderado' && noGrades) {
+    return (
+      <div className="main-container">
+        <div className="header">
+          <div className="header-text">
+            <h1>Portal de notas apoderados</h1>
+          </div>
+        </div>
+        <div className="no-data-message">
+          No hay calificaciones registradas para el estudiante.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="main-container">
       <div className="header">

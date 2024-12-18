@@ -86,10 +86,10 @@ const RegisterGrade = ({ isOpen, onClose, onSuccess, onError, user }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.estudiante_id) {
-      newErrors.estudiante_id = 'El ID del estudiante es requerido';
+      newErrors.estudiante_id = 'Debe seleccionar un estudiante';
     }
     if (!formData.asignatura_id) {
-      newErrors.asignatura_id = 'El ID de la asignatura es requerido';
+      newErrors.asignatura_id = 'Debe seleccionar una asignatura';
     }
     if (!formData.nota) {
       newErrors.nota = 'La calificación es requerida';
