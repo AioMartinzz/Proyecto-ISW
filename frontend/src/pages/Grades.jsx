@@ -383,11 +383,6 @@ const Grades = () => {
           <div className="modal-content">
             <h2>Modificar Calificación</h2>
             
-            <div className="grade-info">
-              <p><strong>Estudiante ID:</strong> {selectedGrade?.estudiante_id}</p>
-              <p><strong>Asignatura ID:</strong> {selectedGrade?.asignatura_id}</p>
-            </div>
-
             <label className="grade-label">Nueva calificación:</label>
             <input
               type="number"
@@ -395,7 +390,7 @@ const Grades = () => {
               max="7.0"
               step="0.1"
               value={selectedGrade?.nota || ''}
-              onChange={(e) => setSelectedGrade({...selectedGrade, nota: e.target.value})}
+              onChange={(e) => setSelectedGrade({ ...selectedGrade, nota: e.target.value })}
               placeholder="Ingrese la nueva calificación"
             />
             
