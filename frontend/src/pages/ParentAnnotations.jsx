@@ -8,6 +8,7 @@ const ParentAnnotations = () => {
   const [anotaciones, setAnotaciones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [noAnotacionesMessage, setNoAnotacionesMessage] = useState(null);
 
   useEffect(() => {
     const fetchAnotaciones = async () => {
@@ -16,13 +17,13 @@ const ParentAnnotations = () => {
       try {
         setLoading(true);
         setError(null);
+        setNoAnotacionesMessage(null);
 
         const token = localStorage.getItem("token");
         if (!token) {
           throw new Error("Token no encontrado.");
         }
 
-        console.log(`Llamando a la URL: /api/anotaciones/apoderado/${alumnoId}`);
         const response = await getAnotaciones(alumnoId, token);
 
         const data = Array.isArray(response)
@@ -32,15 +33,14 @@ const ParentAnnotations = () => {
           : null;
 
         if (!data) {
-          console.error(
-            "Se esperaba un arreglo de anotaciones, pero se recibió:",
-            response
-          );
           throw new Error("Estructura de datos inesperada en la respuesta.");
         }
 
-        console.log("Datos obtenidos:", data);
-        setAnotaciones(data);
+        if (data.length === 0) {
+          setNoAnotacionesMessage("No se encuentran anotaciones para el alumno.");
+        } else {
+          setAnotaciones(data);
+        }
       } catch (err) {
         console.error("Error al obtener anotaciones:", err);
         setError(err.message || "Error al obtener anotaciones.");
@@ -63,7 +63,9 @@ const ParentAnnotations = () => {
   return (
     <div>
       <h1>Anotaciones del Alumno</h1>
-      {anotaciones.length === 0 ? (
+      {noAnotacionesMessage ? (
+        <p>{noAnotacionesMessage}</p>
+      ) : anotaciones.length === 0 ? (
         <p>No hay anotaciones disponibles.</p>
       ) : (
         <div className="anotaciones-container">

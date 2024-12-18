@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; 
 import { getProfesores } from '@services/profesor.service';
 import { getUsers } from '@services/user.service';
 import { getAsignaturas } from '@services/asignatura.service.js'; // Importar el nuevo servicio
@@ -13,7 +13,6 @@ const decodeToken = (token) => {
                 .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
                 .join('')
         );
-        console.log('Token decodificado:', JSON.parse(jsonPayload));
         return JSON.parse(jsonPayload);
     } catch (error) {
         console.error('Error al decodificar el token:', error);
@@ -40,9 +39,6 @@ const useGetProfesorIdByEmail = () => {
             const nombreCompletoToken = decodedToken.nombreCompleto; // Obtener el nombre completo del token
             if (!emailProfesor) throw new Error('Correo no encontrado en el token.');
 
-            console.log('Correo del profesor:', emailProfesor);
-            console.log('Nombre Completo del token:', nombreCompletoToken);
-
             // Guardar el nombre completo del token
             setNombreCompleto(nombreCompletoToken);
 
@@ -63,8 +59,6 @@ const useGetProfesorIdByEmail = () => {
 
             if (!profesorUsuario) throw new Error('No se encontró un profesor con el correo proporcionado.');
 
-            console.log('Usuario profesor encontrado:', profesorUsuario);
-
             // Obtener todos los profesores
             const profesoresResponse = await getProfesores();
             const profesoresData = Array.isArray(profesoresResponse)
@@ -79,8 +73,6 @@ const useGetProfesorIdByEmail = () => {
 
             if (!profesorData) throw new Error('No se encontró ningún profesor asociado a este usuario.');
 
-            console.log('Profesor encontrado:', profesorData);
-
             setProfesorId(profesorData.usuarioId);
             setAsignaturaId(profesorData.asignaturaId);
 
@@ -90,7 +82,6 @@ const useGetProfesorIdByEmail = () => {
 
             if (asignatura) {
                 setNombreAsignatura(asignatura.nombre);
-                console.log('Nombre de la asignatura:', asignatura.nombre);
             } else {
                 console.warn('No se encontró la asignatura para el ID:', profesorData.asignaturaId);
             }
@@ -107,4 +98,5 @@ const useGetProfesorIdByEmail = () => {
 };
 
 export default useGetProfesorIdByEmail;
+
 

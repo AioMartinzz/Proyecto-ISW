@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import axios from '@services/root.service'; // Instancia configurada de Axios
+import axios from '@services/root.service';
 import { getAlumnos } from '@services/alumno.service';
 import { getAnotacionesByProfesor, updateAnotacion } from '@services/anotacion.service';
 import { getProfesores } from '@services/profesor.service';
 import { useUser } from '../context/UserContext';
 import '../styles/Annotations.css';
 import useGetProfesorIdByEmail from '../hooks/profesores/useGetProfesores';
-
 
 const Annotations = () => {
     const { user } = useUser();
@@ -57,7 +56,6 @@ const Annotations = () => {
     
                     // Verificar y asignar asignaturaId
                     if (profesorData?.asignaturaId) {
-                        console.log('Asignatura encontrada:', profesorData.asignaturaId);
                         setAsignaturaId(profesorData.asignaturaId);
                     } else {
                         console.error('AsignaturaId no encontrada en profesorData:', profesorData);
@@ -166,14 +164,12 @@ const renderView = () => {
                         </select>
 
                         <label>Profesor:</label>
-                            {/* Mostrar el nombre, enviar el ID */}
                             <input
                                 value={nombreCompleto ? `${nombreCompleto} (${profesorId})` : profesorId}
                                 readOnly
                             />
 
                         <label>Asignatura:</label>
-                            {/* Mostrar el nombre de asignatura, enviar el ID */}
                             <input
                                 value={nombreAsignatura ? `${nombreAsignatura} (${asignaturaId})` : asignaturaId}
                                 readOnly
@@ -242,9 +238,10 @@ const renderView = () => {
                                 <p>
                                     <strong>Alumno:</strong> {anotacion.alumno.nombreCompleto}
                                 </p>
-                                <button onClick={() => handleEditClick(anotacion)}>Editar</button>
-                                <button onClick={() => handleDelete(anotacion.id)}>Eliminar</button>
-                            </div>
+                                <button onClick={() => handleEditClick(anotacion)}><i className="fas fa-pen-to-square"></i>Editar</button>
+                                <button onClick={() => handleDelete(anotacion.id)}>
+                <i className="fas fa-trash"></i> Eliminar
+              </button>                            </div>
                         ))
                     )}
                 </div>
