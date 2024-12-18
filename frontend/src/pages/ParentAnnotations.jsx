@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import useGetAlumnos from "../hooks/alumnos/useGetAlumnoIdByApoderado";
+import useGetAlumnoIdByApoderado from "../hooks/alumnos/useGetAlumnoIdByApoderado";
 import { getAnotaciones } from "../services/anotacion.service";
 import "@styles/ParentAnnotations.css";
 
-
 const ParentAnnotations = () => {
-  const { alumnoId, loading: loadingAlumno, error: errorAlumno } = useGetAlumnos();
+  const { alumnoId, loading: loadingAlumno, error: errorAlumno } = useGetAlumnoIdByApoderado();
   const [anotaciones, setAnotaciones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

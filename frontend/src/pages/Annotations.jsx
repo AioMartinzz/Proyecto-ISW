@@ -34,22 +34,34 @@ const Annotations = () => {
         fetchAlumnos();
     }, []);
 
-    // Configurar profesorId y asignaturaId
-    useEffect(() => {
-        const fetchProfesorData = async () => {
-            try {
-                if (user && user.id) {
-                    setProfesorId(user.id);
-                    const { data } = await getProfesores();
-                    const profesorData = data.find((prof) => Number(prof.usuarioId) === Number(user.id));
-                    if (profesorData) setAsignaturaId(profesorData.asignaturaId);
+
+// Configurar profesorId y asignaturaId
+useEffect(() => {
+    const fetchProfesorData = async () => {
+        try {
+            if (user && user.id) {
+                console.log('Usuario ID:', user.id); // Mostrar el ID del usuario
+                setProfesorId(user.id);
+
+                const { data } = await getProfesores();
+                console.log('Datos de Profesores:', data); // Mostrar los datos obtenidos de profesores
+
+                const profesorData = data.find((prof) => Number(prof.usuarioId) === Number(user.id));
+                if (profesorData) {
+                    setAsignaturaId(profesorData.asignaturaId);
+                    console.log('Profesor Encontrado:', profesorData); // Mostrar datos del profesor encontrado
+                    console.log('Asignatura ID:', profesorData.asignaturaId); // Mostrar asignaturaId asignado
+                } else {
+                    console.log('No se encontró al profesor con usuarioId:', user.id);
                 }
-            } catch (error) {
-                console.error('Error al obtener datos del profesor:', error.message);
             }
-        };
-        fetchProfesorData();
-    }, [user]);
+        } catch (error) {
+            console.error('Error al obtener datos del profesor:', error.message);
+        }
+    };
+    fetchProfesorData();
+}, [user]);
+
 
     // Obtener anotaciones
     const fetchAnotaciones = async () => {
