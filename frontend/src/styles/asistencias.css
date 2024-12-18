@@ -41,10 +41,8 @@
 
 .form-select,
 .form-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .alumnos-list-title {
@@ -116,6 +114,9 @@ input[type='checkbox'] {
     background-color: #003d80;
 }
 
+.modal-content {
+    position: relative;
+}
 .modal-content h2 {
     margin-bottom: 20px;
 }
@@ -154,4 +155,17 @@ input[type='checkbox'] {
 .modal-content button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+}
+
+.modal-close {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0px 0px;
+    transition: color 0.2s ease;
 }
