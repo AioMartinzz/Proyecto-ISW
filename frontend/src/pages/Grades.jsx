@@ -174,7 +174,7 @@ const Grades = () => {
       setStats({
         totalStudents: 0, // No se muestra 
         totalSubjects: uniqueSubjects.size,
-        generalAverage: generationAverage // Cambia el nombre a promedio generación
+        generalAverage: generationAverage // Cambia el nombre a promedio alumno
       });
       return;
     }
@@ -315,7 +315,7 @@ const Grades = () => {
           <div className="stat-header">
             <i className="fa-solid fa-calculator"></i>
             <p className="stat-title">
-              {user?.rol?.toLowerCase() === 'apoderado' ? 'Promedio Generación' : 'Promedio General'}
+              {user?.rol?.toLowerCase() === 'apoderado' ? 'Promedio alumno' : 'Promedio General'}
             </p>
           </div>
           <p className="stat-value">{stats.generalAverage}</p>
