@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import Search from '../components/Search';
 import RegisterGrade from '../components/RegisterGrade';
 import GradesTable from '../components/GradesTable';
 import useGetGrades from '@hooks/grades/useGetGrades';
@@ -14,10 +13,8 @@ import 'jspdf-autotable';
 const Grades = () => {
   const { grades = [], setGrades, loading, error } = useGetGrades();
   const { user } = useAuth();
-  console.log(user);
   const filteredGrades = useFilteredGrades(grades, user);
   const [filterStudent, setFilterStudent] = useState('');
-  const [selectedGrades, setSelectedGrades] = useState([]);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [stats, setStats] = useState({
@@ -51,13 +48,6 @@ const Grades = () => {
     setFilterStudent(value);
   };
 
-  const handleSelectionChange = useCallback(
-    (selectedItems) => {
-      setSelectedGrades(selectedItems);
-      setSelectedGrade(selectedItems[0]);
-    },
-    [setSelectedGrade]
-  );
 
   const baseColumns = [
     {
@@ -148,16 +138,16 @@ const Grades = () => {
 
   const filterGradesByRole = useCallback((grades) => {
     if (!user || !grades) return [];
-    
+    // Filtrar notas por rol de usuario
     switch (user.rol?.toLowerCase()) {
       case 'apoderado':
-        // Filtrar solo las notas del estudiante asociado al apoderado
+        // solo las notas del estudiante asociado 
         return grades.filter(grade => grade.estudiante_id === user.estudiante_id);
       case 'profesor':
-        // Si es profesor, mostrar solo las notas de su asignatura
+        // Ssolo las notas de su asignatura asociada
         return grades.filter(grade => grade.asignatura_id === user.asignatura_id);
       case 'administrador':
-        // El administrador puede ver todas las notas
+        // puede ver todas las notas
         return grades;
       default:
         return [];
@@ -167,14 +157,12 @@ const Grades = () => {
   const calculateStats = useCallback(() => {
     if (!grades.length) return;
 
-    // Filtrar las notas según el rol antes de calcular estadísticas
+    // Filtrar las notas por rol de usuario
     const filteredGrades = filterGradesByRole(grades);
 
-    // Para apoderado, calcular el promedio de generación
+    // caso apoderado
     if (user?.rol?.toLowerCase() === 'apoderado') {
       const uniqueSubjects = new Set(filteredGrades.map(grade => grade.nombre_asignatura));
-      
-      // Obtener todas las notas de la misma asignatura del estudiante
       const generationGrades = grades.filter(grade => 
         filteredGrades[0]?.asignatura_id === grade.asignatura_id
       );
@@ -184,14 +172,14 @@ const Grades = () => {
         : 0;
 
       setStats({
-        totalStudents: 0, // No se mostrará
+        totalStudents: 0, // No se muestra 
         totalSubjects: uniqueSubjects.size,
-        generalAverage: generationAverage // Ahora es promedio generación
+        generalAverage: generationAverage // Cambia el nombre a promedio generación
       });
       return;
     }
 
-    // Resto del código existente para otros roles...
+    // Otros roles que no sea apoderado 
     const uniqueStudents = new Set(filteredGrades.map(grade => grade.nombre_estudiante));
     const uniqueSubjects = new Set(filteredGrades.map(grade => grade.nombre_asignatura));
     const totalGrades = filteredGrades.reduce((sum, grade) => sum + Number(grade.nota), 0);
@@ -203,7 +191,7 @@ const Grades = () => {
       generalAverage: average
     });
   }, [grades, filterGradesByRole, user]);
-
+  // STATS
   useEffect(() => {
     calculateStats();
   }, [grades, calculateStats]);
@@ -233,14 +221,14 @@ const Grades = () => {
     doc.setFontSize(12);
     doc.setTextColor(100);
 
-    // Filtrar las calificaciones según los filtros seleccionados
+    // Filtrar las notas en base a los filtros
     const filteredForReport = grades.filter(grade => {
       const matchesEstudiante = reportFilters.estudiante ? grade.nombre_estudiante === reportFilters.estudiante : true;
       const matchesAsignatura = reportFilters.asignatura ? grade.nombre_asignatura === reportFilters.asignatura : true;
       return matchesEstudiante && matchesAsignatura;
     });
 
-    // Preparar los datos para la tabla
+    // Formato de la tabla con los encabezados
     const tableColumn = ["Estudiante", "Asignatura", "Calificación", "Fecha"];
     const tableRows = [];
 
@@ -253,7 +241,7 @@ const Grades = () => {
       ];
       tableRows.push(gradeData);
     });
-
+    //crear tabla en  PDF de manera automática usando la libreria
     doc.autoTable(tableColumn, tableRows, { startY: 30 });
 
     doc.save('reporte_calificaciones.pdf');
@@ -268,10 +256,8 @@ const Grades = () => {
     return <div>Error al cargar calificaciones: {error}</div>;
   }
 
-  // Verificar si hay calificaciones para apoderados
-  const noGrades = !grades || 
-                   grades.length === 0 || 
-                   (Array.isArray(grades) && grades[1] === 'No hay calificaciones');
+  // Verificar si existen calificaciones asociadas al usuario siendo este apoderado
+  const noGrades = !grades?.length || grades === 'No hay calificaciones' || (Array.isArray(grades) && grades[1] === 'No hay calificaciones');
 
   if (user?.rol?.toLowerCase() === 'apoderado' && noGrades) {
     return (
@@ -293,7 +279,7 @@ const Grades = () => {
       <div className="header">
         <div className="header-text">
           <h1>
-            {`Portal de notas ${
+            {`Portal de notas ${ //Cambiar el header dependiendo del rol del usuario
               user?.rol?.toLowerCase() === 'administrador'
                 ? 'administrador'
                 : user?.rol?.toLowerCase() === 'profesor'
@@ -399,7 +385,7 @@ const Grades = () => {
         />
       )}
 
-      {isPopupOpen && (
+      {isPopupOpen && ( //Modal modificar notas
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Modificar Calificación</h2>
@@ -426,8 +412,8 @@ const Grades = () => {
           </div>
         </div>
       )}
-
-      {isReportModalOpen && (
+      
+      {isReportModalOpen && ( //Modal PDF
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Generar Informe</h2>
