@@ -10,6 +10,7 @@ const Home = () => {
             <div className="home-features">
                 <div className="feature-card">
                     <div className="feature-card-content">
+                        <i className="fas fa-clipboard-list"></i>
                         <h2>Portal Anotaciones</h2>
                         <p>Digitalizacion de anotaciones.</p>   
                         <p>Descripcion de las anotaciones.</p>
@@ -18,6 +19,7 @@ const Home = () => {
                 </div>
                 <div className="feature-card">
                     <div className="feature-card-content">
+                        <i className="fas fa-calendar-check"></i>
                         <h2>Portal de Asistencia 2</h2>
                         <p>Digitalización de la asistencia.</p>
                         <p>Generación de informes de asistencia.</p>
@@ -26,6 +28,7 @@ const Home = () => {
                 </div>
                 <div className="feature-card">
                     <div className="feature-card-content">
+                        <i className="fa-solid fa-calculator"></i>
                         <h2>Portal de Notas</h2>
                         <p>Digitalización de las notas de los estudiantes.</p>
                         <p>Estadisticas varias.</p>
