@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getProfesores } from '@services/profesor.service';
 import { getUsers } from '@services/user.service';
+import { getAsignaturas } from '@services/asignatura.service.js'; // Importar el nuevo servicio
 
 const decodeToken = (token) => {
     try {
@@ -23,6 +24,8 @@ const decodeToken = (token) => {
 const useGetProfesorIdByEmail = () => {
     const [profesorId, setProfesorId] = useState(null);
     const [asignaturaId, setAsignaturaId] = useState(null);
+    const [nombreAsignatura, setNombreAsignatura] = useState(''); // Estado para el nombre de la asignatura
+    const [nombreCompleto, setNombreCompleto] = useState(null); // Estado para el nombre completo
 
     const fetchProfesorIdByEmail = async () => {
         try {
@@ -34,24 +37,22 @@ const useGetProfesorIdByEmail = () => {
             if (!decodedToken) throw new Error('Token inválido o mal formado.');
 
             const emailProfesor = decodedToken.email?.trim().toLowerCase();
+            const nombreCompletoToken = decodedToken.nombreCompleto; // Obtener el nombre completo del token
             if (!emailProfesor) throw new Error('Correo no encontrado en el token.');
 
             console.log('Correo del profesor:', emailProfesor);
+            console.log('Nombre Completo del token:', nombreCompletoToken);
+
+            // Guardar el nombre completo del token
+            setNombreCompleto(nombreCompletoToken);
 
             // Obtener todos los usuarios
             const usersResponse = await getUsers();
             const usuarios = Array.isArray(usersResponse)
                 ? usersResponse
-                : Array.isArray(usersResponse.data)
-                ? usersResponse.data
-                : null;
+                : usersResponse.data || null;
 
-            if (!usuarios) {
-                console.error('Estructura de datos inesperada en la respuesta de usuarios:', usersResponse);
-                throw new Error('Estructura de datos inesperada.');
-            }
-
-            console.log('Usuarios obtenidos:', usuarios);
+            if (!usuarios) throw new Error('Estructura de datos inesperada.');
 
             // Buscar profesor por correo
             const profesorUsuario = usuarios.find(
@@ -60,10 +61,7 @@ const useGetProfesorIdByEmail = () => {
                     usuario.rol?.toLowerCase() === 'profesor'
             );
 
-            if (!profesorUsuario) {
-                console.error('No se encontró un profesor con el correo proporcionado:', emailProfesor);
-                throw new Error('No se encontró un profesor con el correo proporcionado.');
-            }
+            if (!profesorUsuario) throw new Error('No se encontró un profesor con el correo proporcionado.');
 
             console.log('Usuario profesor encontrado:', profesorUsuario);
 
@@ -71,33 +69,31 @@ const useGetProfesorIdByEmail = () => {
             const profesoresResponse = await getProfesores();
             const profesoresData = Array.isArray(profesoresResponse)
                 ? profesoresResponse
-                : Array.isArray(profesoresResponse.data)
-                ? profesoresResponse.data
-                : null;
+                : profesoresResponse.data || null;
 
-            if (!profesoresData) {
-                console.error('Estructura de datos inesperada en la respuesta de profesores:', profesoresResponse);
-                throw new Error('Estructura de datos inesperada.');
-            }
+            if (!profesoresData) throw new Error('Estructura de datos inesperada.');
 
-            console.log('Datos de profesores obtenidos:', profesoresData);
-
-            // Comparar el usuarioId del profesor en los datos de profesores
             const profesorData = profesoresData.find(
                 (profesor) => Number(profesor.usuarioId) === Number(profesorUsuario.id)
             );
 
-            if (!profesorData) {
-                console.error('No se encontró ningún profesor asociado al usuario con ID:', profesorUsuario.id);
-                throw new Error('No se encontró ningún profesor asociado a este usuario.');
-            }
+            if (!profesorData) throw new Error('No se encontró ningún profesor asociado a este usuario.');
 
             console.log('Profesor encontrado:', profesorData);
-            console.log('ID del Profesor:', profesorData.usuarioId);
-            console.log('ID de la Asignatura:', profesorData.asignaturaId);
 
-            setProfesorId(profesorData.usuarioId); // Guardar el ID del profesor
-            setAsignaturaId(profesorData.asignaturaId); // Guardar el ID de la asignatura
+            setProfesorId(profesorData.usuarioId);
+            setAsignaturaId(profesorData.asignaturaId);
+
+            // Obtener nombre de la asignatura
+            const asignaturas = await getAsignaturas();
+            const asignatura = asignaturas.find((a) => a.id === profesorData.asignaturaId);
+
+            if (asignatura) {
+                setNombreAsignatura(asignatura.nombre);
+                console.log('Nombre de la asignatura:', asignatura.nombre);
+            } else {
+                console.warn('No se encontró la asignatura para el ID:', profesorData.asignaturaId);
+            }
         } catch (err) {
             console.error('Error en fetchProfesorIdByEmail:', err);
         }
@@ -107,7 +103,7 @@ const useGetProfesorIdByEmail = () => {
         fetchProfesorIdByEmail();
     }, []);
 
-    return { profesorId, asignaturaId };
+    return { profesorId, asignaturaId, nombreAsignatura, nombreCompleto }; // Retorna nombre de asignatura
 };
 
 export default useGetProfesorIdByEmail;

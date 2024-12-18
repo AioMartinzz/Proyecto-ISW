@@ -10,7 +10,7 @@ import useGetProfesorIdByEmail from '../hooks/profesores/useGetProfesores';
 
 const Annotations = () => {
     const { user } = useUser();
-    const [activeView, setActiveView] = useState(''); // Controla la vista activa
+    const [activeView, setActiveView] = useState(''); 
     const [anotaciones, setAnotaciones] = useState([]);
     const [editAnotacion, setEditAnotacion] = useState(null);
     const [selectedAlumno, setSelectedAlumno] = useState('');
@@ -22,7 +22,11 @@ const Annotations = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [alumnos, setAlumnos] = useState([]);
-    const { profesorId: hookProfesorId } = useGetProfesorIdByEmail();
+    const { 
+        profesorId: hookProfesorId, 
+        nombreAsignatura, 
+        nombreCompleto 
+    } = useGetProfesorIdByEmail();
 
     // Obtener alumnos al montar
     useEffect(() => {
@@ -49,6 +53,7 @@ const Annotations = () => {
     
                     // Buscar profesor con el ID
                     const profesorData = data.find((prof) => Number(prof.usuarioId) === Number(hookProfesorId));
+                    
     
                     // Verificar y asignar asignaturaId
                     if (profesorData?.asignaturaId) {
@@ -142,97 +147,132 @@ const Annotations = () => {
         }
     };
 
-    // Renderizar las diferentes vistas
-    const renderView = () => {
-        switch (activeView) {
-            case 'crear':
-                return (
-                    <div>
-                        <h2>Crear Anotación</h2>
-                        <form onSubmit={handleSubmit}>
-                            <label>Alumno:</label>
-                            <select value={selectedAlumno} onChange={(e) => setSelectedAlumno(e.target.value)}>
-                                <option value="">Seleccione un alumno</option>
-                                {alumnos.map((alumno) => (
-                                    <option key={alumno.id} value={alumno.id}>
-                                        {alumno.nombreCompleto || alumno.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                            <label>ID Profesor:</label>
-                            <input value={profesorId} readOnly />
+// Renderizar las diferentes vistas
+const renderView = () => {
+    switch (activeView) {
+        case 'crear':
+            return (
+                <div className="view-container">
+                    <h2>Crear Anotación</h2>
+                    <form onSubmit={handleSubmit}>
+                        <label>Alumno:</label>
+                        <select value={selectedAlumno} onChange={(e) => setSelectedAlumno(e.target.value)}>
+                            <option value="">Seleccione un alumno</option>
+                            {alumnos.map((alumno) => (
+                                <option key={alumno.id} value={alumno.id}>
+                                    {alumno.nombreCompleto || alumno.nombre}
+                                </option>
+                            ))}
+                        </select>
 
-                            <label>ID Asignatura:</label>
-                            <input value={asignaturaId} readOnly />
-                            <label>Tipo:</label>
-                            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
-                                <option value="Positiva">Positiva</option>
-                                <option value="Negativa">Negativa</option>
-                            </select>
-                            <label>Descripción:</label>
-                            <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
-                            <label>Fecha:</label>
-                            <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
-                            <button type="submit">Guardar</button>
-                        </form>
-                    </div>
-                );
-            case 'editar':
-                return (
-                    <div>
-                        <h2>Editar Anotación</h2>
-                        <form onSubmit={handleSaveEdit}>
-                            <label>Descripción:</label>
-                            <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
-                            <label>Tipo:</label>
-                            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
-                                <option value="Positiva">Positiva</option>
-                                <option value="Negativa">Negativa</option>
-                            </select>
-                            <label>Fecha:</label>
-                            <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
-                            <button type="submit">Guardar Cambios</button>
-                            <button type="button" onClick={() => setActiveView('ver')}>
-                                Cancelar
-                            </button>
-                        </form>
-                    </div>
-                );
-            case 'ver':
-                return (
-                    <div>
-                        <h2>Anotaciones Creadas</h2>
-                        {loading ? (
-                            <p>Cargando...</p>
-                        ) : error ? (
-                            <p style={{ color: 'red' }}>{error}</p>
-                        ) : (
-                            anotaciones.map((anotacion) => (
-                                <div key={anotacion.id} className="anotacion-card">
-                                    <p><strong>Descripción:</strong> {anotacion.descripcion}</p>
-                                    <p><strong>Tipo:</strong> {anotacion.tipo}</p>
-                                    <p><strong>Fecha:</strong> {anotacion.fecha}</p>
-                                    <p><strong>Alumno:</strong> {anotacion.alumno.nombreCompleto}</p>
-                                    <button onClick={() => handleEditClick(anotacion)}>Editar</button>
-                                    <button onClick={() => handleDelete(anotacion.id)}>Eliminar</button>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                );
-            default:
-                return <p>Seleccione una opción.</p>;
-        }
-    };
+                        <label>Profesor:</label>
+                            {/* Mostrar el nombre, enviar el ID */}
+                            <input
+                                value={nombreCompleto ? `${nombreCompleto} (${profesorId})` : profesorId}
+                                readOnly
+                            />
 
-    return (
-        <div className="main-content">
-            <h1>Gestión de Anotaciones</h1>
+                        <label>Asignatura:</label>
+                            {/* Mostrar el nombre de asignatura, enviar el ID */}
+                            <input
+                                value={nombreAsignatura ? `${nombreAsignatura} (${asignaturaId})` : asignaturaId}
+                                readOnly
+                            />
+
+                        <label>Tipo:</label>
+                        <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+                            <option value="Positiva">Positiva</option>
+                            <option value="Negativa">Negativa</option>
+                        </select>
+
+                        <label>Descripción:</label>
+                        <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
+
+                        <label>Fecha:</label>
+                        <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+
+                        <button type="submit">Guardar</button>
+                    </form>
+                </div>
+            );
+        case 'editar':
+            return (
+                <div className="view-container">
+                    <h2>Editar Anotación</h2>
+                    <form onSubmit={handleSaveEdit}>
+                        <label>Descripción:</label>
+                        <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
+
+                        <label>Tipo:</label>
+                        <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+                            <option value="Positiva">Positiva</option>
+                            <option value="Negativa">Negativa</option>
+                        </select>
+
+                        <label>Fecha:</label>
+                        <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+
+                        <button type="submit">Guardar Cambios</button>
+                        <button type="button" onClick={() => setActiveView('ver')}>
+                            Cancelar
+                        </button>
+                    </form>
+                </div>
+            );
+        case 'ver':
+            return (
+                <div className="view-container">
+                    <h2>Anotaciones Creadas</h2>
+                    {loading ? (
+                        <p>Cargando...</p>
+                    ) : error ? (
+                        <p style={{ color: 'red' }}>{error}</p>
+                    ) : (
+                        anotaciones.map((anotacion) => (
+                            <div key={anotacion.id} className="anotacion-card">
+                                <p>
+                                    <strong>Descripción:</strong> {anotacion.descripcion}
+                                </p>
+                                <p>
+                                    <strong>Tipo:</strong> {anotacion.tipo}
+                                </p>
+                                <p>
+                                    <strong>Fecha:</strong> {anotacion.fecha}
+                                </p>
+                                <p>
+                                    <strong>Alumno:</strong> {anotacion.alumno.nombreCompleto}
+                                </p>
+                                <button onClick={() => handleEditClick(anotacion)}>Editar</button>
+                                <button onClick={() => handleDelete(anotacion.id)}>Eliminar</button>
+                            </div>
+                        ))
+                    )}
+                </div>
+            );
+        default:
+            return <p>Seleccione una opción.</p>;
+    }
+};
+
+return (
+    <div className="main-content">
+    <h1 className="anotaciones-title">
+        <i className="fas fa-edit"></i> Gestión de Anotaciones
+    </h1>
+
+        {}
+        <div className="button-container">
             <button onClick={() => setActiveView('crear')}>Crear Anotación</button>
-            <button onClick={() => { setActiveView('ver'); fetchAnotaciones(); }}>Ver Anotaciones</button>
-            {renderView()}
+            <button onClick={() => { setActiveView('ver'); fetchAnotaciones(); }}>
+                Ver Anotaciones
+            </button>
         </div>
-    );
+
+        {}
+        {renderView()}
+    </div>
+);
+
 };
 
 export default Annotations;

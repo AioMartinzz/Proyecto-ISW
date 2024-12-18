@@ -1,18 +1,38 @@
 .main-content {
     max-width: 500px; /* Define un ancho máximo más amplio */
     margin: 0 auto; /* Centra el contenido horizontalmente */
-    padding: 80px;
+    padding: 130px;
     background-color: #f9f9f9; /* Color de fondo suave */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
     font-family: Arial, sans-serif;
+    align-items: center;
+    justify-content: center;
 }
 
-h1, h2 {
+h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 50px;
     text-align: center;
-    color: #333;
+    color: #0056b3;
 }
 
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 50px;
+    text-align: center;
+    color: #0056b3;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; /* Centra los botones horizontalmente */
+    align-items: center; /* Centra verticalmente si hay altura */
+    gap: 10px; /* Espacio entre botones */
+    margin: 10px 0; /* Espaciado superior e inferior */
+}
 button {
     padding: 10px 15px;
     margin: 5px;
@@ -20,18 +40,21 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    background-color: #0056b3;
+    color: white;
+    text-align: center;
 }
 
 button:hover {
-    background-color: #238ec8;
+    background-color: #003d80;
 }
 
 form {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    background-color: #fff;
-    padding: 20px;
+    background-color: #2cbff434;
+    padding: 10px;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -44,7 +67,8 @@ input, textarea, select {
     padding: 8px;
     font-size: 14px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
+    box-sizing: border-box; 
 }
 
 textarea {

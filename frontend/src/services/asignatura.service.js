@@ -9,3 +9,13 @@ export const getAsignaturaByUsuarioId = async (usuarioId) => {
         throw error;
     }
 };
+
+export const getAsignaturas = async () => {
+    try {
+        const response = await axios.get('/asignaturas');
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener las asignaturas:', error.message);
+        throw error;
+    }
+};
