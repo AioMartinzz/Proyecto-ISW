@@ -210,7 +210,13 @@ export async function createAsistenciaAutomatica(req, res) {
   }
 }
 
-cron.schedule("59 23 * * *", async () => {
-  console.log("Creando asistencias automáticas...");
-  await createAsistenciaAutomaticaService();
-});
+cron.schedule(
+  "59 23 * * *",
+  async () => {
+    console.log("Creando asistencias automáticas...");
+    await createAsistenciaAutomaticaService();
+  },
+  {
+    timezone: "America/Santiago",
+  },
+);
