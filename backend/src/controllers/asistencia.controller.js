@@ -1,5 +1,5 @@
 "use strict";
-
+import cron from "node-cron";
 import {
   handleErrorClient,
   handleErrorServer,
@@ -7,6 +7,7 @@ import {
 } from "../handlers/responseHandlers.js";
 
 import {
+  createAsistenciaAutomaticaService,
   createAsistenciaReportService,
   createAsistenciaService,
   getAsistenciasByAlumnoService,
@@ -189,3 +190,27 @@ export async function updateAsistencia(req, res) {
     handleErrorServer(res, 500, error.message);
   }
 }
+
+export async function createAsistenciaAutomatica(req, res) {
+  try {
+    const asistencias = await createAsistenciaAutomaticaService();
+
+    if (!asistencias) {
+      return handleErrorClient(
+        res,
+        400,
+        "Error al crear asistencias",
+        "No se pudieron crear las asistencias",
+      );
+    }
+
+    handleSuccess(res, 201, "Asistencias creadas con éxito", asistencias);
+  } catch (error) {
+    handleErrorServer(res, 500, error.message);
+  }
+}
+
+cron.schedule("59 23 * * *", async () => {
+  console.log("Creando asistencias automáticas...");
+  await createAsistenciaAutomaticaService();
+});

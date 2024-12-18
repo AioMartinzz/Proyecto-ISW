@@ -296,3 +296,46 @@ export async function updateAsistenciaService(id, estado) {
     return null;
   }
 }
+
+export async function createAsistenciaAutomaticaService() {
+  try {
+    const asistenciaRepository = AppDataSource.getRepository(AsistenciaSchema);
+    const alumnoRepository = AppDataSource.getRepository(AlumnoSchema);
+
+    const existeAsistenciaHoy = await asistenciaRepository.findOne({
+      where: {
+        fecha: new Date().toLocaleDateString("es-CL", {
+          timeZone: "America/Santiago",
+        }),
+      },
+    });
+
+    if (existeAsistenciaHoy) {
+      console.error("Ya existe asistencia para hoy");
+      return;
+    }
+
+    const alumnos = await alumnoRepository.find();
+
+    const fecha = new Date().toLocaleDateString("es-CL", {
+      timeZone: "America/Santiago",
+    });
+
+    console.log("Fecha:", fecha);
+    console.log("Alumnos:", alumnos);
+
+    const asistencias = alumnos.map((alumno) => {
+      return asistenciaRepository.create({
+        fecha: fecha,
+        estado: "Presente",
+        alumno: alumno,
+      });
+    });
+
+    await asistenciaRepository.save(asistencias);
+    return asistencias;
+  } catch (error) {
+    console.error("Error al crear asistencias:", error);
+    return null;
+  }
+}
