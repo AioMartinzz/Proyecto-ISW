@@ -14,8 +14,10 @@ const Home = () => {
             <div className="home-features">
                 <div className="feature-card">
                     <div className="feature-card-content">
-                        <h2>Registro de Usuarios</h2>
-                        <p>Descripción breve de la funcionalidad 1.</p>
+                        <h2>Portal Anotaciones</h2>
+                        <p>Digitalizacion de anotaciones.</p>   
+                        <p>Descripcion de las anotaciones.</p>
+
                     </div>
                 </div>
                 <div className="feature-card">
