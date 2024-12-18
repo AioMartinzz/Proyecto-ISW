@@ -9,6 +9,7 @@ import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
 import Asistencias from '@pages/Asistencias';
 import Annotations from '@pages/Annotations'; // Importar el componente de Anotaciones
+import ParentAnnotations from '@pages/ParentAnnotations'; // Importar el componente para apoderados
 import { UserProvider } from '@context/UserContext'; // Importar el contexto de usuario
 import '@styles/styles.css';
 import Grades from '@pages/Grades';
@@ -52,6 +53,14 @@ const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute allowedRoles={['profesor', 'apoderado']}>
                         <Grades />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: '/annotations-apoderado', // Nueva ruta para Anotaciones de Apoderados
+                element: (
+                    <ProtectedRoute allowedRoles={['apoderado']}>
+                        <ParentAnnotations />
                     </ProtectedRoute>
                 ),
             },
