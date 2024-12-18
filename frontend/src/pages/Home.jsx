@@ -32,8 +32,9 @@ const Home = () => {
                     <div className="feature-card-content">
                         <h2>Portal de Notas</h2>
                         <p>Digitalización de las notas de los estudiantes.</p>
-                        <p>Estadisticas de las notas.</p>
-                       
+                        <p>Estadisticas varias.</p>
+                        <p>Generación de reportes de notas en PDF.</p>
+                        <p>Modificación de notas.</p> 
                     </div>
                 </div>
             </div>
