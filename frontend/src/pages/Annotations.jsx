@@ -27,6 +27,13 @@ const Annotations = () => {
         nombreCompleto 
     } = useGetProfesorIdByEmail();
 
+    const [tipoFiltro, setTipoFiltro] = useState('');
+    const [fechaFiltro, setFechaFiltro] = useState('');
+    const [alumnoFiltro, setAlumnoFiltro] = useState('');
+    const [filteredAnotaciones, setFilteredAnotaciones] = useState([]);
+    
+
+
     // Obtener alumnos al montar
     useEffect(() => {
         const fetchAlumnos = async () => {
@@ -84,6 +91,33 @@ const Annotations = () => {
             setLoading(false);
         }
     };
+
+    const applyFilters = () => {
+        let result = anotaciones;
+    
+        if (tipoFiltro) {
+            result = result.filter((anotacion) => anotacion.tipo === tipoFiltro);
+        }
+    
+        if (fechaFiltro) {
+            result = result.filter((anotacion) => anotacion.fecha === fechaFiltro);
+        }
+    
+        if (alumnoFiltro) {
+            result = result.filter((anotacion) =>
+                anotacion.alumno.nombreCompleto.toLowerCase().includes(alumnoFiltro.toLowerCase())
+            );
+        }
+    
+        setFilteredAnotaciones(result);
+    };
+    
+    // Inicializa las anotaciones filtradas con todas las anotaciones al cargar la vista
+    useEffect(() => {
+        setFilteredAnotaciones(anotaciones);
+    }, [anotaciones]);
+
+
 
     // Guardar anotación editada
     const handleSaveEdit = async (e) => {
@@ -147,6 +181,11 @@ const Annotations = () => {
 
 // Renderizar las diferentes vistas
 const renderView = () => {
+    const formatDate = (date) => {
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return new Date(date).toLocaleDateString('es-ES', options);
+    };
+
     switch (activeView) {
         case 'crear':
             return (
@@ -164,16 +203,16 @@ const renderView = () => {
                         </select>
 
                         <label>Profesor:</label>
-                            <input
-                                value={nombreCompleto ? `${nombreCompleto} (${profesorId})` : profesorId}
-                                readOnly
-                            />
+                        <input
+                            value={nombreCompleto ? `${nombreCompleto} (${profesorId})` : profesorId}
+                            readOnly
+                        />
 
                         <label>Asignatura:</label>
-                            <input
-                                value={nombreAsignatura ? `${nombreAsignatura} (${asignaturaId})` : asignaturaId}
-                                readOnly
-                            />
+                        <input
+                            value={nombreAsignatura ? `${nombreAsignatura} (${asignaturaId})` : asignaturaId}
+                            readOnly
+                        />
 
                         <label>Tipo:</label>
                         <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
@@ -219,12 +258,46 @@ const renderView = () => {
             return (
                 <div className="view-container">
                     <h2>Anotaciones Creadas</h2>
+
+                    {/* Filtros */}
+                    <div className="filter-container">
+                        <h3>Filtrar Anotaciones</h3>
+                        <div className="filter-group">
+                            <div className="filter-item">
+                                <label>Tipo:</label>
+                                <select value={tipoFiltro} onChange={(e) => setTipoFiltro(e.target.value)}>
+                                    <option value="">Todos</option>
+                                    <option value="Positiva">Positiva</option>
+                                    <option value="Negativa">Negativa</option>
+                                </select>
+                            </div>
+                            <div className="filter-item">
+                                <label>Fecha:</label>
+                                <input
+                                    type="date"
+                                    value={fechaFiltro}
+                                    onChange={(e) => setFechaFiltro(e.target.value)}
+                                />
+                            </div>
+                            <div className="filter-item">
+                                <label>Alumno:</label>
+                                <input
+                                    type="text"
+                                    placeholder="Nombre del alumno"
+                                    value={alumnoFiltro}
+                                    onChange={(e) => setAlumnoFiltro(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <button className="filter-button" onClick={applyFilters}>Buscar</button>
+                    </div>
+
                     {loading ? (
                         <p>Cargando...</p>
                     ) : error ? (
                         <p style={{ color: 'red' }}>{error}</p>
-                    ) : (
-                        anotaciones.map((anotacion) => (
+                    ) : filteredAnotaciones.length > 0 ? (
+                        filteredAnotaciones.map((anotacion) => (
                             <div key={anotacion.id} className="anotacion-card">
                                 <p>
                                     <strong>Descripción:</strong> {anotacion.descripcion}
@@ -233,16 +306,21 @@ const renderView = () => {
                                     <strong>Tipo:</strong> {anotacion.tipo}
                                 </p>
                                 <p>
-                                    <strong>Fecha:</strong> {anotacion.fecha}
+                                    <strong>Fecha:</strong> {formatDate(anotacion.fecha)}
                                 </p>
                                 <p>
                                     <strong>Alumno:</strong> {anotacion.alumno.nombreCompleto}
                                 </p>
-                                <button onClick={() => handleEditClick(anotacion)}><i className="fas fa-pen-to-square"></i>Editar</button>
+                                <button onClick={() => handleEditClick(anotacion)}>
+                                    <i className="fas fa-pen-to-square"></i>Editar
+                                </button>
                                 <button onClick={() => handleDelete(anotacion.id)}>
-                <i className="fas fa-trash"></i> Eliminar
-              </button>                            </div>
+                                    <i className="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
                         ))
+                    ) : (
+                        <p>No se encontraron anotaciones con los criterios seleccionados.</p>
                     )}
                 </div>
             );
@@ -250,6 +328,8 @@ const renderView = () => {
             return <p>Seleccione una opción.</p>;
     }
 };
+
+
 
 return (
     <div className="main-content">

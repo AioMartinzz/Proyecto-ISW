@@ -10,6 +10,11 @@ const ParentAnnotations = () => {
   const [error, setError] = useState(null);
   const [noAnotacionesMessage, setNoAnotacionesMessage] = useState(null);
 
+  const formatDate = (date) => {
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return new Date(date).toLocaleDateString('es-ES', options);
+  };
+
   useEffect(() => {
     const fetchAnotaciones = async () => {
       if (!alumnoId) return;
@@ -70,9 +75,13 @@ const ParentAnnotations = () => {
       ) : (
         <div className="anotaciones-container">
           {anotaciones.map((anotacion) => (
-            <div key={anotacion.id} className="anotacion-card">
+            <div 
+              key={anotacion.id} 
+              className="anotacion-card"
+              data-tipo={anotacion.tipo}
+            >
               <p><strong>Descripción:</strong> {anotacion.descripcion}</p>
-              <p><strong>Fecha:</strong> {anotacion.fecha}</p>
+              <p><strong>Fecha:</strong> {formatDate(anotacion.fecha)}</p>
               <p><strong>Tipo:</strong> {anotacion.tipo}</p>
               <p><strong>Asignatura:</strong> {anotacion.asignatura?.nombre || "N/A"}</p>
             </div>

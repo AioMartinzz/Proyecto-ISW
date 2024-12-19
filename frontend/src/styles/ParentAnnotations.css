@@ -1,27 +1,55 @@
 .anotaciones-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centrar los elementos horizontalmente */
-    gap: 1rem;
-    padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.anotacion-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #eaeaea;
+}
+
+.anotacion-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.anotacion-card p {
+  margin: 0.8rem 0;
+  line-height: 1.5;
+  color: #4a5568;
+}
+
+.anotacion-card p strong {
+  color: #2d3748;
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.anotacion-card[data-tipo="Positiva"] {
+  border-left: 4px solid #48bb78;
+}
+
+.anotacion-card[data-tipo="Negativa"] {
+  border-left: 4px solid #f56565;
+}
+
+@media (max-width: 768px) {
+  .anotaciones-container {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      padding: 1rem;
   }
-  
-  .anotacion-card {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 80%; /* Ajustar el ancho para centrar mejor */
-    max-width: 600px; /* Establecer un máximo para evitar que sean demasiado grandes */
-    text-align: left; /* Alinear el texto a la izquierda dentro de la tarjeta */
+}
+
+@media (max-width: 480px) {
+  .anotaciones-container {
+      grid-template-columns: 1fr;
   }
-  
-  .anotacion-card p {
-    margin: 0.5rem 0;
-  }
-  
-  .anotacion-card p strong {
-    color: #333;
-  }
-  
+}
