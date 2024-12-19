@@ -3,12 +3,12 @@ import { createGradeService, deleteGradeService, updateGradeService, getGradesSe
 
 
 
-// Controlador para crear una calificacion
+// Controlador para crear una calificación
 export async function createGrade(req, res) {
   try {
     const { score } = req.body;
     
-    // Validación de calificación
+    // Validación 
     if (score < 1.0 || score > 7.0) {
       return res.status(400).json({
         message: 'La calificación debe estar entre 1.0 y 7.0'
@@ -34,7 +34,7 @@ export async function updateGrade(req, res) {
     const { id } = req.params;
     const { estudiante_id, asignatura_id, nota } = req.body;
     
-    // Validación de calificación
+    // Validación 
     if (nota < 1.0 || nota > 7.0) {
       return res.status(400).json({
         message: 'La calificación debe estar entre 1.0 y 7.0'

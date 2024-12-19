@@ -20,7 +20,7 @@ router.post(
   createGrade,
 );
 
-// Ruta para actualizar una Grade
+// Ruta para actualizar una calificacion
 router.put(
   "/:id",
   authenticateJwt,
@@ -28,7 +28,7 @@ router.put(
   updateGrade,
 );
 
-// Ruta para eliminar una Grade
+// Ruta para eliminar una calificacion
 router.delete(
   "/:id",
   authenticateJwt,
