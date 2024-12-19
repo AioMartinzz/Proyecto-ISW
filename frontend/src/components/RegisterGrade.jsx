@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { registerGrade } from '../services/grade.service';
 import axios from '../services/root.service';
+import Select from 'react-select';
+
 
 const RegisterGrade = ({ isOpen, onClose, onSuccess, onError, user }) => {
   const [formData, setFormData] = useState({
@@ -118,6 +120,11 @@ const RegisterGrade = ({ isOpen, onClose, onSuccess, onError, user }) => {
     }
   };
 
+  const studentOptions = estudiantes.map(estudiante => ({
+    value: estudiante.id,
+    label: estudiante.nombreCompleto
+  }));
+
   return (
     <div className="register-modal-overlay">
       <div className="register-modal-content">
@@ -126,18 +133,19 @@ const RegisterGrade = ({ isOpen, onClose, onSuccess, onError, user }) => {
         <form onSubmit={handleSubmit} className="register-form">
           <div className="form-group">
             <label htmlFor="estudiante_id">Estudiante:</label>
-            <select
+            <Select
               name="estudiante_id"
-              value={formData.estudiante_id}
-              onChange={handleChange}
-            >
-              <option value="">Seleccione un estudiante</option>
-              {estudiantes && estudiantes.map(estudiante => (
-                <option key={estudiante.id} value={estudiante.id}>
-                  {estudiante.nombreCompleto}
-                </option>
-              ))}
-            </select>
+              value={studentOptions.find(option => option.value === formData.estudiante_id)}
+              onChange={(option) => handleChange({
+                target: { name: 'estudiante_id', value: option ? option.value : '' }
+              })}
+              options={studentOptions}
+              placeholder="Seleccione un estudiante"
+              isClearable
+              isSearchable
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
             {errors.estudiante_id && (
               <span className="error-message">{errors.estudiante_id}</span>
             )}
