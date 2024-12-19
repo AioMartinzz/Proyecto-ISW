@@ -170,3 +170,23 @@ textarea {
 .filter-button:hover {
     background-color: #0056b3;
 }
+
+.view-container {
+    display: flex;
+    flex-direction: column;  /* Esto hará que los elementos se apilen verticalmente */
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.filter-container {
+    width: 100%;  /* Asegura que el filtro ocupe todo el ancho */
+    margin-bottom: 20px;  /* Espacio entre el filtro y las anotaciones */
+}
+
+/* Contenedor específico para las anotaciones */
+.anotaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}

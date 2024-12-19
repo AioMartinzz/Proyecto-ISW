@@ -297,28 +297,26 @@ const renderView = () => {
                     ) : error ? (
                         <p style={{ color: 'red' }}>{error}</p>
                     ) : filteredAnotaciones.length > 0 ? (
-                        filteredAnotaciones.map((anotacion) => (
-                            <div key={anotacion.id} className="anotacion-card">
-                                <p>
-                                    <strong>Descripción:</strong> {anotacion.descripcion}
-                                </p>
-                                <p>
-                                    <strong>Tipo:</strong> {anotacion.tipo}
-                                </p>
-                                <p>
-                                    <strong>Fecha:</strong> {formatDate(anotacion.fecha)}
-                                </p>
-                                <p>
-                                    <strong>Alumno:</strong> {anotacion.alumno.nombreCompleto}
-                                </p>
-                                <button onClick={() => handleEditClick(anotacion)}>
-                                    <i className="fas fa-pen-to-square"></i>Editar
-                                </button>
-                                <button onClick={() => handleDelete(anotacion.id)}>
-                                    <i className="fas fa-trash"></i> Eliminar
-                                </button>
-                            </div>
-                        ))
+                        <div className="anotaciones-grid">
+                            {filteredAnotaciones.map((anotacion) => (
+                                <div 
+                                    key={anotacion.id} 
+                                    className="anotacion-card"
+                                    data-tipo={anotacion.tipo}
+                                >
+                                    <p><strong>Descripción:</strong> {anotacion.descripcion}</p>
+                                    <p><strong>Tipo:</strong> {anotacion.tipo}</p>
+                                    <p><strong>Fecha:</strong> {formatDate(anotacion.fecha)}</p>
+                                    <p><strong>Alumno:</strong> {anotacion.alumno.nombreCompleto}</p>
+                                    <button onClick={() => handleEditClick(anotacion)}>
+                                        <i className="fas fa-pen-to-square"></i>Editar
+                                    </button>
+                                    <button onClick={() => handleDelete(anotacion.id)}>
+                                        <i className="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
                     ) : (
                         <p>No se encontraron anotaciones con los criterios seleccionados.</p>
                     )}
