@@ -18,6 +18,7 @@ export default function Asistencias() {
     const [reporteMes, setReporteMes] = useState('')
     const [reporteAlumno, setReporteAlumno] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [successMessage, setSuccessMessage] = useState(null)
     const [submitError, setSubmitError] = useState(null)
     const [shouldFetchAttendance, setShouldFetchAttendance] = useState(false)
 
@@ -79,7 +80,6 @@ export default function Asistencias() {
                 },
                 {}
             )
-
             setAttendanceList(updatedAttendanceList)
             setIsExistingAttendance(asistencias.length > 0)
         } else {
@@ -98,6 +98,7 @@ export default function Asistencias() {
         setSelectedDate(e.target.value)
         setAttendanceList({})
         setShouldFetchAttendance(true)
+        setSuccessMessage(null)
         setSubmitError(null)
     }
 
@@ -112,25 +113,24 @@ export default function Asistencias() {
         e.preventDefault()
         if (!selectedCurso || !selectedDate) return
 
-        const hoy = new Date().toLocaleDateString('es-Cl', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-        })
+        const hoy = new Date()
+        const [year, month, day] = selectedDate.split('-')
+        const selectedDateObject = new Date(year, month - 1, day)
 
-        const [day, month, year] = hoy.split('-')
-        const hoyFormatted = `${year}-${month}-${day}`
+        // Calcular el límite de un mes antes de la fecha actual
+        const limiteAnterior = new Date(hoy)
+        limiteAnterior.setMonth(hoy.getMonth() - 1)
 
-        if (selectedDate > hoyFormatted) {
+        if (selectedDateObject < limiteAnterior) {
             setSubmitError(
-                'No se puede marcar asistencia para una fecha futura.'
+                'No se puede marcar asistencia para una fecha mayor a un mes de antigüedad.'
             )
             return
         }
 
-        if (selectedDate < hoyFormatted) {
+        if (selectedDateObject > hoy) {
             setSubmitError(
-                'No se puede marcar asistencia para una fecha pasada.'
+                'No se puede marcar asistencia para una fecha futura.'
             )
             return
         }
@@ -158,6 +158,12 @@ export default function Asistencias() {
 
             setShouldFetchAttendance(true)
             await fetchAttendance()
+
+            // Mensaje de éxito
+            setSuccessMessage('Asistencias creadas o actualizadas con éxito.')
+
+            // Limpiar el mensaje después de unos segundos
+            setTimeout(() => setSuccessMessage(''), 5000)
         } catch (error) {
             console.error('Error al actualizar asistencias:', error)
             setSubmitError(
@@ -304,6 +310,7 @@ export default function Asistencias() {
                                     ))}
                             </tbody>
                         </table>
+
                         <button
                             type="submit"
                             className="submit-button"
@@ -317,6 +324,13 @@ export default function Asistencias() {
                                 'Crear Asistencias'
                             )}
                         </button>
+                        {successMessage && (
+                            <p className="success-message">
+                                <i className="fas fa-check-circle"></i>{' '}
+                                {successMessage}
+                            </p>
+                        )}
+
                         {submitError && (
                             <p className="error-message">
                                 <i className="fas fa-exclamation-circle"></i>{' '}

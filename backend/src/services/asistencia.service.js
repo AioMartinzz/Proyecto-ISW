@@ -21,29 +21,55 @@ export async function createAsistenciaService(alumnoId, estado, fecha) {
       return null;
     }
 
-    // Obtener fecha actual de Chile
-    const fechaChile = new Date().toLocaleDateString("es-CL", {
-      timeZone: "America/Santiago",
-    });
+    // Obtener fecha actual en la zona horaria de Chile
+    const hoy = new Date();
+    const fechaChile = new Date(
+      hoy.toLocaleString("es-CL", { timeZone: "America/Santiago" }),
+    );
 
-    // Formatear fecha de Chile a yyyy-mm-dd
-    const [dia, mes, anio] = fechaChile.split("-");
-    const fechaChileFormateada = `${anio}-${mes}-${dia}`;
+    // Calcular el límite de un mes atrás
+    const [diaFechaChile, mesFechaChile, anioFechaChile] =
+      fechaChile.split("-");
 
-    if (fecha !== fechaChileFormateada) {
-      console.error("Solo se puede crear asistencia para hoy");
+    const limiteMesAnterior = new Date(
+      anioFechaChile,
+      mesFechaChile - 2,
+      diaFechaChile,
+    );
+
+    // Convertir la fecha proporcionada a un objeto Date
+    const [anioFechaEntrada, mesFechaEntrada, diaFechaEntrada] =
+      fecha.split("-");
+    const fechaProporcionada = new Date(
+      anioFechaEntrada,
+      mesFechaEntrada - 1,
+      diaFechaEntrada,
+    );
+
+    // Validar que la fecha no sea futura ni mayor a un mes de antigüedad
+    if (fechaProporcionada > fechaChile) {
+      console.error("No se puede crear asistencia para fechas futuras");
       return null;
     }
 
+    if (fechaProporcionada < limiteMesAnterior) {
+      console.error(
+        "No se puede crear asistencia para fechas mayores a un mes de antigüedad",
+      );
+      return null;
+    }
+
+    // Verificar si ya existe una asistencia para esta fecha y alumno
     const asistencia = await asistenciaRepository.findOne({
       where: { fecha: fecha, alumno: alumno },
     });
 
     if (asistencia) {
-      console.error("Asistencia ya creada para hoy");
+      console.error("Asistencia ya creada para esta fecha");
       return null;
     }
 
+    // Crear y guardar la nueva asistencia
     const newAsistencia = asistenciaRepository.create({
       fecha: fecha,
       estado: estado,
@@ -55,6 +81,7 @@ export async function createAsistenciaService(alumnoId, estado, fecha) {
     if (estado === "Ausente") {
       await verificarInasistenciasService(alumnoId);
     }
+
     return newAsistencia;
   } catch (error) {
     console.error("Error al crear asistencia:", error);
